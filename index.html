@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PremierFix - Log Issue</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbAlYMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#511e58">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/autoprefixer.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Feature detection -->
+    <script src="js/modernizr-custom.js"></script>
+    <!-- Polyfills for older browsers -->
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.26.1/minified.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <!-- Service Worker Registration -->
+    <script>
+        // Check if service workers are supported
+        if ('serviceWorker' in navigator) {
+            // Use the window load event to keep the page load performant
+            window.addEventListener('load', () => {
+                // Check if we're on HTTPS or localhost (for development)
+                const isLocalhost = Boolean(
+                    window.location.hostname === 'localhost' ||
+                    window.location.hostname === '[::1]' ||
+                    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+                );
+                
+                // Only register service worker on HTTPS or localhost
+                if (window.location.protocol === 'https:' || isLocalhost) {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(registration => {
+                            console.log('Service Worker registered with scope:', registration.scope);
+                            
+                            // Check for updates
+                            registration.onupdatefound = () => {
+                                const installingWorker = registration.installing;
+                                installingWorker.onstatechange = () => {
+                                    if (installingWorker.state === 'installed') {
+                                        if (navigator.serviceWorker.controller) {
+                                            console.log('New content is available; please refresh.');
+                                        } else {
+                                            console.log('Content is cached for offline use.');
+                                        }
+                                    }
+                                };
+                            };
+                        })
+                        .catch(error => {
+                            console.error('Service Worker registration failed:', error);
+                            
+                            // If running from file:// protocol, show a more helpful message
+                            if (window.location.protocol === 'file:') {
+                                console.warn('Service Worker registration failed because you are running from the file:// protocol. Please use a local web server as described in the README.md file.');
+                            }
+                        });
+                } else {
+                    console.warn('Service Worker registration skipped: Not running on HTTPS or localhost');
+                }
+            });
+        } else {
+            console.warn('Service Workers are not supported in this browser');
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <img src="./images/PremierFix.png" alt="PremierFix Logo" class="brand-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Log Issue</a>
+                <a href="tracking.html">Track Issues</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1>Log Maintenance Issue</h1>
+        <form id="issueForm" class="issue-form">
+            <div class="form-group location-group">
+                <div class="location-field">
+                    <label for="roomNumber">Room Number</label>
+                    <input type="text" id="roomNumber" name="roomNumber" pattern="[0-9]*" placeholder="Enter room number">
+                </div>
+                <div class="location-field">
+                    <label for="location">Or Select Location</label>
+                    <select id="location" name="location">
+                        <option value="">Select location</option>
+                        <option value="Reception">Reception</option>
+                        <option value="Office">Office</option>
+                        <option value="Staff Room">Staff Room</option>
+                        <option value="Car Park">Car Park</option>
+                        <option value="Restaurant">Restaurant</option>
+                        <option value="Corridors">Corridors</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category of Fault</label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="timePreference">When</label>
+                <input type="hidden" id="timePreference" name="timePreference" value="anytime">
+                <div class="time-selection" id="timeSelectionButtons">
+                    <button type="button" class="time-btn active" data-time="anytime">Anytime</button>
+                    <button type="button" class="time-btn" data-time="before">Before</button>
+                    <button type="button" class="time-btn" data-time="after">After</button>
+                </div>
+                <div id="dateTimeContainer" class="datetime-container" style="display: none;">
+                    <label for="dateTime">Select Date and Time</label>
+                    <input type="text" id="dateTime" name="dateTime" placeholder="Click to select date and time">
+                    <div class="datetime-hint">Please select your preferred maintenance time</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="authorName">Requested By</label>
+                <input type="text" id="authorName" name="authorName" required>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitButton" name="submitButton">Submit Issue</button>
+        </form>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="js/form.js"></script>
+</body>
+</html> 
