@@ -38,7 +38,10 @@
                 
                 // Only register service worker on HTTPS or localhost
                 if (window.location.protocol === 'https:' || isLocalhost) {
-                    navigator.serviceWorker.register('/service-worker.js')
+                    // Get the base path for GitHub Pages
+                    const basePath = location.pathname.includes('/PremierFix') ? '/PremierFix' : '';
+                    
+                    navigator.serviceWorker.register(basePath + '/service-worker.js')
                         .then(registration => {
                             console.log('Service Worker registered with scope:', registration.scope);
                             

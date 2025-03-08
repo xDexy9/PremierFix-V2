@@ -2,7 +2,7 @@
   "name": "PremierFix",
   "short_name": "PremierFix",
   "description": "Maintenance issue tracking system",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f5f6fa",
   "theme_color": "#511e58",
@@ -31,14 +31,14 @@
       "name": "Log Issue",
       "short_name": "Log",
       "description": "Log a new maintenance issue",
-      "url": "/index.html",
+      "url": "./index.html",
       "icons": [{ "src": "images/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Track Issues",
       "short_name": "Track",
       "description": "Track existing maintenance issues",
-      "url": "/tracking.html",
+      "url": "./tracking.html",
       "icons": [{ "src": "images/icon-192x192.png", "sizes": "192x192" }]
     }
   ]

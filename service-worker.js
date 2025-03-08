@@ -1,23 +1,21 @@
-// Service Worker for PremierFix
-const CACHE_NAME = 'premierfix-cache-v1';
+// Service Worker for PremierFix PWA
+
+const CACHE_NAME = 'premierfix-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/tracking.html',
-  '/css/normalize.css',
-  '/css/autoprefixer.css',
-  '/css/styles.css',
-  '/js/modernizr-custom.js',
-  '/js/form.js',
-  '/js/tracking.js',
-  '/images/PremierFix.png',
-  '/manifest.json',
-  'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
-  'https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css',
-  'https://cdn.jsdelivr.net/npm/flatpickr',
-  'https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js',
-  'https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js',
-  'https://cdn.jsdelivr.net/npm/core-js-bundle@3.26.1/minified.js'
+  './',
+  './index.html',
+  './tracking.html',
+  './css/normalize.css',
+  './css/autoprefixer.css',
+  './css/styles.css',
+  './js/modernizr-custom.js',
+  './js/form.js',
+  './js/tracking.js',
+  './js/firebase-config.js',
+  './images/icon-192x192.png',
+  './images/icon-512x512.png',
+  './images/PremierFix.png',
+  './manifest.json'
 ];
 
 // Install event - cache assets
@@ -30,11 +28,11 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('[Service Worker] Caching app shell and content');
+        console.log('[Service Worker] Caching app shell and content...');
         return cache.addAll(ASSETS_TO_CACHE);
       })
       .catch(error => {
-        console.error('[Service Worker] Error during cache.addAll():', error);
+        console.error('[Service Worker] Cache addAll failed:', error);
       })
   );
 });
@@ -43,10 +41,9 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   console.log('[Service Worker] Activating Service Worker...');
   
-  // Claim clients to ensure the service worker controls all clients
-  event.waitUntil(self.clients.claim());
+  // Claim clients to ensure that the service worker controls all clients
+  self.clients.claim();
   
-  // Remove old caches
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -63,65 +60,49 @@ self.addEventListener('activate', event => {
 
 // Fetch event - serve from cache or network
 self.addEventListener('fetch', event => {
-  // Skip cross-origin requests like Firebase
-  if (!event.request.url.startsWith(self.location.origin) && 
-      !event.request.url.includes('cdn.jsdelivr.net')) {
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
   
-  // For HTML files, use network-first strategy
-  if (event.request.headers.get('accept').includes('text/html')) {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Clone the response to store in cache
-          const clonedResponse = response.clone();
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, clonedResponse);
-            });
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request)
-            .then(cachedResponse => {
-              if (cachedResponse) {
-                return cachedResponse;
-              }
-              // If no cached HTML, return the offline page
-              return caches.match('/index.html');
-            });
-        })
-    );
+  // Skip Firebase API requests
+  if (event.request.url.includes('firestore.googleapis.com') || 
+      event.request.url.includes('firebase') ||
+      event.request.url.includes('googleapis')) {
     return;
   }
   
-  // For other assets, use cache-first strategy
   event.respondWith(
     caches.match(event.request)
-      .then(cachedResponse => {
-        if (cachedResponse) {
-          return cachedResponse;
+      .then(response => {
+        // Return cached response if found
+        if (response) {
+          return response;
         }
         
-        return fetch(event.request)
+        // Clone the request because it's a one-time use stream
+        const fetchRequest = event.request.clone();
+        
+        return fetch(fetchRequest)
           .then(response => {
-            // Don't cache responses that aren't successful
+            // Check if we received a valid response
             if (!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
             
-            // Clone the response to store in cache
-            const clonedResponse = response.clone();
+            // Clone the response because it's a one-time use stream
+            const responseToCache = response.clone();
+            
             caches.open(CACHE_NAME)
               .then(cache => {
-                cache.put(event.request, clonedResponse);
+                cache.put(event.request, responseToCache);
               });
             
             return response;
           })
           .catch(error => {
             console.error('[Service Worker] Fetch failed:', error);
+            // You could return a custom offline page here
           });
       })
   );
