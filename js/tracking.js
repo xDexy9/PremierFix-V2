@@ -716,89 +716,94 @@ function generateScheduledTask(taskId, task) {
         });
 }
 
-// Initialize the page
+// Add retry logic for initialization
+let initRetryCount = 0;
+const maxInitRetries = 3;
+
 async function initializePage() {
     try {
         console.log("Starting page initialization...");
         
-        // Initialize Firebase without clearing data
-        await window.firebaseService.initialize();
-        console.log("Firebase initialization complete");
-
+        // Initialize Firebase with retry logic
+        while (initRetryCount < maxInitRetries) {
+            try {
+                await window.firebaseService.initialize();
+                console.log("Firebase initialization complete");
+                break;
+            } catch (error) {
+                console.warn(`Firebase initialization attempt ${initRetryCount + 1} failed:`, error);
+                initRetryCount++;
+                if (initRetryCount === maxInitRetries) {
+                    throw new Error("Failed to initialize Firebase after multiple attempts");
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000 * initRetryCount));
+            }
+        }
+        
         // Set up event listeners
-        if (safeGetElement(ELEMENTS.searchInput)) {
-            ELEMENTS.searchInput.addEventListener('input', debounce(() => {
-                currentPage = 1;
-                filterAndDisplayIssues();
-            }, 300));
-        }
+        setupEventListeners();
         
-        if (safeGetElement(ELEMENTS.filterCategory)) {
-            ELEMENTS.filterCategory.addEventListener('change', () => {
-                currentPage = 1;
-                filterAndDisplayIssues();
-            });
-        }
-        
-        if (safeGetElement(ELEMENTS.filterStatus)) {
-            ELEMENTS.filterStatus.addEventListener('change', () => {
-                currentPage = 1;
-                filterAndDisplayIssues();
-            });
-        }
-        
-        if (safeGetElement(ELEMENTS.dateFrom)) {
-            ELEMENTS.dateFrom.addEventListener('change', () => {
-                currentPage = 1;
-                filterAndDisplayIssues();
-            });
-        }
-        
-        if (safeGetElement(ELEMENTS.dateTo)) {
-            ELEMENTS.dateTo.addEventListener('change', () => {
-                currentPage = 1;
-                filterAndDisplayIssues();
-            });
-        }
-        
-        if (safeGetElement(ELEMENTS.sortControlButtons)) {
-            ELEMENTS.sortControlButtons.addEventListener('click', toggleSort);
-        }
-        
-        if (safeGetElement(ELEMENTS.clearFilters)) {
-            ELEMENTS.clearFilters.addEventListener('click', clearFilters);
-        }
-        
-        if (safeGetElement(ELEMENTS.exportCSV)) {
-            ELEMENTS.exportCSV.addEventListener('click', exportToCSV);
-        }
-        
-        if (safeGetElement(ELEMENTS.printView)) {
-            ELEMENTS.printView.addEventListener('click', openPrintView);
-        }
-        
-        // Add summary container
-        if (safeGetElement(ELEMENTS.container) && safeGetElement(ELEMENTS.issuesList)) {
-            ELEMENTS.summaryContainer.className = 'issues-summary';
-            ELEMENTS.container.insertBefore(ELEMENTS.summaryContainer, ELEMENTS.issuesList);
-        }
-        
-        // Load issues and update UI
-        await Promise.all([
-            filterAndDisplayIssues(),
-            updateTaskCards()
-        ]);
+        // Initial data load
+        await loadInitialData();
         
         console.log("Page initialization complete");
-        
-        // Clear console after a small delay to ensure all logs are shown
-        setTimeout(() => {
-            console.clear();
-            console.log("✨ PremierFix Issue Tracker Ready!");
-        }, 1000);
     } catch (error) {
         console.error('Error initializing page:', error);
         showError('Failed to initialize page. Please refresh and try again.');
+    }
+}
+
+async function loadInitialData() {
+    try {
+        // Show loading state
+        ELEMENTS.issuesList.innerHTML = '<div class="loading">Loading issues...</div>';
+        
+        // Load and display issues
+        await filterAndDisplayIssues();
+        
+        // Remove loading state if successful
+        const loadingElement = ELEMENTS.issuesList.querySelector('.loading');
+        if (loadingElement) {
+            loadingElement.remove();
+        }
+    } catch (error) {
+        console.error('Error loading initial data:', error);
+        showError('Failed to load issues. Please check your connection and try again.');
+    }
+}
+
+function setupEventListeners() {
+    // Debounce search input
+    ELEMENTS.searchInput.addEventListener('input', debounce(() => filterAndDisplayIssues(), 300));
+    
+    // Add change listeners to filters
+    ELEMENTS.filterCategory.addEventListener('change', () => filterAndDisplayIssues());
+    ELEMENTS.filterStatus.addEventListener('change', () => filterAndDisplayIssues());
+    ELEMENTS.dateFrom.addEventListener('change', () => filterAndDisplayIssues());
+    ELEMENTS.dateTo.addEventListener('change', () => filterAndDisplayIssues());
+    
+    // Sort control
+    ELEMENTS.sortControlButtons.addEventListener('click', toggleSort);
+    
+    // Clear filters
+    ELEMENTS.clearFilters.addEventListener('click', clearFilters);
+    
+    // Export buttons
+    ELEMENTS.exportCSV.addEventListener('click', exportToCSV);
+    ELEMENTS.printView.addEventListener('click', openPrintView);
+    
+    // Add online/offline handlers
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+}
+
+function handleOnlineStatus() {
+    if (navigator.onLine) {
+        console.log('Back online, refreshing data...');
+        filterAndDisplayIssues();
+    } else {
+        console.log('Offline, using cached data...');
+        showNotification('You are offline. Some features may be limited.', 'warning');
     }
 }
 
