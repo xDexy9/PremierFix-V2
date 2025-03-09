@@ -28,13 +28,11 @@ service cloud.firestore {
                      (request.resource.data.diff(resource.data).affectedKeys()
                       .hasOnly(['status', 'updatedAt']));
                       
-      // Allow full updates by the creator
-      allow update: if request.auth != null && 
-                     request.auth.uid == resource.data.userId;
+      // Allow full updates by any authenticated user
+      allow update: if request.auth != null;
                      
-      // Allow deletion by the creator
-      allow delete: if request.auth != null && 
-                     request.auth.uid == resource.data.userId;
+      // Allow deletion by any authenticated user
+      allow delete: if request.auth != null;
     }
   }
 }
@@ -42,13 +40,13 @@ service cloud.firestore {
 
 ## Why This Fixes the Issue
 
-The previous rules were not correctly allowing status updates. The key changes are:
+The previous rules were too restrictive, only allowing deletion by the creator of the issue. The key changes are:
 
-1. Using `diff()` and `affectedKeys()` to properly check which fields are being modified
-2. Separating the rules for status updates and full updates by the creator
-3. Ensuring that any authenticated user can update the status field
+1. Removed the requirement that the user must be the creator to delete issues
+2. Simplified the update rules to allow any authenticated user to make changes
+3. Kept the authentication requirement to prevent unauthorized access
 
-After updating these rules, you should be able to update issue status without permission errors.
+After updating these rules, you should be able to update issue status and delete issues without permission errors.
 
 ## Storage Rules (if you're using Firebase Storage)
 
@@ -58,4 +56,4 @@ No changes needed to the Storage rules if you're not experiencing issues with fi
 
 Make sure your GitHub Pages domain is still in the authorized domains list:
 - Go to Authentication > Settings > Authorized domains
-- Verify that `xdexy9.github.io` is in the list 
+- Verify that `

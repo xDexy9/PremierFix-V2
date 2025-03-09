@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/autoprefixer.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
     <!-- Feature detection -->
     <script src="js/modernizr-custom.js"></script>
     <!-- Polyfills for older browsers -->
@@ -23,6 +24,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     <script src="js/firebase-config.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Service Worker Registration -->
     <script>
         // Check if service workers are supported
@@ -100,13 +103,10 @@
                     <p>Quarterly maintenance task for all rooms</p>
                     <div class="task-status"></div>
                     <div class="next-due"></div>
-                    <button onclick="generateACFilterChecklist()" class="checklist-btn">Generate Checklist</button>
-                </div>
-                <div class="task-card" id="premisesTask">
-                    <h3>Premises Inspection</h3>
-                    <p>Monthly inspection of building and surroundings</p>
-                    <div class="task-status"></div>
-                    <div class="next-due"></div>
+                    <div class="maintenance-buttons">
+                        <button onclick="generateMaintenanceChecklist('ac')" class="checklist-btn">AC Filter Checklist</button>
+                        <button onclick="generateMaintenanceChecklist('fan')" class="checklist-btn">Bathroom Fan Checklist</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,7 +130,7 @@
                 <label for="filterStatus" class="filter-label">Status</label>
                 <select id="filterStatus" name="filterStatus" class="filter-input">
                     <option value="">All Statuses</option>
-                    <option value="Pending">Pending</option>
+                    <option value="New">New</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                 </select>
@@ -144,7 +144,7 @@
                 <input type="date" id="dateTo" name="dateTo" class="filter-input" placeholder="To">
             </div>
             <div class="filter-group">
-                <label for="sortControl" class="filter-label">Sort By</label>
+                <label for="sortControlButtons" class="filter-label">Sort By</label>
                 <input type="hidden" id="sortControl" name="sortControl" value="desc">
                 <div class="sort-control" id="sortControlButtons">
                     <span>Date</span>
@@ -159,7 +159,7 @@
 
         <div class="export-controls">
             <button class="export-btn" id="exportCSV" name="exportCSV">
-                <span>Export CSV</span>
+                <span>Export to Excel</span>
             </button>
             <button class="export-btn" id="printView" name="printView">
                 <span>Print View</span>
@@ -167,20 +167,7 @@
         </div>
 
         <div id="issuesList" class="issues-list">
-            <!-- Skeleton loading placeholder -->
-            <div class="skeleton-card skeleton">
-                <div class="skeleton-header"></div>
-                <div class="skeleton-content">
-                    <div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                    </div>
-                    <div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                    </div>
-                </div>
-            </div>
+            <!-- Empty div for issues -->
         </div>
         <div id="paginationContainer"></div>
     </main>

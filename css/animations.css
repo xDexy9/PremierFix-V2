@@ -1,0 +1,74 @@
+/* Custom animations for PremierFix */
+
+/* Confetti animation for completed items */
+.issue-card[data-status='Completed'] {
+    position: relative;
+    overflow: hidden;
+}
+
+.issue-card[data-status='Completed']::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: 
+        radial-gradient(circle at 20% 30%, #27ae60 1px, transparent 1px),
+        radial-gradient(circle at 40% 70%, #3498db 1px, transparent 1px),
+        radial-gradient(circle at 60% 20%, #f1c40f 1px, transparent 1px),
+        radial-gradient(circle at 80% 50%, #e74c3c 1px, transparent 1px),
+        radial-gradient(circle at 30% 80%, #9b59b6 1px, transparent 1px),
+        radial-gradient(circle at 70% 10%, #2ecc71 1px, transparent 1px),
+        radial-gradient(circle at 90% 90%, #e67e22 1px, transparent 1px);
+    background-size: 12% 12%;
+    animation: confettiAnimation 0.5s ease-out;
+    opacity: 0;
+}
+
+.issue-card.status-updated[data-status='Completed']::after {
+    animation: confettiAnimation 0.5s ease-out;
+    opacity: 1;
+}
+
+@keyframes confettiAnimation {
+    0% {
+        background-size: 0% 0%;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        background-size: 12% 12%;
+        opacity: 0;
+    }
+}
+
+/* Success checkmark animation */
+.btn-completed:active:not(:disabled)::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    color: var(--success-color);
+    animation: checkmarkPop 0.5s ease-out;
+}
+
+@keyframes checkmarkPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+} 

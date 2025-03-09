@@ -6,6 +6,9 @@
     --border-color: #dcdde1;
     --success-color: #2ecc71;
     --warning-color: #f1c40f;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: rgba(31, 38, 135, 0.15);
 }
 
 * {
@@ -174,18 +177,22 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-submit {
-    background-color: var(--secondary-color);
-    color: white;
-    padding: 1rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: 500;
-    width: 100%;
-    transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    transition: all 0.15s ease-in-out;
 }
 
 .btn-submit:hover {
@@ -205,47 +212,62 @@ input:focus, select:focus, textarea:focus {
 }
 
 .issue-card {
-    background-color: white;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
     padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03),
-                0 2px 12px rgba(0, 0, 0, 0.02),
-                0 0 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    border: 1px solid rgba(0, 0, 0, 0.03);
     position: relative;
     overflow: hidden;
-    border-left: 4px solid;
 }
 
 .issue-card::before {
-    content: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    z-index: 0;
+    border-radius: 20px;
 }
 
 .issue-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08),
-                0 4px 16px rgba(0, 0, 0, 0.04),
-                0 0 1px rgba(0, 0, 0, 0.05);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 var(--glass-shadow);
 }
 
 .issue-header {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .issue-header h3 {
     font-size: 1.25rem;
-    color: var(--text-color);
+    background: linear-gradient(120deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-weight: 600;
     letter-spacing: -0.02em;
 }
 
 .issue-content {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
@@ -293,13 +315,15 @@ input:focus, select:focus, textarea:focus {
     justify-content: center;
     gap: 0.5rem;
     padding: 0.6rem 1rem;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: transparent;
-    border: 2px solid;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid var(--glass-border);
 }
 
 .status-indicator::before {
@@ -310,22 +334,19 @@ input:focus, select:focus, textarea:focus {
     background-color: currentColor;
 }
 
-.status-indicator.pending {
+.status-indicator.new {
+    background: rgba(231, 76, 60, 0.1);
     color: #e74c3c;
-    border-color: #e74c3c;
-    background-color: rgba(231, 76, 60, 0.05);
 }
 
 .status-indicator.in-progress {
+    background: rgba(243, 156, 18, 0.1);
     color: #f39c12;
-    border-color: #f39c12;
-    background-color: rgba(243, 156, 18, 0.05);
 }
 
 .status-indicator.completed {
+    background: rgba(46, 204, 113, 0.1);
     color: #27ae60;
-    border-color: #27ae60;
-    background-color: rgba(46, 204, 113, 0.05);
 }
 
 .action-buttons {
@@ -336,24 +357,26 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-status {
-    padding: 0.6rem 1.2rem;
+    position: relative;
+    z-index: 1;
+    padding: 0.8rem 1.4rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.85rem;
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: transparent;
-    border: 2px solid;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    border: 1px solid var(--glass-border);
 }
 
 .btn-status:hover:not(:disabled) {
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn-status:active:not(:disabled) {
@@ -361,8 +384,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-progress {
+    background: rgba(243, 156, 18, 0.1);
     color: #f39c12;
-    border-color: #f39c12;
 }
 
 .btn-progress:hover:not(:disabled) {
@@ -370,8 +393,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-completed {
-    color: var(--success-color);
-    border-color: var(--success-color);
+    background: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
 }
 
 .btn-completed:hover:not(:disabled) {
@@ -699,17 +722,6 @@ textarea:invalid:focus {
     box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
 }
 
-/* Loading animation enhancement */
-.btn-submit.loading {
-    background-color: #2980b9;
-}
-
-.btn-submit.loading::after {
-    border-width: 3px;
-    width: 24px;
-    height: 24px;
-}
-
 /* Add focus styles for better accessibility */
 input:focus-visible,
 select:focus-visible,
@@ -735,13 +747,13 @@ button:focus-visible {
 
 .status-separator {
     margin: 2.5rem 0 1.5rem;
-    padding: 1rem 1.5rem;
-    background-color: white;
-    position: relative;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid;
-    transition: all 0.3s ease;
+    padding: 1.2rem 1.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 20px 0 var(--glass-shadow);
 }
 
 .status-separator:first-child {
@@ -753,7 +765,9 @@ button:focus-visible {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-color);
+    background: linear-gradient(120deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     position: relative;
     padding-left: 1.5rem;
     display: inline-block;
@@ -771,7 +785,7 @@ button:focus-visible {
 }
 
 /* Status-specific colors for separators */
-.status-separator:has(.status-separator-text:contains('Pending')) {
+.status-separator:has(.status-separator-text:contains('New')) {
     border-left-color: #e74c3c;
     background-color: rgba(231, 76, 60, 0.03);
 }
@@ -792,7 +806,7 @@ button:focus-visible {
 }
 
 /* Add status-specific background colors to issue cards */
-.issue-card[data-status='Pending'] {
+.issue-card[data-status='New'] {
     background-color: rgba(231, 76, 60, 0.02);
     border-left-color: #e74c3c;
 }
@@ -900,35 +914,6 @@ button:focus-visible {
     }
 }
 
-/* Loading spinner */
-.loader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    z-index: 1000;
-}
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--background-color);
-    border-top: 3px solid var(--secondary-color);
-    border-radius: 50%;
-    margin: 0 auto 1rem;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 /* Error message */
 .error-message {
     position: fixed;
@@ -984,7 +969,7 @@ button:focus-visible {
     color: var(--text-color);
 }
 
-.summary-item.pending {
+.summary-item.new {
     border-left: 4px solid #e74c3c;
 }
 
@@ -1006,106 +991,6 @@ button:focus-visible {
     .issues-summary {
         grid-template-columns: 1fr;
     }
-}
-
-/* Enhance existing styles */
-.issue-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.issue-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-}
-
-.status-indicator {
-    transition: all 0.3s ease;
-}
-
-.status-indicator:hover {
-    transform: scale(1.05);
-}
-
-.btn-status {
-    transition: all 0.3s ease;
-}
-
-.btn-status:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Animation keyframes */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Skeleton Loading */
-.skeleton {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.8) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
-
-.skeleton-card {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    margin-bottom: 1rem;
-}
-
-.skeleton-header {
-    height: 24px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-bottom: 1.5rem;
-    width: 70%;
-}
-
-.skeleton-content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-}
-
-.skeleton-line {
-    height: 16px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-.skeleton-line:last-child {
-    width: 80%;
-}
-
-@keyframes loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
 }
 
 /* Enhanced Notifications */
@@ -1362,22 +1247,27 @@ button:focus-visible {
 }
 
 .task-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    border: 1px solid #e9ecef;
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
     flex-direction: column;
 }
 
 .task-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 var(--glass-shadow);
 }
 
 .task-card h3 {
-    color: #2c3e50;
+    background: linear-gradient(120deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin-bottom: 10px;
     font-size: 1.2em;
 }
@@ -1403,7 +1293,7 @@ button:focus-visible {
     margin-right: 8px;
 }
 
-.task-status.pending::before {
+.task-status.new::before {
     background-color: #e74c3c;
 }
 
@@ -1421,23 +1311,126 @@ button:focus-visible {
 }
 
 .checklist-btn {
-    margin-top: 15px;
-    padding: 10px 15px;
-    background-color: var(--secondary-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
+    background: rgba(52, 152, 219, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid var(--glass-border);
+    color: var(--secondary-color);
+    border-radius: 12px;
+    padding: 0.8rem 1.4rem;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .checklist-btn:hover {
-    background-color: #2980b9;
+    background: rgba(52, 152, 219, 0.2);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
 }
 
 .checklist-btn:active {
     transform: translateY(0);
+}
+
+/* Clear All Tasks Button */
+.clear-all-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 24px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+}
+
+.clear-all-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.clear-all-btn:active {
+    transform: translateY(0);
+}
+
+/* Confirmation Dialog */
+.confirm-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirm-content {
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.confirm-content p {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+.confirm-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.confirm-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-confirm {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background-color: #c0392b;
+}
+
+/* Loading Message */
+.loading-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-weight: 500;
+    z-index: 1000;
 } 

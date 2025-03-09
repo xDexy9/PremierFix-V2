@@ -16,19 +16,35 @@ const ELEMENTS = {
     summaryContainer: document.createElement('div')
 };
 
+// Helper function to safely access DOM elements
+function safeGetElement(element, fallbackAction = () => {}) {
+    if (!element) {
+        console.warn(`Element not found in the DOM`);
+        fallbackAction();
+        return null;
+    }
+    return element;
+}
+
+// Global variables
+let currentPage = 1;
+const issuesPerPage = 10;
+let cachedIssues = [];
+let sortDirection = 'desc';
+
 // Scheduled maintenance tasks configuration
 const SCHEDULED_TASKS = {
     AC_FILTER_CLEANING: {
-        name: 'AC Filter Cleaning',
+        name: 'AC & Ventilation Maintenance',
         frequency: 'quarterly', // every 3 months
-        description: 'Clean AC filters in all rooms',
+        description: 'Clean AC filters and bathroom fans in all rooms',
         checklistItems: [
-            'Remove filter carefully',
+            'Remove filter/fan carefully',
             'Clean with appropriate cleaning solution',
             'Let dry completely',
             'Check for damage',
-            'Reinstall filter',
-            'Test AC operation'
+            'Reinstall filter/fan',
+            'Test operation'
         ],
         generateRooms: () => {
             const rooms = [];
@@ -66,23 +82,101 @@ const SCHEDULED_TASKS = {
             }
             return rooms;
         }
-    },
-    PREMISES_INSPECTION: {
-        name: 'Premises Inspection',
-        frequency: 'monthly',
-        description: 'General inspection of building and surroundings',
-        checklistItems: [
-            'Check exterior lighting',
-            'Inspect for debris/rubbish around buildings',
-            'Check for any visible damage to building exterior',
-            'Inspect parking areas',
-            'Check security cameras',
-            'Verify all emergency exits are clear',
-            'Inspect grounds and landscaping'
-        ],
-        locations: 'exterior'
     }
 };
+
+// Add clear all tasks button to the DOM
+const clearAllButton = document.createElement('button');
+clearAllButton.className = 'clear-all-btn';
+clearAllButton.textContent = 'Clear All Tasks';
+clearAllButton.onclick = confirmClearAllTasks;
+
+// Add the button after the filter section
+const filterSection = document.querySelector('.filter-section');
+if (filterSection) {
+    filterSection.insertAdjacentElement('afterend', clearAllButton);
+}
+
+// Function to show confirmation dialog
+function showConfirmDialog(message) {
+    return new Promise((resolve) => {
+        const dialog = document.createElement('div');
+        dialog.className = 'confirm-dialog';
+        dialog.innerHTML = `
+            <div class="confirm-content">
+                <p>${message}</p>
+                <div class="confirm-buttons">
+                    <button class="btn-cancel">Cancel</button>
+                    <button class="btn-confirm">Yes, proceed</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(dialog);
+        
+        const confirmBtn = dialog.querySelector('.btn-confirm');
+        const cancelBtn = dialog.querySelector('.btn-cancel');
+        
+        confirmBtn.onclick = () => {
+            document.body.removeChild(dialog);
+            resolve(true);
+        };
+        
+        cancelBtn.onclick = () => {
+            document.body.removeChild(dialog);
+            resolve(false);
+        };
+    });
+}
+
+// Function to handle clearing all tasks
+async function confirmClearAllTasks() {
+    // First confirmation
+    const firstConfirm = await showConfirmDialog('Are you sure you want to delete all tasks from the tracker?');
+    if (!firstConfirm) return;
+    
+    // Second confirmation with warning
+    const secondConfirm = await showConfirmDialog(`<span style="color: #e74c3c; font-weight: bold;">WARNING:</span> This action cannot be undone. All tasks will be permanently deleted. Do you want to proceed?`);
+    if (!secondConfirm) return;
+
+    try {
+        // Show loading message
+        const loadingMessage = document.createElement('div');
+        loadingMessage.className = 'loading-message';
+        loadingMessage.textContent = 'Deleting all tasks...';
+        document.body.appendChild(loadingMessage);
+
+        // Initialize Firebase first
+        await window.firebaseService.initialize();
+
+        // Delete all tasks
+        await window.firebaseService.deleteAllIssues();
+
+        // Remove loading message
+        document.body.removeChild(loadingMessage);
+
+        // Show success notification
+        showNotification('All tasks have been deleted successfully.', 'success');
+
+        // Refresh the page to show updated state
+        await filterAndDisplayIssues();
+    } catch (error) {
+        console.error('Error deleting all tasks:', error);
+        
+        // Remove loading message if it exists
+        const loadingMsg = document.querySelector('.loading-message');
+        if (loadingMsg) {
+            document.body.removeChild(loadingMsg);
+        }
+
+        // Show more specific error message
+        if (error.message.includes('permissions')) {
+            showError('Permission denied. Please try refreshing the page and try again.');
+        } else {
+            showError('Failed to delete tasks. Please try again or contact support.');
+        }
+    }
+}
 
 // Debounced search handler
 const debounce = (fn, delay) => {
@@ -94,23 +188,16 @@ const debounce = (fn, delay) => {
 };
 
 const STATUS_PRIORITY = {
-    'Pending': 0,
+    'New': 0,
     'In Progress': 1,
     'Completed': 2
 };
 
 const STATUS_COLORS = {
-    'Pending': '#e74c3c',
+    'New': '#e74c3c',
     'In Progress': '#f39c12',
     'Completed': '#27ae60'
 };
-
-// Add pagination and sorting state
-let currentPage = 1;
-const issuesPerPage = 10;
-let cachedIssues = [];
-let isLoading = false;
-let sortDirection = 'desc';
 
 // Function to check and generate scheduled maintenance tasks
 function checkScheduledMaintenance() {
@@ -166,14 +253,124 @@ function isTaskDue(lastDate, frequency) {
     }
 }
 
-// Function to generate AC Filter cleaning checklist PDF
-function generateACFilterChecklist() {
+// Function to show maintenance type selection dialog
+function showMaintenanceTypeDialog() {
+    return new Promise((resolve) => {
+        // Create backdrop overlay
+        const backdrop = document.createElement('div');
+        backdrop.className = 'dialog-backdrop';
+        
+        const dialog = document.createElement('div');
+        dialog.className = 'confirm-dialog maintenance-type-dialog';
+        dialog.innerHTML = `
+            <div class="confirm-content">
+                <h3>Select Maintenance Type</h3>
+                <div class="maintenance-type-buttons">
+                    <button class="btn-maintenance-type" data-type="ac">AC Filter Cleaning</button>
+                    <button class="btn-maintenance-type" data-type="fan">Bathroom Fan Maintenance</button>
+                </div>
+            </div>
+        `;
+        
+        // Add styles for the dialog and backdrop
+        const style = document.createElement('style');
+        style.textContent = `
+            .dialog-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9998;
+            }
+            
+            .maintenance-type-dialog {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 9999;
+                min-width: 300px;
+            }
+            
+            .maintenance-type-dialog h3 {
+                margin: 0 0 20px 0;
+                color: var(--text-color);
+                font-size: 18px;
+                text-align: center;
+            }
+            
+            .maintenance-type-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn-maintenance-type {
+                padding: 12px 20px;
+                border: none;
+                border-radius: 6px;
+                background: var(--secondary-color);
+                color: white;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                width: 100%;
+            }
+            
+            .btn-maintenance-type:hover {
+                background: #2980b9;
+                transform: translateY(-1px);
+            }
+            
+            .btn-maintenance-type:active {
+                transform: translateY(0);
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Add backdrop and dialog to the body
+        document.body.appendChild(backdrop);
+        document.body.appendChild(dialog);
+        
+        // Handle button clicks
+        const buttons = dialog.querySelectorAll('.btn-maintenance-type');
+        buttons.forEach(btn => {
+            btn.onclick = () => {
+                document.body.removeChild(backdrop);
+                document.body.removeChild(dialog);
+                resolve(btn.dataset.type);
+            };
+        });
+        
+        // Close dialog when clicking backdrop
+        backdrop.onclick = () => {
+            document.body.removeChild(backdrop);
+            document.body.removeChild(dialog);
+            resolve(null); // Return null if dialog is dismissed
+        };
+    });
+}
+
+// Function to generate AC Filter or Bathroom Fan cleaning checklist PDF
+async function generateMaintenanceChecklist(type) {
+    const title = type === 'ac' ? 'AC Filter Cleaning' : 'Bathroom Fan Maintenance';
+    
     const today = new Date();
     const checklistContent = `
         <!DOCTYPE html>
         <html>
         <head>
-            <title>AC Filter Cleaning Checklist - ${today.toLocaleDateString()}</title>
+            <title>${title} Checklist - ${today.toLocaleDateString()}</title>
             <style>
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
                 
@@ -312,7 +509,7 @@ function generateACFilterChecklist() {
         </head>
         <body>
             <div class="header">
-                <h1>AC Filter Cleaning Checklist</h1>
+                <h1>${title} Checklist</h1>
             </div>
             
             <div class="date-section">
@@ -483,122 +680,158 @@ function generateACFilterChecklist() {
 // Modify the generateScheduledTask function to handle AC Filter cleaning differently
 function generateScheduledTask(taskId, task) {
     if (taskId === 'AC_FILTER_CLEANING') {
-        generateACFilterChecklist();
+        generateMaintenanceChecklist('ac');
         return;
     }
 
-    const issues = JSON.parse(localStorage.getItem('issues')) || [];
-    
-    // Check if task already exists and is pending/in-progress
-    const existingTask = issues.find(issue => 
-        issue.scheduledTaskId === taskId && 
-        ['Pending', 'In Progress'].includes(issue.status)
-    );
-    
-    if (existingTask) {
-        return; // Don't create duplicate task if one is already pending
-    }
-    
-    const newIssue = {
-        id: Date.now(),
-        scheduledTaskId: taskId,
+    // Create a new scheduled task
+    const newTask = {
+        id: 'task_' + Date.now(),
+        description: task.name,
+        location: 'All Buildings',
+        roomNumber: 'All',
         category: 'Scheduled Maintenance',
-        description: `${task.name}\n\nChecklist:\n${task.checklistItems.map(item => `• ${item}`).join('\n')}`,
-        location: task.locations,
+        priority: 'Medium',
         authorName: 'System',
-        status: 'Pending',
-        dateCreated: new Date().toISOString(),
-        priority: 'High',
-        timePreference: { type: 'anytime' }
+        authorEmail: 'system@example.com',
+        authorPhone: '',
+        status: 'New',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        scheduledTaskId: taskId
     };
-    
-    // Only add to issues list if it's not the AC Filter cleaning task
-    if (taskId !== 'AC_FILTER_CLEANING') {
-        issues.push(newIssue);
-        localStorage.setItem('issues', JSON.stringify(issues));
-        showNotification(`New scheduled maintenance task created: ${task.name}`, 'info');
-    }
+
+    // Add to Firebase
+    window.firebaseService.saveIssue(newTask)
+        .then(() => {
+            showNotification(`${task.name} task created successfully`, 'success');
+            
+            // Update UI
+            updateTaskCards();
+            filterAndDisplayIssues();
+        })
+        .catch(error => {
+            console.error('Error creating scheduled task:', error);
+            showError('Failed to create scheduled task. Please try again.');
+        });
 }
 
 // Initialize the page
 async function initializePage() {
     try {
-        // Initialize Firebase
-        // window.firebaseService.initializeFirebase(); // This function no longer exists
+        console.log("Starting page initialization...");
         
+        // Initialize Firebase without clearing data
+        await window.firebaseService.initialize();
+        console.log("Firebase initialization complete");
+
         // Set up event listeners
-        ELEMENTS.searchInput.addEventListener('input', debounce(() => {
-            currentPage = 1;
-            filterAndDisplayIssues();
-        }, 300));
+        if (safeGetElement(ELEMENTS.searchInput)) {
+            ELEMENTS.searchInput.addEventListener('input', debounce(() => {
+                currentPage = 1;
+                filterAndDisplayIssues();
+            }, 300));
+        }
         
-        ELEMENTS.filterCategory.addEventListener('change', () => {
-            currentPage = 1;
-            filterAndDisplayIssues();
-        });
+        if (safeGetElement(ELEMENTS.filterCategory)) {
+            ELEMENTS.filterCategory.addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayIssues();
+            });
+        }
         
-        ELEMENTS.filterStatus.addEventListener('change', () => {
-            currentPage = 1;
-            filterAndDisplayIssues();
-        });
+        if (safeGetElement(ELEMENTS.filterStatus)) {
+            ELEMENTS.filterStatus.addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayIssues();
+            });
+        }
         
-        ELEMENTS.dateFrom.addEventListener('change', () => {
-            currentPage = 1;
-            filterAndDisplayIssues();
-        });
+        if (safeGetElement(ELEMENTS.dateFrom)) {
+            ELEMENTS.dateFrom.addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayIssues();
+            });
+        }
         
-        ELEMENTS.dateTo.addEventListener('change', () => {
-            currentPage = 1;
-            filterAndDisplayIssues();
-        });
+        if (safeGetElement(ELEMENTS.dateTo)) {
+            ELEMENTS.dateTo.addEventListener('change', () => {
+                currentPage = 1;
+                filterAndDisplayIssues();
+            });
+        }
         
-        ELEMENTS.sortControlButtons.addEventListener('click', toggleSort);
-        ELEMENTS.clearFilters.addEventListener('click', clearFilters);
-        ELEMENTS.exportCSV.addEventListener('click', exportToCSV);
-        ELEMENTS.printView.addEventListener('click', openPrintView);
+        if (safeGetElement(ELEMENTS.sortControlButtons)) {
+            ELEMENTS.sortControlButtons.addEventListener('click', toggleSort);
+        }
+        
+        if (safeGetElement(ELEMENTS.clearFilters)) {
+            ELEMENTS.clearFilters.addEventListener('click', clearFilters);
+        }
+        
+        if (safeGetElement(ELEMENTS.exportCSV)) {
+            ELEMENTS.exportCSV.addEventListener('click', exportToCSV);
+        }
+        
+        if (safeGetElement(ELEMENTS.printView)) {
+            ELEMENTS.printView.addEventListener('click', openPrintView);
+        }
         
         // Add summary container
-        ELEMENTS.summaryContainer.className = 'issues-summary';
-        ELEMENTS.container.insertBefore(ELEMENTS.summaryContainer, ELEMENTS.issuesList);
+        if (safeGetElement(ELEMENTS.container) && safeGetElement(ELEMENTS.issuesList)) {
+            ELEMENTS.summaryContainer.className = 'issues-summary';
+            ELEMENTS.container.insertBefore(ELEMENTS.summaryContainer, ELEMENTS.issuesList);
+        }
         
-        // Load issues
-        await filterAndDisplayIssues();
+        // Load issues and update UI
+        await Promise.all([
+            filterAndDisplayIssues(),
+            updateTaskCards()
+        ]);
         
-        // Check scheduled maintenance
-        checkScheduledMaintenance();
+        console.log("Page initialization complete");
         
-        // Update task cards
-        updateTaskCards();
+        // Clear console after a small delay to ensure all logs are shown
+        setTimeout(() => {
+            console.clear();
+            console.log("✨ PremierFix Issue Tracker Ready!");
+        }, 1000);
     } catch (error) {
         console.error('Error initializing page:', error);
         showError('Failed to initialize page. Please refresh and try again.');
     }
 }
 
-function showLoading() {
-    const loader = document.createElement('div');
-    loader.className = 'loader';
-    loader.innerHTML = `
-        <div class="loading-spinner"></div>
-        <p>Loading issues...</p>
-    `;
-    ELEMENTS.container.appendChild(loader);
-    isLoading = true;
-}
-
-function hideLoading() {
-    const loader = document.querySelector('.loader');
-    if (loader) {
-        loader.remove();
-    }
-    isLoading = false;
-}
-
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        text-align: center;
+        min-width: 300px;
+        max-width: 80%;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
     notification.textContent = message;
     document.body.appendChild(notification);
+    
+    // Force a reflow to ensure the initial state is applied
+    notification.offsetHeight;
+    
+    // Fade in
+    requestAnimationFrame(() => {
+        notification.style.opacity = '1';
+    });
     
     setTimeout(() => {
         notification.style.opacity = '0';
@@ -607,6 +840,8 @@ function showNotification(message, type = 'info') {
 }
 
 async function displayIssues(issues) {
+    if (!safeGetElement(ELEMENTS.issuesList)) return;
+    
     ELEMENTS.issuesList.innerHTML = '';
     
     if (issues.length === 0) {
@@ -616,7 +851,9 @@ async function displayIssues(issues) {
                 <p>There are no maintenance issues matching your search criteria.</p>
             </div>
         `;
-        ELEMENTS.paginationContainer.innerHTML = '';
+        if (safeGetElement(ELEMENTS.paginationContainer)) {
+            ELEMENTS.paginationContainer.innerHTML = '';
+        }
         return;
     }
 
@@ -649,53 +886,99 @@ async function displayIssues(issues) {
 
 async function filterAndDisplayIssues() {
     try {
-        showLoading();
+        console.log('Starting to fetch issues...');
+        
+        // Show loading state
+        if (safeGetElement(ELEMENTS.issuesList)) {
+            ELEMENTS.issuesList.innerHTML = '<div class="loading-message">Loading issues...</div>';
+        }
         
         // Get filtered issues
-        const filteredIssues = await filterIssues();
+        const result = await filterIssues();
+        console.log('Received issues count:', result?.issues?.length || 0);
+        
+        // Ensure we have a valid result with an array of issues
+        if (!result || typeof result !== 'object') {
+            throw new Error('Invalid response from filterIssues');
+        }
+        
+        // Convert issues to array if it's not already
+        const filteredIssues = Array.isArray(result.issues) ? result.issues : 
+                             (result.issues ? Object.values(result.issues) : []);
+        
+        // Log only relevant information about the filtered issues
+        console.log('Processed issues:', {
+            total: filteredIssues.length,
+            new: filteredIssues.filter(i => i.status === 'New').length,
+            inProgress: filteredIssues.filter(i => i.status === 'In Progress').length,
+            completed: filteredIssues.filter(i => i.status === 'Completed').length
+        });
         
         // Cache the filtered issues for pagination
         cachedIssues = filteredIssues;
         
-        // Update summary
+        // Update summary with the array
         updateSummary(filteredIssues);
         
-        // Apply pagination
+        // Apply pagination and display
         const totalPages = Math.ceil(filteredIssues.length / issuesPerPage);
         const startIndex = (currentPage - 1) * issuesPerPage;
         const endIndex = startIndex + issuesPerPage;
         const paginatedIssues = filteredIssues.slice(startIndex, endIndex);
         
-        // Display issues and pagination
         await displayIssues(paginatedIssues);
         renderPagination(currentPage, totalPages);
-        
-        hideLoading();
     } catch (error) {
         console.error('Error filtering and displaying issues:', error);
-        showError('Failed to load issues. Please try again.');
-        hideLoading();
+        if (safeGetElement(ELEMENTS.issuesList)) {
+            ELEMENTS.issuesList.innerHTML = `
+                <div class="error-state">
+                    <h3>Error Loading Issues</h3>
+                    <p>There was a problem loading the maintenance issues. Please try refreshing the page.</p>
+                    <button onclick="window.location.reload()">Refresh Page</button>
+                </div>
+            `;
+        }
+        showError('Failed to load issues. Please try refreshing the page.');
     }
 }
 
 function toggleSort() {
+    if (!safeGetElement(ELEMENTS.sortControl) || !safeGetElement(ELEMENTS.sortControlButtons)) return;
+    
     sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     ELEMENTS.sortControl.value = sortDirection;
-    ELEMENTS.sortControlButtons.querySelector('.sort-icon').textContent = sortDirection === 'asc' ? '↑' : '↓';
+    
+    const sortIcon = ELEMENTS.sortControlButtons.querySelector('.sort-icon');
+    if (sortIcon) {
+        sortIcon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+    }
+    
     ELEMENTS.sortControlButtons.classList.toggle('asc', sortDirection === 'asc');
     filterAndDisplayIssues();
 }
 
 function clearFilters() {
-    ELEMENTS.searchInput.value = '';
-    ELEMENTS.filterCategory.value = '';
-    ELEMENTS.filterStatus.value = '';
-    ELEMENTS.dateFrom.value = '';
-    ELEMENTS.dateTo.value = '';
+    if (safeGetElement(ELEMENTS.searchInput)) ELEMENTS.searchInput.value = '';
+    if (safeGetElement(ELEMENTS.filterCategory)) ELEMENTS.filterCategory.value = '';
+    if (safeGetElement(ELEMENTS.filterStatus)) ELEMENTS.filterStatus.value = '';
+    if (safeGetElement(ELEMENTS.dateFrom)) ELEMENTS.dateFrom.value = '';
+    if (safeGetElement(ELEMENTS.dateTo)) ELEMENTS.dateTo.value = '';
+    
     sortDirection = 'desc';
-    ELEMENTS.sortControl.value = 'desc';
-    ELEMENTS.sortControlButtons.querySelector('.sort-icon').textContent = '↓';
-    ELEMENTS.sortControlButtons.classList.remove('asc');
+    
+    if (safeGetElement(ELEMENTS.sortControl)) {
+        ELEMENTS.sortControl.value = 'desc';
+    }
+    
+    if (safeGetElement(ELEMENTS.sortControlButtons)) {
+        const sortIcon = ELEMENTS.sortControlButtons.querySelector('.sort-icon');
+        if (sortIcon) {
+            sortIcon.textContent = '↓';
+        }
+        ELEMENTS.sortControlButtons.classList.remove('asc');
+    }
+    
     currentPage = 1;
     filterAndDisplayIssues();
 }
@@ -707,194 +990,129 @@ function exportToCSV() {
         return;
     }
     
-    const headers = ['ID', 'Location', 'Category', 'Description', 'Time Preference', 'Author', 'Status', 'Date Created'];
-    const csvContent = [
-        headers.join(','),
-        ...issues.map(issue => [
-            issue.id,
-            issue.location || `Room ${issue.roomNumber}`,
-            issue.category,
-            `"${issue.description.replace(/"/g, '""')}"`,
-            formatTimePreference(issue.timePreference),
-            issue.authorName,
-            issue.status,
-            new Date(issue.dateCreated).toLocaleString()
-        ].join(','))
-    ].join('\n');
+    // Create workbook data
+    const headers = ['Location', 'Category', 'Description', 'Time Preference', 'Author', 'Status', 'Date Created'];
+    const rows = issues.map(issue => [
+        issue.location || `Room ${issue.roomNumber}`,
+        issue.category,
+        issue.description,
+        formatTimePreference(issue.timePreference),
+        issue.authorName,
+        issue.status,
+        formatDate(issue.createdAt || issue.dateCreated)
+    ]);
     
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    // Create the Excel content with proper XML namespace declarations
+    let excelContent = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+              xmlns:x="urn:schemas-microsoft-com:office:excel" 
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <!--[if gte mso 9]>
+            <xml>
+                <x:ExcelWorkbook>
+                    <x:ExcelWorksheets>
+                        <x:ExcelWorksheet>
+                            <x:Name>Maintenance Issues</x:Name>
+                            <x:WorksheetOptions>
+                                <x:DisplayGridlines/>
+                            </x:WorksheetOptions>
+                        </x:ExcelWorksheet>
+                    </x:ExcelWorksheets>
+                </x:ExcelWorkbook>
+            </xml>
+            <![endif]-->
+            <style>
+                table { border-collapse: collapse; }
+                th { background-color: #f0f0f0; font-weight: bold; }
+                th, td { border: 1px solid #ccc; padding: 5px; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+            </style>
+        </head>
+        <body>
+            <table>
+                <tr>
+                    ${headers.map(header => 
+                        `<th>${header}</th>`
+                    ).join('')}
+                </tr>
+                ${rows.map(row => 
+                    `<tr>${row.map(cell => 
+                        `<td>${cell}</td>`
+                    ).join('')}</tr>`
+                ).join('')}
+            </table>
+        </body>
+        </html>
+    `;
+    
+    // Create blob with Excel MIME type and proper encoding
+    const blob = new Blob(['\ufeff', excelContent], { 
+        type: 'application/vnd.ms-excel;charset=utf-8' 
+    });
+    
+    // Create download link with .xls extension
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `maintenance_issues_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `maintenance_issues_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.xls`;
     link.click();
     
     showNotification('Issues exported successfully', 'success');
 }
 
 function openPrintView() {
-    const issues = JSON.parse(localStorage.getItem('issues')) || [];
+    const issues = cachedIssues || [];
     const relevantIssues = issues.filter(issue => 
-        ['Pending', 'In Progress'].includes(issue.status)
+        ['New', 'In Progress'].includes(issue.status)
     ).sort((a, b) => {
-        // Sort by status (Pending first) then by date
+        // Sort by status (New first) then by date
         if (a.status !== b.status) {
-            return a.status === 'Pending' ? -1 : 1;
+            return a.status === 'New' ? -1 : 1;
         }
-        return new Date(b.dateCreated) - new Date(a.dateCreated);
+        return new Date(b.createdAt?.seconds * 1000 || b.dateCreated) - new Date(a.createdAt?.seconds * 1000 || a.dateCreated);
     });
 
+    // Create a hidden iframe for printing
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    
     const printContent = `
         <!DOCTYPE html>
         <html>
         <head>
             <title>Maintenance Task List - ${new Date().toLocaleDateString('en-GB')}</title>
             <style>
-                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-                
-                body { 
-                    font-family: 'Inter', sans-serif;
-                    padding: 20px;
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    background: #f8fafc;
-                    color: #1e293b;
-                }
-
-                .header {
-                    text-align: center;
-                    margin-bottom: 20px;
-                    padding: 15px;
-                    background: white;
-                    border-radius: 12px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                }
-
-                .header h1 {
-                    margin: 0 0 10px 0;
-                    color: #1e293b;
-                    font-size: 24px;
-                    font-weight: 600;
-                }
-
-                .header p {
-                    margin: 5px 0;
-                    color: #64748b;
-                    font-size: 14px;
-                }
-
-                .task-group {
-                    margin-bottom: 25px;
-                    background: white;
-                    border-radius: 12px;
-                    overflow: hidden;
-                }
-
-                .task-group-header {
-                    padding: 12px 20px;
-                    background: #f1f5f9;
-                    color: #1e293b;
-                    font-weight: 600;
-                    font-size: 16px;
-                    border-bottom: 1px solid #e2e8f0;
-                }
-
-                .task {
-                    padding: 20px;
-                    border-bottom: 1px solid #e2e8f0;
-                    break-inside: avoid;
-                }
-
-                .task:last-child {
-                    border-bottom: none;
-                }
-
-                .task-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 15px;
-                }
-
-                .task-title {
-                    font-weight: 600;
-                    font-size: 15px;
-                    color: #1e293b;
-                }
-
-                .status-badge {
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    font-size: 13px;
-                    font-weight: 500;
-                }
-
-                .status-badge.pending {
-                    background: #fee2e2;
-                    color: #991b1b;
-                }
-
-                .status-badge.in-progress {
-                    background: #fef3c7;
-                    color: #92400e;
-                }
-
-                .task-content {
-                    font-size: 14px;
-                    color: #475569;
-                    line-height: 1.6;
-                }
-
-                .checklist {
-                    margin-top: 15px;
-                    padding-left: 0;
-                }
-
-                .checklist-item {
-                    display: flex;
-                    align-items: center;
-                    margin: 8px 0;
-                    font-size: 14px;
-                }
-
-                .checkbox {
-                    width: 16px;
-                    height: 16px;
-                    border: 1.5px solid #64748b;
-                    border-radius: 4px;
-                    margin-right: 10px;
-                    flex-shrink: 0;
-                }
-
-                .task-footer {
-                    margin-top: 15px;
-                    padding-top: 15px;
-                    border-top: 1px solid #e2e8f0;
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 15px;
-                    font-size: 13px;
-                    color: #64748b;
-                }
-
-                .task-footer strong {
-                    color: #475569;
-                }
-
                 @media print {
                     body {
-                        background: white;
-                        padding: 0;
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                        color: #000;
                     }
 
-                    .header,
-                    .task-group {
-                        box-shadow: none;
-                        border: 1px solid #e2e8f0;
+                    .header {
+                        text-align: center;
                         margin-bottom: 20px;
+                        padding: 15px;
+                        border-bottom: 2px solid #000;
+                    }
+
+                    .header h1 {
+                        margin: 0 0 10px 0;
+                        font-size: 24px;
                     }
 
                     .task-group {
+                        margin-bottom: 25px;
                         page-break-inside: avoid;
+                    }
+
+                    .task-group-header {
+                        padding: 10px;
+                        background: #f0f0f0;
+                        font-weight: bold;
+                        border-bottom: 1px solid #000;
                     }
                 }
             </style>
@@ -907,9 +1125,9 @@ function openPrintView() {
             </div>
 
             <div class="task-group">
-                <div class="task-group-header">Pending Tasks</div>
+                <div class="task-group-header">New Tasks</div>
                 ${relevantIssues
-                    .filter(issue => issue.status === 'Pending')
+                    .filter(issue => issue.status === 'New')
                     .map(issue => createTaskHTML(issue))
                     .join('')}
             </div>
@@ -925,16 +1143,27 @@ function openPrintView() {
         </html>
     `;
 
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    printWindow.print();
+    // Write content to iframe and print
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(printContent);
+    iframe.contentWindow.document.close();
+
+    // Wait for content to load before printing
+    iframe.onload = () => {
+        iframe.contentWindow.print();
+        // Remove iframe after printing dialog is closed
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+        }, 100);
+    };
 }
 
 function createTaskHTML(issue) {
     const location = issue.location || `Room ${issue.roomNumber}`;
     const timePreference = formatTimePreference(issue.timePreference);
-    const date = new Date(issue.dateCreated).toLocaleDateString('en-GB');
+    const date = issue.createdAt?.seconds ? 
+        new Date(issue.createdAt.seconds * 1000).toLocaleDateString('en-GB') : 
+        new Date(issue.dateCreated).toLocaleDateString('en-GB');
 
     return `
         <div class="task">
@@ -973,6 +1202,8 @@ function createTaskHTML(issue) {
 }
 
 function showError(message) {
+    if (!safeGetElement(ELEMENTS.container)) return;
+    
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
     errorDiv.textContent = message;
@@ -986,7 +1217,7 @@ function showError(message) {
 function createIssueCard(issue, index) {
     const location = issue.location || `Room ${issue.roomNumber}`;
     const timeInfo = formatTimePreference(issue.timePreference);
-    const createdDate = issue.createdAt ? formatDate(issue.createdAt) : 'Unknown date';
+    const createdDate = formatDate(issue.createdAt || issue.dateCreated);
     
     const card = document.createElement('div');
     card.className = `issue-card ${issue.status.toLowerCase().replace(' ', '-')}`;
@@ -994,7 +1225,7 @@ function createIssueCard(issue, index) {
     card.dataset.id = issue.id;
     
     let statusButtons = '';
-    if (issue.status === 'Pending') {
+    if (issue.status === 'New') {
         statusButtons = `
             <button class="btn-status btn-progress" onclick="updateStatus('${issue.id}', 'In Progress')">
                 Mark In Progress
@@ -1057,11 +1288,36 @@ function formatTimePreference(timePreference) {
 }
 
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'short'
-    });
+    try {
+        let date;
+        if (dateString?.seconds) {
+            // Handle Firebase Timestamp
+            date = new Date(dateString.seconds * 1000);
+        } else if (dateString instanceof Date) {
+            // Handle Date object
+            date = dateString;
+        } else {
+            // Handle ISO string or other string format
+            date = new Date(dateString);
+        }
+
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', dateString);
+            return 'Invalid Date';
+        }
+
+        return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return 'Invalid Date';
+    }
 }
 
 function createStatusSeparator(status) {
@@ -1090,13 +1346,74 @@ function renderPagination(currentPage, totalPages) {
     `;
 }
 
+// Modern confetti animation function
+function triggerConfetti() {
+    const duration = 3000;
+    const defaults = {
+        startVelocity: 30,
+        spread: 360,
+        ticks: 60,
+        zIndex: 10000,
+        shapes: ['square', 'circle'],
+        colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+    };
+
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    // Launch confetti from multiple points
+    const interval = setInterval(() => {
+        const timeLeft = duration - Date.now();
+        
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        const particleCount = 50;
+
+        // Left cannon
+        confetti({
+            ...defaults,
+            particleCount: particleCount / 2,
+            origin: { x: 0.2, y: 0.7 }
+        });
+
+        // Right cannon
+        confetti({
+            ...defaults,
+            particleCount: particleCount / 2,
+            origin: { x: 0.8, y: 0.7 }
+        });
+
+        // Center burst
+        confetti({
+            ...defaults,
+            particleCount: particleCount,
+            origin: { x: 0.5, y: 0.7 }
+        });
+
+    }, 250);
+
+    // Final burst
+    setTimeout(() => {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { x: 0.5, y: 0.7 }
+        });
+    }, duration - 1000);
+}
+
 async function updateStatus(issueId, newStatus) {
     try {
-        // Show loading state
+        // Store current scroll position
+        const scrollPosition = window.scrollY;
+
+        // Update status buttons
         const statusButtons = document.querySelectorAll(`.issue-card[data-id="${issueId}"] .btn-status`);
         statusButtons.forEach(btn => {
             btn.disabled = true;
-            btn.classList.add('loading');
         });
         
         // Update status in Firebase
@@ -1105,8 +1422,49 @@ async function updateStatus(issueId, newStatus) {
         // Show success notification
         showNotification(`Issue status updated to ${newStatus}`, 'success');
         
-        // Refresh the issues list
-        await filterAndDisplayIssues();
+        // Trigger confetti animation if status is Completed
+        if (newStatus === 'Completed') {
+            triggerConfetti();
+        }
+        
+        // Update UI
+        const issueCard = document.querySelector(`.issue-card[data-id="${issueId}"]`);
+        if (issueCard) {
+            issueCard.dataset.status = newStatus;
+            
+            // Update the status indicator text
+            const statusIndicator = issueCard.querySelector('.status-indicator');
+            if (statusIndicator) {
+                statusIndicator.textContent = newStatus;
+                statusIndicator.className = `status-indicator ${newStatus.toLowerCase().replace(' ', '-')}`;
+            }
+            
+            // Update action buttons
+            const actionButtons = issueCard.querySelector('.action-buttons');
+            if (actionButtons) {
+                if (newStatus === 'In Progress') {
+                    actionButtons.innerHTML = `
+                        <button class="btn-status btn-completed" onclick="updateStatus('${issueId}', 'Completed')">
+                            Mark Completed
+                        </button>
+                    `;
+                } else if (newStatus === 'Completed') {
+                    actionButtons.innerHTML = '';
+                }
+            }
+        }
+        
+        // Update summary without refreshing the whole list
+        const result = await window.firebaseService.getIssues({});
+        updateSummary(result.issues);
+        
+        // Re-enable buttons
+        statusButtons.forEach(btn => {
+            btn.disabled = false;
+        });
+
+        // Restore scroll position
+        window.scrollTo(0, scrollPosition);
     } catch (error) {
         console.error('Error updating status:', error);
         showError('Failed to update status. Please try again.');
@@ -1115,64 +1473,61 @@ async function updateStatus(issueId, newStatus) {
         const statusButtons = document.querySelectorAll(`.issue-card[data-id="${issueId}"] .btn-status`);
         statusButtons.forEach(btn => {
             btn.disabled = false;
-            btn.classList.remove('loading');
         });
     }
 }
 
-function filterIssues() {
-    const searchTerm = ELEMENTS.searchInput.value.toLowerCase();
-    const categoryFilter = ELEMENTS.filterCategory.value;
-    const statusFilter = ELEMENTS.filterStatus.value;
-    const dateFromFilter = ELEMENTS.dateFrom.value ? new Date(ELEMENTS.dateFrom.value) : null;
-    const dateToFilter = ELEMENTS.dateTo.value ? new Date(ELEMENTS.dateTo.value) : null;
-    
-    // Create filters object for Firebase
-    const filters = {};
-    
-    if (categoryFilter) {
-        filters.category = categoryFilter;
-    }
-    
-    if (statusFilter) {
-        filters.status = statusFilter;
-    }
-    
-    if (dateFromFilter) {
-        filters.dateFrom = dateFromFilter;
-    }
-    
-    if (dateToFilter) {
-        filters.dateTo = dateToFilter;
-    }
-    
-    // Add sorting
-    filters.sortBy = 'createdAt';
-    filters.sortDirection = sortDirection;
-    
-    // Return a promise that resolves with filtered issues
-    return window.firebaseService.getIssues(filters)
-        .then(issues => {
-            // Apply search filter client-side (Firebase doesn't support full-text search)
-            if (searchTerm) {
-                return issues.filter(issue => {
-                    const location = issue.location || issue.roomNumber;
-                    const searchFields = [
-                        issue.description.toLowerCase(),
-                        location.toString().toLowerCase(),
-                        issue.authorName.toLowerCase(),
-                        issue.category.toLowerCase()
-                    ];
-                    return searchFields.some(field => field.includes(searchTerm));
-                });
-            }
-            return issues;
-        })
-        .catch(error => {
-            console.error('Error filtering issues:', error);
-            showError('Failed to load issues. Please try again.');
-            return [];
+async function filterIssues() {
+    try {
+        console.log('Starting filterIssues...');
+        
+        const searchTerm = safeGetElement(ELEMENTS.searchInput) ? ELEMENTS.searchInput.value.toLowerCase() : '';
+        const categoryFilter = safeGetElement(ELEMENTS.filterCategory) ? ELEMENTS.filterCategory.value : '';
+        const statusFilter = safeGetElement(ELEMENTS.filterStatus) ? ELEMENTS.filterStatus.value : '';
+        const dateFromFilter = safeGetElement(ELEMENTS.dateFrom) && ELEMENTS.dateFrom.value ? new Date(ELEMENTS.dateFrom.value) : null;
+        const dateToFilter = safeGetElement(ELEMENTS.dateTo) && ELEMENTS.dateTo.value ? new Date(ELEMENTS.dateTo.value) : null;
+        
+        // Create filters object for Firebase
+        const filters = {
+            search: searchTerm,
+            category: categoryFilter,
+            status: statusFilter,
+            sortBy: 'createdAt',
+            sortDirection: sortDirection
+        };
+        
+        if (dateFromFilter) {
+            filters.dateFrom = dateFromFilter;
+        }
+        
+        if (dateToFilter) {
+            filters.dateTo = dateToFilter;
+        }
+        
+        // Get issues from Firebase
+        const result = await window.firebaseService.getIssues(filters);
+        
+        // Sort issues by status priority and date
+        const sortedIssues = result.issues.sort((a, b) => {
+            // First sort by status priority
+            const statusDiff = STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status];
+            if (statusDiff !== 0) return statusDiff;
+            
+            // If same status, sort by date based on sortDirection
+            const dateA = a.createdAt ? new Date(a.createdAt.seconds * 1000) : new Date(a.dateCreated);
+            const dateB = b.createdAt ? new Date(b.createdAt.seconds * 1000) : new Date(b.dateCreated);
+            
+            return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
         });
+        
+        return {
+            issues: sortedIssues,
+            total: sortedIssues.length
+        };
+    } catch (error) {
+        console.error('Error filtering issues:', error);
+        throw error;
+    }
 }
 
 function changePage(newPage) {
@@ -1185,101 +1540,194 @@ function changePage(newPage) {
     }
 }
 
-// Initial load of issues
-filterAndDisplayIssues();
-
 function updateSummary(issues) {
-    const pendingCount = issues.filter(issue => issue.status === 'Pending').length;
-    const inProgressCount = issues.filter(issue => issue.status === 'In Progress').length;
-    const completedCount = issues.filter(issue => issue.status === 'Completed').length;
-    const totalCount = issues.length;
+    // Ensure issues is an array
+    const issuesArray = Array.isArray(issues) ? issues : [];
     
-    ELEMENTS.summaryContainer.innerHTML = `
-        <div class="summary-item pending">
-            <div class="summary-label">Pending</div>
-            <div class="summary-value">${pendingCount}</div>
-        </div>
-        <div class="summary-item in-progress">
-            <div class="summary-label">In Progress</div>
-            <div class="summary-value">${inProgressCount}</div>
-        </div>
-        <div class="summary-item completed">
-            <div class="summary-label">Completed</div>
-            <div class="summary-value">${completedCount}</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label">Total</div>
-            <div class="summary-value">${totalCount}</div>
-        </div>
-    `;
+    try {
+        const summary = {
+            new: issuesArray.filter(issue => issue && issue.status === 'New').length,
+            inProgress: issuesArray.filter(issue => issue && issue.status === 'In Progress').length,
+            completed: issuesArray.filter(issue => issue && issue.status === 'Completed').length,
+            total: issuesArray.length
+        };
+        
+        console.log('Summary:', summary);
+        
+        if (safeGetElement(ELEMENTS.summaryContainer)) {
+            ELEMENTS.summaryContainer.innerHTML = `
+                <div class="summary-item new">
+                    <div class="summary-label">New</div>
+                    <div class="summary-value">${summary.new}</div>
+                </div>
+                <div class="summary-item in-progress">
+                    <div class="summary-label">In Progress</div>
+                    <div class="summary-value">${summary.inProgress}</div>
+                </div>
+                <div class="summary-item completed">
+                    <div class="summary-label">Completed</div>
+                    <div class="summary-value">${summary.completed}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total</div>
+                    <div class="summary-value">${summary.total}</div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error updating summary:', error);
+        if (safeGetElement(ELEMENTS.summaryContainer)) {
+            ELEMENTS.summaryContainer.innerHTML = `
+                <div class="summary-item error">
+                    <div class="summary-label">Error</div>
+                    <div class="summary-value">Failed to load summary</div>
+                </div>
+            `;
+        }
+    }
 }
 
 async function updateTaskCards() {
     try {
-        // Update AC Filter task card
-        const acFilterTask = document.getElementById('acFilterTask');
-        const acFilterStatus = acFilterTask.querySelector('.task-status');
-        const acFilterNextDue = acFilterTask.querySelector('.next-due');
-        
-        // Update Premises Inspection task card
-        const premisesTask = document.getElementById('premisesTask');
-        const premisesStatus = premisesTask.querySelector('.task-status');
-        const premisesNextDue = premisesTask.querySelector('.next-due');
-        
         // Get task data from Firebase
         const filters = {
             category: 'Scheduled Maintenance'
         };
         
-        const maintenanceTasks = await window.firebaseService.getIssues(filters);
+        const result = await window.firebaseService.getIssues(filters);
+        const maintenanceTasks = result.issues || [];
         
         // Update AC Filter task
-        const acFilterTasks = maintenanceTasks.filter(task => 
-            task.scheduledTaskId === 'AC_FILTER_CLEANING'
-        );
-        
-        if (acFilterTasks.length > 0) {
-            const latestTask = acFilterTasks.sort((a, b) => 
-                b.createdAt - a.createdAt
-            )[0];
-            
-            acFilterStatus.textContent = `Status: ${latestTask.status}`;
-            acFilterStatus.className = `task-status ${latestTask.status.toLowerCase().replace(' ', '-')}`;
-            
-            // Calculate next due date (3 months after latest)
-            const nextDueDate = new Date(latestTask.createdAt);
-            nextDueDate.setMonth(nextDueDate.getMonth() + 3);
-            acFilterNextDue.textContent = `Next due: ${formatDate(nextDueDate)}`;
-        } else {
-            acFilterStatus.textContent = 'Status: Not Started';
-            acFilterStatus.className = 'task-status pending';
-            acFilterNextDue.textContent = 'Next due: As soon as possible';
-        }
+        updateACFilterTaskCard(maintenanceTasks);
         
         // Update Premises Inspection task
-        const premisesTasks = maintenanceTasks.filter(task => 
-            task.scheduledTaskId === 'PREMISES_INSPECTION'
-        );
-        
-        if (premisesTasks.length > 0) {
-            const latestTask = premisesTasks.sort((a, b) => 
-                b.createdAt - a.createdAt
-            )[0];
-            
-            premisesStatus.textContent = `Status: ${latestTask.status}`;
-            premisesStatus.className = `task-status ${latestTask.status.toLowerCase().replace(' ', '-')}`;
-            
-            // Calculate next due date (1 month after latest)
-            const nextDueDate = new Date(latestTask.createdAt);
-            nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-            premisesNextDue.textContent = `Next due: ${formatDate(nextDueDate)}`;
-        } else {
-            premisesStatus.textContent = 'Status: Not Started';
-            premisesStatus.className = 'task-status pending';
-            premisesNextDue.textContent = 'Next due: As soon as possible';
-        }
+        updatePremisesTaskCard(maintenanceTasks);
     } catch (error) {
         console.error('Error updating task cards:', error);
+        // Show error in task cards
+        showTaskCardError('acFilterTask');
+        showTaskCardError('premisesTask');
+    }
+}
+
+// Function to update AC Filter task card
+function updateACFilterTaskCard(tasks) {
+    const acFilterTask = document.getElementById('acFilterTask');
+    if (!acFilterTask) return;
+
+    const acFilterStatus = acFilterTask.querySelector('.task-status');
+    const acFilterNextDue = acFilterTask.querySelector('.next-due');
+    
+    // Update the task card HTML to include both maintenance types
+    acFilterTask.innerHTML = `
+        <h3>AC & Ventilation Maintenance</h3>
+        <p>Quarterly maintenance task for all rooms</p>
+        <div class="task-status"></div>
+        <div class="next-due"></div>
+        <div class="maintenance-buttons">
+            <button onclick="generateMaintenanceChecklist('ac')" class="checklist-btn">AC Filter Checklist</button>
+            <button onclick="generateMaintenanceChecklist('fan')" class="checklist-btn">Bathroom Fan Checklist</button>
+        </div>
+    `;
+
+    // Add styles for the maintenance buttons
+    const style = document.createElement('style');
+    style.textContent = `
+        .maintenance-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .checklist-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background: var(--secondary-color);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .checklist-btn:hover {
+            background: #2980b9;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    const acFilterTasks = tasks.filter(task => task.scheduledTaskId === 'AC_FILTER_CLEANING');
+    
+    if (acFilterTasks.length > 0) {
+        const latestTask = acFilterTasks.sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+            return dateB - dateA;
+        })[0];
+        
+        updateTaskCardStatus(acFilterStatus, latestTask.status);
+        updateTaskCardNextDue(acFilterNextDue, latestTask.createdAt, 3);
+    } else {
+        updateTaskCardStatus(acFilterStatus, 'Not Started');
+        acFilterNextDue.textContent = 'Next due: As soon as possible';
+    }
+}
+
+// Helper function to update Premises Inspection task card
+function updatePremisesTaskCard(tasks) {
+    const premisesTask = document.getElementById('premisesTask');
+    if (!premisesTask) return;
+
+    const premisesStatus = premisesTask.querySelector('.task-status');
+    const premisesNextDue = premisesTask.querySelector('.next-due');
+    
+    const premisesTasks = tasks.filter(task => task.scheduledTaskId === 'PREMISES_INSPECTION');
+    
+    if (premisesTasks.length > 0) {
+        const latestTask = premisesTasks.sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+            return dateB - dateA;
+        })[0];
+        
+        updateTaskCardStatus(premisesStatus, latestTask.status);
+        updateTaskCardNextDue(premisesNextDue, latestTask.createdAt, 1);
+    } else {
+        updateTaskCardStatus(premisesStatus, 'Not Started');
+        premisesNextDue.textContent = 'Next due: As soon as possible';
+    }
+}
+
+// Helper function to update task card status
+function updateTaskCardStatus(statusElement, status) {
+    if (!statusElement) return;
+    statusElement.textContent = `Status: ${status}`;
+    statusElement.className = `task-status ${status.toLowerCase().replace(' ', '-')}`;
+}
+
+// Helper function to update task card next due date
+function updateTaskCardNextDue(dueElement, createdDate, monthsInterval) {
+    if (!dueElement) return;
+    const createdAt = createdDate ? new Date(createdDate) : new Date();
+    const nextDueDate = new Date(createdAt);
+    nextDueDate.setMonth(nextDueDate.getMonth() + monthsInterval);
+    dueElement.textContent = `Next due: ${formatDate(nextDueDate)}`;
+}
+
+// Helper function to show error in task card
+function showTaskCardError(cardId) {
+    const taskCard = document.getElementById(cardId);
+    if (!taskCard) return;
+
+    const status = taskCard.querySelector('.task-status');
+    const nextDue = taskCard.querySelector('.next-due');
+    
+    if (status) {
+        status.textContent = 'Status: Error loading';
+        status.className = 'task-status error';
+    }
+    
+    if (nextDue) {
+        nextDue.textContent = 'Unable to determine next due date';
     }
 }
 
