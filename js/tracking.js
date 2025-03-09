@@ -524,7 +524,7 @@ function generateScheduledTask(taskId, task) {
 async function initializePage() {
     try {
         // Initialize Firebase
-        window.firebaseService.initializeFirebase();
+        // window.firebaseService.initializeFirebase(); // This function no longer exists
         
         // Set up event listeners
         ELEMENTS.searchInput.addEventListener('input', debounce(() => {
