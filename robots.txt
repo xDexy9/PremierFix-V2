@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://xdexy9.github.io/PremierFix/sitemap.xml 
