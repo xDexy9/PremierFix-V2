@@ -5,6 +5,7 @@ const ELEMENTS = {
     searchInput: document.getElementById('searchInput'),
     filterCategory: document.getElementById('filterCategory'),
     filterStatus: document.getElementById('filterStatus'),
+    filterPriority: document.getElementById('filterPriority'),
     dateFrom: document.getElementById('dateFrom'),
     dateTo: document.getElementById('dateTo'),
     sortControl: document.getElementById('sortControl'),
@@ -13,24 +14,23 @@ const ELEMENTS = {
     exportCSV: document.getElementById('exportCSV'),
     printView: document.getElementById('printView'),
     container: document.querySelector('.container'),
-    summaryContainer: document.createElement('div')
+    summaryContainer: document.createElement('div'),
+    branchInfo: document.getElementById('branchInfo')
 };
 
-// Helper function to safely access DOM elements
-function safeGetElement(element, fallbackAction = () => {}) {
-    if (!element) {
-        console.warn(`Element not found in the DOM`);
-        fallbackAction();
-        return null;
-    }
-    return element;
-}
+// Priority levels (must match form.js)
+const PRIORITY_LEVELS = {
+    low: { label: 'Low', color: '#28a745' },
+    medium: { label: 'Medium', color: '#ffc107' },
+    critical: { label: 'Critical', color: '#dc3545' }
+};
 
 // Global variables
 let currentPage = 1;
 const issuesPerPage = 10;
 let cachedIssues = [];
 let sortDirection = 'desc';
+let currentBranchId = null;
 
 // Scheduled maintenance tasks configuration
 const SCHEDULED_TASKS = {
@@ -47,40 +47,15 @@ const SCHEDULED_TASKS = {
             'Test operation'
         ],
         generateRooms: () => {
-            const rooms = [];
-            // Ground floor (1-18, excluding 13)
-            for (let i = 1; i <= 18; i++) {
-                if (i !== 13) rooms.push(i.toString().padStart(2, '0'));
+            // Get rooms from the current branch data
+            const branchData = window.hotelBranchManager.getBranchData();
+            if (!branchData || !branchData.rooms) {
+                console.warn('No rooms found for current branch');
+                return [];
             }
-            // First floor (101-121, excluding 113)
-            for (let i = 101; i <= 121; i++) {
-                if (i !== 113) rooms.push(i.toString());
-            }
-            // Second floor (201-227, excluding 213)
-            for (let i = 201; i <= 227; i++) {
-                if (i !== 213) rooms.push(i.toString());
-            }
-            // Third floor (301-330, excluding 313)
-            for (let i = 301; i <= 330; i++) {
-                if (i !== 313) rooms.push(i.toString());
-            }
-            // Fourth floor (401-430, excluding 413)
-            for (let i = 401; i <= 430; i++) {
-                if (i !== 413) rooms.push(i.toString());
-            }
-            // Fifth floor (501-511, excluding 513)
-            for (let i = 501; i <= 511; i++) {
-                rooms.push(i.toString());
-            }
-            // Sixth floor (601-612)
-            for (let i = 601; i <= 612; i++) {
-                rooms.push(i.toString());
-            }
-            // Seventh floor (701-712)
-            for (let i = 701; i <= 712; i++) {
-                rooms.push(i.toString());
-            }
-            return rooms;
+            
+            // Return array of room numbers from the branch data
+            return Object.keys(branchData.rooms);
         }
     }
 };
@@ -201,7 +176,13 @@ const STATUS_COLORS = {
 
 // Function to check and generate scheduled maintenance tasks
 function checkScheduledMaintenance() {
-    const lastCheck = localStorage.getItem('lastMaintenanceCheck') || new Date(0).toISOString();
+    const branchId = window.hotelBranchManager.getCurrentBranch();
+    if (!branchId) {
+        console.warn('No branch selected, skipping scheduled maintenance check');
+        return;
+    }
+    
+    const lastCheck = localStorage.getItem(`lastMaintenanceCheck_${branchId}`) || new Date(0).toISOString();
     const now = new Date();
     const lastCheckDate = new Date(lastCheck);
     
@@ -210,32 +191,30 @@ function checkScheduledMaintenance() {
         return;
     }
     
-    // Get existing scheduled tasks
-    const scheduledIssues = JSON.parse(localStorage.getItem('scheduledMaintenance')) || [];
+    // Get existing scheduled tasks for this branch
+    const scheduledIssues = JSON.parse(localStorage.getItem(`scheduledMaintenance_${branchId}`)) || [];
     
     // Check each scheduled task
     Object.entries(SCHEDULED_TASKS).forEach(([taskId, task]) => {
-        const lastTaskDate = findLastTaskDate(taskId);
+        const lastTaskDate = findLastTaskDate(taskId, branchId);
         if (isTaskDue(lastTaskDate, task.frequency)) {
-            generateScheduledTask(taskId, task);
+            generateScheduledTask(taskId, task, branchId);
         }
     });
     
-    localStorage.setItem('lastMaintenanceCheck', now.toISOString());
+    localStorage.setItem(`lastMaintenanceCheck_${branchId}`, now.toISOString());
 }
 
-function findLastTaskDate(taskId) {
-    const issues = JSON.parse(localStorage.getItem('issues')) || [];
-    const matchingIssues = issues.filter(issue => 
-        issue.scheduledTaskId === taskId && 
-        issue.status === 'Completed'
-    );
-    
-    if (matchingIssues.length === 0) {
+// Find the last date a task was performed for a specific branch
+function findLastTaskDate(taskId, branchId) {
+    const taskHistory = JSON.parse(localStorage.getItem(`taskHistory_${branchId}_${taskId}`)) || [];
+    if (taskHistory.length === 0) {
         return new Date(0);
     }
     
-    return new Date(Math.max(...matchingIssues.map(issue => new Date(issue.dateCreated))));
+    // Sort by date descending and get the most recent
+    taskHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return new Date(taskHistory[0].date);
 }
 
 function isTaskDue(lastDate, frequency) {
@@ -677,43 +656,27 @@ async function generateMaintenanceChecklist(type) {
     printWindow.print();
 }
 
-// Modify the generateScheduledTask function to handle AC Filter cleaning differently
-function generateScheduledTask(taskId, task) {
-    if (taskId === 'AC_FILTER_CLEANING') {
-        generateMaintenanceChecklist('ac');
-        return;
-    }
-
-    // Create a new scheduled task
-    const newTask = {
-        id: 'task_' + Date.now(),
-        description: task.name,
-        location: 'All Buildings',
-        roomNumber: 'All',
-        category: 'Scheduled Maintenance',
-        priority: 'Medium',
-        authorName: 'System',
-        authorEmail: 'system@example.com',
-        authorPhone: '',
-        status: 'New',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        scheduledTaskId: taskId
+// Generate a scheduled maintenance task for a specific branch
+function generateScheduledTask(taskId, task, branchId) {
+    // Create a task specific to this branch
+    const scheduledTask = {
+        id: `${taskId}_${Date.now()}`,
+        branchId: branchId,
+        name: task.name,
+        description: task.description,
+        rooms: task.generateRooms(),
+        checklistItems: task.checklistItems,
+        dateCreated: new Date().toISOString(),
+        status: 'Pending'
     };
-
-    // Add to Firebase
-    window.firebaseService.saveIssue(newTask)
-        .then(() => {
-            showNotification(`${task.name} task created successfully`, 'success');
-            
-            // Update UI
-            updateTaskCards();
-            filterAndDisplayIssues();
-        })
-        .catch(error => {
-            console.error('Error creating scheduled task:', error);
-            showError('Failed to create scheduled task. Please try again.');
-        });
+    
+    // Store in localStorage for this branch
+    const scheduledTasks = JSON.parse(localStorage.getItem(`scheduledMaintenance_${branchId}`)) || [];
+    scheduledTasks.push(scheduledTask);
+    localStorage.setItem(`scheduledMaintenance_${branchId}`, JSON.stringify(scheduledTasks));
+    
+    // Update UI
+    updateScheduledTasksUI();
 }
 
 // Add retry logic for initialization
@@ -740,6 +703,27 @@ async function initializePage() {
             }
         }
         
+        // Initialize branch manager
+        await window.hotelBranchManager.initialize();
+        console.log("Branch manager initialization complete");
+        
+        // Check if branch is selected
+        currentBranchId = window.hotelBranchManager.getCurrentBranch();
+        if (!currentBranchId) {
+            // Show branch selector
+            window.branchSelector.showBranchSelector();
+            return;
+        }
+        
+        // Update branch info
+        updateBranchInfo();
+        
+        // Check for scheduled maintenance tasks
+        checkScheduledMaintenance();
+        
+        // Update scheduled tasks UI
+        updateScheduledTasksUI();
+        
         // Set up event listeners
         setupEventListeners();
         
@@ -747,6 +731,12 @@ async function initializePage() {
         await loadInitialData();
         
         console.log("Page initialization complete");
+        
+        // Clear console after a small delay to ensure all logs are shown
+        setTimeout(() => {
+            console.clear();
+            console.log("✨ PremierFix Tracker Ready!");
+        }, 1000);
     } catch (error) {
         console.error('Error initializing page:', error);
         showError('Failed to initialize page. Please refresh and try again.');
@@ -755,20 +745,30 @@ async function initializePage() {
 
 async function loadInitialData() {
     try {
-        // Show loading state
-        ELEMENTS.issuesList.innerHTML = '<div class="loading">Loading issues...</div>';
+        // Add priority filter
+        const filterPriorityHTML = `
+            <div class="filter-group">
+                <label for="filterPriority">Priority</label>
+                <select id="filterPriority">
+                    <option value="">All</option>
+                    ${Object.entries(PRIORITY_LEVELS).map(([value, { label }]) => `
+                        <option value="${value}">${label}</option>
+                    `).join('')}
+                </select>
+            </div>
+        `;
+        
+        const filterContainer = document.querySelector('.filter-section');
+        filterContainer.insertAdjacentHTML('beforeend', filterPriorityHTML);
+        
+        // Initialize filter elements
+        ELEMENTS.filterPriority = document.getElementById('filterPriority');
         
         // Load and display issues
         await filterAndDisplayIssues();
-        
-        // Remove loading state if successful
-        const loadingElement = ELEMENTS.issuesList.querySelector('.loading');
-        if (loadingElement) {
-            loadingElement.remove();
-        }
     } catch (error) {
         console.error('Error loading initial data:', error);
-        showError('Failed to load issues. Please check your connection and try again.');
+        showError('Failed to load issues');
     }
 }
 
@@ -891,60 +891,34 @@ async function displayIssues(issues) {
 
 async function filterAndDisplayIssues() {
     try {
-        console.log('Starting to fetch issues...');
-        
-        // Show loading state
-        if (safeGetElement(ELEMENTS.issuesList)) {
-            ELEMENTS.issuesList.innerHTML = '<div class="loading-message">Loading issues...</div>';
+        const filters = {
+            branchId: currentBranchId,
+            search: ELEMENTS.searchInput.value.trim(),
+            category: ELEMENTS.filterCategory.value,
+            status: ELEMENTS.filterStatus.value,
+            priority: ELEMENTS.filterPriority.value,
+            dateFrom: ELEMENTS.dateFrom.value,
+            dateTo: ELEMENTS.dateTo.value
+        };
+
+        const issues = await window.firebaseService.getFilteredIssues(filters);
+        cachedIssues = issues;
+
+        // Sort issues
+        if (sortDirection === 'asc') {
+            cachedIssues.sort((a, b) => new Date(a.dateCreated) - new Date(b.dateCreated));
+        } else {
+            cachedIssues.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
         }
+
+        // Update display
+        await displayIssues(cachedIssues);
         
-        // Get filtered issues
-        const result = await filterIssues();
-        console.log('Received issues count:', result?.issues?.length || 0);
-        
-        // Ensure we have a valid result with an array of issues
-        if (!result || typeof result !== 'object') {
-            throw new Error('Invalid response from filterIssues');
-        }
-        
-        // Convert issues to array if it's not already
-        const filteredIssues = Array.isArray(result.issues) ? result.issues : 
-                             (result.issues ? Object.values(result.issues) : []);
-        
-        // Log only relevant information about the filtered issues
-        console.log('Processed issues:', {
-            total: filteredIssues.length,
-            new: filteredIssues.filter(i => i.status === 'New').length,
-            inProgress: filteredIssues.filter(i => i.status === 'In Progress').length,
-            completed: filteredIssues.filter(i => i.status === 'Completed').length
-        });
-        
-        // Cache the filtered issues for pagination
-        cachedIssues = filteredIssues;
-        
-        // Update summary with the array
-        updateSummary(filteredIssues);
-        
-        // Apply pagination and display
-        const totalPages = Math.ceil(filteredIssues.length / issuesPerPage);
-        const startIndex = (currentPage - 1) * issuesPerPage;
-        const endIndex = startIndex + issuesPerPage;
-        const paginatedIssues = filteredIssues.slice(startIndex, endIndex);
-        
-        await displayIssues(paginatedIssues);
-        renderPagination(currentPage, totalPages);
+        // Update summary
+        updateSummary(cachedIssues);
     } catch (error) {
-        console.error('Error filtering and displaying issues:', error);
-        if (safeGetElement(ELEMENTS.issuesList)) {
-            ELEMENTS.issuesList.innerHTML = `
-                <div class="error-state">
-                    <h3>Error Loading Issues</h3>
-                    <p>There was a problem loading the maintenance issues. Please try refreshing the page.</p>
-                    <button onclick="window.location.reload()">Refresh Page</button>
-                </div>
-            `;
-        }
-        showError('Failed to load issues. Please try refreshing the page.');
+        console.error('Error filtering issues:', error);
+        showError('Failed to filter issues');
     }
 }
 
@@ -989,81 +963,51 @@ function clearFilters() {
 }
 
 function exportToCSV() {
-    const issues = cachedIssues;
-    if (issues.length === 0) {
-        showNotification('No issues to export', 'error');
-        return;
+    try {
+        const branchData = window.hotelBranchManager.getBranchData();
+        if (!branchData) throw new Error('Branch data not available');
+
+        const headers = [
+            'Date Created',
+            'Room/Location',
+            'Category',
+            'Description',
+            'Priority',
+            'Time Preference',
+            'Status',
+            'Author'
+        ];
+
+        const rows = cachedIssues.map(issue => [
+            formatDate(issue.dateCreated),
+            issue.roomNumber ? `Room ${issue.roomNumber}` : issue.location,
+            issue.category,
+            issue.description,
+            PRIORITY_LEVELS[issue.priority]?.label || 'Low',
+            formatTimePreference(issue.timePreference),
+            issue.status,
+            issue.authorName
+        ]);
+
+        // Create CSV content
+        const csvContent = [
+            [`Branch: ${branchData.name}`],
+            [`Address: ${branchData.address}`],
+            [''],
+            headers,
+            ...rows
+        ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+
+        // Create and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `issues_${branchData.name.toLowerCase().replace(/\s+/g, '_')}_${formatDate(new Date())}.csv`;
+        link.click();
+    } catch (error) {
+        console.error('Error exporting to CSV:', error);
+        showError('Failed to export issues');
     }
-    
-    // Create workbook data
-    const headers = ['Location', 'Category', 'Description', 'Time Preference', 'Author', 'Status', 'Date Created'];
-    const rows = issues.map(issue => [
-        issue.location || `Room ${issue.roomNumber}`,
-        issue.category,
-        issue.description,
-        formatTimePreference(issue.timePreference),
-        issue.authorName,
-        issue.status,
-        formatDate(issue.createdAt || issue.dateCreated)
-    ]);
-    
-    // Create the Excel content with proper XML namespace declarations
-    let excelContent = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
-              xmlns:x="urn:schemas-microsoft-com:office:excel" 
-              xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <!--[if gte mso 9]>
-            <xml>
-                <x:ExcelWorkbook>
-                    <x:ExcelWorksheets>
-                        <x:ExcelWorksheet>
-                            <x:Name>Maintenance Issues</x:Name>
-                            <x:WorksheetOptions>
-                                <x:DisplayGridlines/>
-                            </x:WorksheetOptions>
-                        </x:ExcelWorksheet>
-                    </x:ExcelWorksheets>
-                </x:ExcelWorkbook>
-            </xml>
-            <![endif]-->
-            <style>
-                table { border-collapse: collapse; }
-                th { background-color: #f0f0f0; font-weight: bold; }
-                th, td { border: 1px solid #ccc; padding: 5px; }
-                tr:nth-child(even) { background-color: #f9f9f9; }
-            </style>
-        </head>
-        <body>
-            <table>
-                <tr>
-                    ${headers.map(header => 
-                        `<th>${header}</th>`
-                    ).join('')}
-                </tr>
-                ${rows.map(row => 
-                    `<tr>${row.map(cell => 
-                        `<td>${cell}</td>`
-                    ).join('')}</tr>`
-                ).join('')}
-            </table>
-        </body>
-        </html>
-    `;
-    
-    // Create blob with Excel MIME type and proper encoding
-    const blob = new Blob(['\ufeff', excelContent], { 
-        type: 'application/vnd.ms-excel;charset=utf-8' 
-    });
-    
-    // Create download link with .xls extension
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `maintenance_issues_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.xls`;
-    link.click();
-    
-    showNotification('Issues exported successfully', 'success');
 }
 
 function openPrintView() {
@@ -1223,6 +1167,7 @@ function createIssueCard(issue, index) {
     const location = issue.location || `Room ${issue.roomNumber}`;
     const timeInfo = formatTimePreference(issue.timePreference);
     const createdDate = formatDate(issue.createdAt || issue.dateCreated);
+    const priority = PRIORITY_LEVELS[issue.priority] || PRIORITY_LEVELS.low;
     
     const card = document.createElement('div');
     card.className = `issue-card ${issue.status.toLowerCase().replace(' ', '-')}`;
@@ -1734,6 +1679,333 @@ function showTaskCardError(cardId) {
     if (nextDue) {
         nextDue.textContent = 'Unable to determine next due date';
     }
+}
+
+// Update branch info display
+async function updateBranchInfo() {
+    const branchData = window.hotelBranchManager.getBranchData();
+    if (!branchData) return;
+
+    ELEMENTS.branchInfo.innerHTML = `
+        <div class="branch-info">
+            <h2>${branchData.name}</h2>
+            <p>${branchData.address}</p>
+            <button id="switchBranch" class="btn-secondary">Switch Branch</button>
+            <button id="auditRoom" class="btn-primary">Room Audit</button>
+        </div>
+    `;
+
+    // Add event listeners
+    document.getElementById('switchBranch').addEventListener('click', () => {
+        window.branchSelector.showBranchSelector();
+    });
+
+    document.getElementById('auditRoom').addEventListener('click', () => {
+        showRoomSelector();
+    });
+}
+
+// Show room selector for audit
+function showRoomSelector() {
+    const branchData = window.hotelBranchManager.getBranchData();
+    if (!branchData || !branchData.rooms) {
+        showError('Room data not available');
+        return;
+    }
+
+    const modalHTML = `
+        <div id="roomSelectorModal" class="modal">
+            <div class="modal-content">
+                <h2>Select Room for Audit</h2>
+                <div class="room-grid">
+                    ${Object.entries(branchData.rooms)
+                        .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                        .map(([roomNumber, room]) => `
+                            <button class="room-btn ${room.available ? '' : 'unavailable'}" 
+                                    data-room="${roomNumber}"
+                                    ${!room.available ? 'disabled' : ''}>
+                                ${roomNumber}
+                            </button>
+                        `).join('')}
+                </div>
+                <button class="close-btn">Close</button>
+            </div>
+        </div>
+    `;
+
+    const styles = `
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .room-btn {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .room-btn:hover:not(:disabled) {
+            background: #007bff;
+            color: white;
+        }
+
+        .room-btn.unavailable {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            cursor: not-allowed;
+        }
+    `;
+
+    // Add styles
+    const styleElement = document.createElement('style');
+    styleElement.textContent = styles;
+    document.head.appendChild(styleElement);
+
+    // Add modal to document
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHTML;
+    document.body.appendChild(modalContainer);
+
+    // Add event listeners
+    const modal = document.getElementById('roomSelectorModal');
+    const closeBtn = modal.querySelector('.close-btn');
+    const roomButtons = modal.querySelectorAll('.room-btn:not(.unavailable)');
+
+    closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modalContainer);
+    });
+
+    roomButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const roomNumber = button.dataset.room;
+            document.body.removeChild(modalContainer);
+            window.roomAuditUI.openAudit(roomNumber);
+        });
+    });
+
+    modal.style.display = 'block';
+}
+
+// Update the UI to show scheduled tasks for the current branch
+function updateScheduledTasksUI() {
+    const branchId = window.hotelBranchManager.getCurrentBranch();
+    if (!branchId) {
+        console.warn('No branch selected, cannot display scheduled tasks');
+        return;
+    }
+    
+    // Get scheduled tasks for this branch
+    const scheduledTasks = JSON.parse(localStorage.getItem(`scheduledMaintenance_${branchId}`)) || [];
+    
+    // Get the container
+    const tasksContainer = document.querySelector('.scheduled-tasks');
+    if (!tasksContainer) {
+        console.warn('Scheduled tasks container not found');
+        return;
+    }
+    
+    // Clear existing content
+    tasksContainer.innerHTML = '';
+    
+    if (scheduledTasks.length === 0) {
+        // No tasks for this branch
+        tasksContainer.innerHTML = `
+            <div class="no-tasks">
+                <p>No scheduled maintenance tasks for this branch.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Add each task to the UI
+    scheduledTasks.forEach(task => {
+        const taskCard = document.createElement('div');
+        taskCard.className = 'task-card';
+        taskCard.id = task.id;
+        
+        taskCard.innerHTML = `
+            <h3>${task.name}</h3>
+            <p>${task.description}</p>
+            <div class="task-status">${task.status}</div>
+            <div class="next-due">Rooms: ${task.rooms.length}</div>
+            <div class="maintenance-buttons">
+                <button onclick="generateMaintenanceChecklist('${task.id}')" class="checklist-btn">Generate Checklist</button>
+            </div>
+        `;
+        
+        tasksContainer.appendChild(taskCard);
+    });
+}
+
+// Generate a maintenance checklist for a specific task
+function generateMaintenanceChecklist(taskId) {
+    const branchId = window.hotelBranchManager.getCurrentBranch();
+    if (!branchId) {
+        showError('No branch selected');
+        return;
+    }
+    
+    // Get scheduled tasks for this branch
+    const scheduledTasks = JSON.parse(localStorage.getItem(`scheduledMaintenance_${branchId}`)) || [];
+    const task = scheduledTasks.find(t => t.id === taskId);
+    
+    if (!task) {
+        // If taskId is not a specific task ID, use the default AC or fan checklist
+        if (taskId === 'ac' || taskId === 'fan') {
+            generateDefaultChecklist(taskId);
+            return;
+        }
+        
+        showError('Task not found');
+        return;
+    }
+    
+    // Generate PDF checklist
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add header
+    doc.setFontSize(20);
+    doc.text(`${task.name} Checklist`, 20, 20);
+    
+    // Add branch info
+    const branchData = window.hotelBranchManager.getBranchData();
+    doc.setFontSize(12);
+    doc.text(`Branch: ${branchData.name}`, 20, 30);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 37);
+    
+    // Add checklist items
+    doc.setFontSize(14);
+    doc.text('Checklist Items:', 20, 50);
+    
+    let y = 60;
+    task.checklistItems.forEach((item, index) => {
+        doc.text(`□ ${index + 1}. ${item}`, 25, y);
+        y += 10;
+    });
+    
+    // Add rooms
+    y += 10;
+    doc.setFontSize(14);
+    doc.text('Rooms to Check:', 20, y);
+    y += 10;
+    
+    // Create a grid of rooms
+    const roomsPerRow = 10;
+    const roomWidth = 18;
+    const roomHeight = 10;
+    
+    task.rooms.forEach((room, index) => {
+        const col = index % roomsPerRow;
+        const row = Math.floor(index / roomsPerRow);
+        const x = 20 + (col * roomWidth);
+        const rowY = y + (row * roomHeight);
+        
+        // Start a new page if needed
+        if (rowY > 280) {
+            doc.addPage();
+            y = 20;
+            doc.text(`${task.name} Checklist (continued)`, 20, 10);
+        } else {
+            doc.text(`□ ${room}`, x, rowY);
+        }
+    });
+    
+    // Save the PDF
+    doc.save(`${task.name.replace(/\s+/g, '_')}_Checklist.pdf`);
+    
+    // Show success message
+    showNotification('Checklist generated successfully', 'success');
+}
+
+// Generate a default checklist for AC or fan maintenance
+function generateDefaultChecklist(type) {
+    const branchId = window.hotelBranchManager.getCurrentBranch();
+    if (!branchId) {
+        showError('No branch selected');
+        return;
+    }
+    
+    const branchData = window.hotelBranchManager.getBranchData();
+    if (!branchData || !branchData.rooms) {
+        showError('No rooms found for this branch');
+        return;
+    }
+    
+    const rooms = Object.keys(branchData.rooms);
+    const title = type === 'ac' ? 'AC Filter Cleaning' : 'Bathroom Fan Maintenance';
+    const checklistItems = [
+        'Remove filter/fan carefully',
+        'Clean with appropriate cleaning solution',
+        'Let dry completely',
+        'Check for damage',
+        'Reinstall filter/fan',
+        'Test operation'
+    ];
+    
+    // Generate PDF checklist
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add header
+    doc.setFontSize(20);
+    doc.text(`${title} Checklist`, 20, 20);
+    
+    // Add branch info
+    doc.setFontSize(12);
+    doc.text(`Branch: ${branchData.name}`, 20, 30);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 37);
+    
+    // Add checklist items
+    doc.setFontSize(14);
+    doc.text('Checklist Items:', 20, 50);
+    
+    let y = 60;
+    checklistItems.forEach((item, index) => {
+        doc.text(`□ ${index + 1}. ${item}`, 25, y);
+        y += 10;
+    });
+    
+    // Add rooms
+    y += 10;
+    doc.setFontSize(14);
+    doc.text('Rooms to Check:', 20, y);
+    y += 10;
+    
+    // Create a grid of rooms
+    const roomsPerRow = 10;
+    const roomWidth = 18;
+    const roomHeight = 10;
+    
+    rooms.forEach((room, index) => {
+        const col = index % roomsPerRow;
+        const row = Math.floor(index / roomsPerRow);
+        const x = 20 + (col * roomWidth);
+        const rowY = y + (row * roomHeight);
+        
+        // Start a new page if needed
+        if (rowY > 280) {
+            doc.addPage();
+            y = 20;
+            doc.text(`${title} Checklist (continued)`, 20, 10);
+        } else {
+            doc.text(`□ ${room}`, x, rowY);
+        }
+    });
+    
+    // Save the PDF
+    doc.save(`${title.replace(/\s+/g, '_')}_Checklist.pdf`);
+    
+    // Show success message
+    showNotification('Checklist generated successfully', 'success');
 }
 
 // Initialize the page when the DOM is loaded

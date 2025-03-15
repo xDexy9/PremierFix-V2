@@ -3,96 +3,789 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PremierFix - Log Issue</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbAlYMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#511e58">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/autoprefixer.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PremierFix - Maintenance Request</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbA5YMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
+    <meta name="theme-color" content="#3a7bd5">
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="js/form.js" as="script">
+    
+    <!-- Load fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Critical CSS -->
+    <style>
+        :root {
+            --primary-color: #3a7bd5;
+            --secondary-color: #3498db;
+            --background-color: #f5f6fa;
+            --text-color: #2c3e50;
+            --border-color: #dcdde1;
+            --success-color: #4ade80;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: rgba(31, 38, 135, 0.15);
+        }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+            width: 100%;
+        }
+        
+        /* Responsive navbar styles */
+        .navbar {
+            background-color: #3a7bd5;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .nav-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand-logo {
+            height: 45px;
+            width: auto;
+            display: block;
+            max-width: 100%;
+            object-fit: contain;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Loading Indicator */
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loading-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(58, 123, 213, 0.2);
+            border-radius: 50%;
+            border-top-color: #3a7bd5;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Modern Dashboard Styles */
+        .branch-info-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(58, 123, 213, 0.05);
+            position: relative;
+        }
+        
+        .branch-info-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+        
+        .branch-info-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: linear-gradient(90deg, #3a7bd5, #3498db);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .branch-info-container:hover::after {
+            height: 3px;
+            opacity: 1;
+        }
+        
+        .dashboard-header {
+            position: relative;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #3a7bd5 0%, #3a6073 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #3a6073);
+            opacity: 0.7;
+        }
+        
+        .branch-details h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem;
+            letter-spacing: -0.01em;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .branch-details p {
+            font-size: 0.95rem;
+            margin: 0 0 0.75rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .branch-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.75rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+        
+        .header-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 1;
+            margin-top: 0;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        
+        .header-action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-action-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(1px);
+        }
+        
+        .header-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1.25rem 2rem;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-action-btn:hover {
+            background: #4e46e5;
+            color: white;
+            border-color: #4e46e5;
+        }
+        
+        .quick-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #3a7bd5, #3498db);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover::before {
+            width: 6px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            display: block;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        
+        .stat-box:nth-child(1)::after {
+            content: '';
+            position: absolute;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            width: 32px;
+            height: 32px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='rgba(58, 123, 213, 0.15)' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z' /%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:nth-child(2)::after {
+            content: '';
+            position: absolute;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            width: 32px;
+            height: 32px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='rgba(58, 123, 213, 0.15)' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605' /%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:nth-child(3)::after {
+            content: '';
+            position: absolute;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            width: 32px;
+            height: 32px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='rgba(58, 123, 213, 0.15)' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z' /%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-box:hover::after {
+            opacity: 0.3;
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1rem 1.25rem 3.5rem 1.25rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                position: relative;
+            }
+            
+            .header-action-btn {
+                position: absolute;
+                bottom: 0.75rem;
+                left: 1.25rem;
+                margin-top: 0;
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+                animation: pulseButton 2s infinite;
+            }
+            
+            .header-action-btn:hover, .header-action-btn:active {
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.05);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            }
+            
+            @keyframes pulseButton {
+                0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+                70% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-box:hover {
+                transform: translateY(-3px);
+            }
+        }
+        
+        .priority-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .priority-btn:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+        
+        .priority-btn.active[data-priority="low"] {
+            background: #4ade80;
+            border-color: #4ade80;
+            color: black !important;
+            box-shadow: 0 2px 5px rgba(74, 222, 128, 0.2);
+        }
+        
+        .priority-btn.active[data-priority="medium"] {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: black !important;
+            box-shadow: 0 2px 5px rgba(245, 158, 11, 0.2);
+        }
+        
+        .priority-btn.active[data-priority="critical"] {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: black !important;
+            box-shadow: 0 2px 5px rgba(239, 68, 68, 0.2);
+        }
+        
+        .time-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        
+        .time-btn:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+        
+        .time-btn.active {
+            background: #3a7bd5;
+            border-color: #3a7bd5;
+            color: black !important;
+            box-shadow: 0 2px 5px rgba(58, 123, 213, 0.2);
+        }
+
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        
+        .priority-btn[data-priority="low"] .priority-dot {
+            background-color: var(--success-color);
+        }
+        
+        .priority-btn[data-priority="medium"] .priority-dot {
+            background-color: var(--warning-color);
+        }
+        
+        .priority-btn[data-priority="critical"] .priority-dot {
+            background-color: var(--danger-color);
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem auto;
+                padding: 0 0.75rem;
+            }
+            
+            .nav-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-brand {
+                margin-bottom: 1rem;
+            }
+            
+            .form-card {
+                padding: 1.25rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .time-selection, .priority-selection {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .time-btn, .priority-btn {
+                width: 100%;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+            
+            .brand-logo {
+                height: 35px;
+            }
+            
+            .form-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .form-title {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+            
+            .form-group label {
+                font-size: 0.9rem;
+            }
+            
+            input, select, textarea {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+            }
+            
+            .submit-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Image optimization */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Form optimizations */
+        input, select, textarea {
+            box-sizing: border-box;
+            width: 100%;
+            transition: border-color 0.2s ease;
+        }
+        
+        /* Improve touch targets for mobile */
+        button, 
+        input[type="submit"],
+        input[type="button"],
+        select {
+            min-height: 44px;
+        }
+    </style>
+
+    <!-- Non-critical CSS -->
+    <link rel="stylesheet" href="css/normalize.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/animations.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css" media="print" onload="this.media='all'">
+    
     <!-- Feature detection -->
-    <script src="js/modernizr-custom.js"></script>
-    <!-- Polyfills for older browsers -->
-    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.26.1/minified.js"></script>
+    <script src="js/modernizr-custom.js" defer></script>
+    
+    <!-- Polyfills - Load conditionally -->
+    <script>
+        if (!window.Promise || !window.fetch || !window.Symbol) {
+            const polyfills = [
+                'https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js',
+                'https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.min.js',
+                'https://cdn.jsdelivr.net/npm/core-js-bundle@3.26.1/minified.js'
+            ];
+            polyfills.forEach(src => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.defer = true;
+                document.head.appendChild(script);
+            });
+        }
+    </script>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     <script src="js/firebase-config.js"></script>
-    <!-- Service Worker Registration -->
-    <script>
-        // Check if service workers are supported
-        if ('serviceWorker' in navigator) {
-            // Use the window load event to keep the page load performant
-            window.addEventListener('load', () => {
-                // Check if we're on HTTPS or localhost (for development)
-                const isLocalhost = Boolean(
-                    window.location.hostname === 'localhost' ||
-                    window.location.hostname === '[::1]' ||
-                    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
-                );
-                
-                // Only register service worker on HTTPS or localhost
-                if (window.location.protocol === 'https:' || isLocalhost) {
-                    // Get the base path for GitHub Pages
-                    const basePath = location.pathname.includes('/PremierFix') ? '/PremierFix' : '';
-                    
-                    navigator.serviceWorker.register(basePath + '/service-worker.js')
-                        .then(registration => {
-                            console.log('Service Worker registered with scope:', registration.scope);
-                            
-                            // Check for updates
-                            registration.onupdatefound = () => {
-                                const installingWorker = registration.installing;
-                                installingWorker.onstatechange = () => {
-                                    if (installingWorker.state === 'installed') {
-                                        if (navigator.serviceWorker.controller) {
-                                            console.log('New content is available; please refresh.');
-                                        } else {
-                                            console.log('Content is cached for offline use.');
-                                        }
-                                    }
-                                };
-                            };
-                        })
-                        .catch(error => {
-                            console.error('Service Worker registration failed:', error);
-                            
-                            // If running from file:// protocol, show a more helpful message
-                            if (window.location.protocol === 'file:') {
-                                console.warn('Service Worker registration failed because you are running from the file:// protocol. Please use a local web server as described in the README.md file.');
-                            }
-                        });
-                } else {
-                    console.warn('Service Worker registration skipped: Not running on HTTPS or localhost');
-                }
-            });
-        } else {
-            console.warn('Service Workers are not supported in this browser');
-        }
-    </script>
+
+    <!-- Main scripts -->
+    <script src="js/hotel-config.js"></script>
+    <script src="js/branch-selector.js"></script>
+    <script src="js/form.js" defer></script>
+    <link rel="stylesheet" href="css/branch-selector.css">
 </head>
 <body>
+    <!-- Loading indicator -->
+    <div class="loading-container" id="loadingContainer">
+        <div class="loading-spinner"></div>
+    </div>
+
     <nav class="navbar">
         <div class="nav-content">
             <div class="nav-brand">
-                <img src="./images/PremierFix.png" alt="PremierFix Logo" class="brand-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
+                <img src="images/PremierFix.png" alt="PremierFix Logo" class="brand-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
             </div>
             <div class="nav-links">
                 <a href="index.html" class="active">Log Issue</a>
                 <a href="tracking.html">Track Issues</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="hoteleditor.html">Hotel Management</a>
             </div>
         </div>
     </nav>
 
-    <main class="container">
+    <div class="container">
+        <div id="branchInfo" class="branch-info-container">
+            <div class="dashboard-header">
+                <div class="branch-details">
+                    <h2 id="branchName">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        Barking
+                    </h2>
+                    <p id="branchAddress">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        Highbridge Rd, Barking IG11 7BA
+                    </p>
+                    <div class="branch-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Active</span>
+                    </div>
+                </div>
+                <button class="header-action-btn" id="switchBranch">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                    </svg>
+                    Select Branch
+                </button>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-label">New Jobs</div>
+                    <div class="stat-value" id="newIssuesCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value" id="inProgressCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Rooms</div>
+                    <div class="stat-value" id="totalRooms">0</div>
+                </div>
+            </div>
+        </div>
+
         <h1>Log Maintenance Issue</h1>
         <form id="issueForm" class="issue-form">
             <div class="form-group location-group">
@@ -134,14 +827,33 @@
                 <label for="timePreference">When</label>
                 <input type="hidden" id="timePreference" name="timePreference" value="anytime">
                 <div class="time-selection" id="timeSelectionButtons">
-                    <button type="button" class="time-btn active" data-time="anytime">Anytime</button>
-                    <button type="button" class="time-btn" data-time="before">Before</button>
-                    <button type="button" class="time-btn" data-time="after">After</button>
+                    <button type="button" class="time-btn active" id="timeAny" data-time="anytime">Anytime</button>
+                    <button type="button" class="time-btn" id="timeBefore" data-time="before">Before</button>
+                    <button type="button" class="time-btn" id="timeAfter" data-time="after">After</button>
                 </div>
                 <div id="dateTimeContainer" class="datetime-container" style="display: none;">
-                    <label for="dateTime">Select Date and Time</label>
+                    <label for="dateTime" id="dateTimeLabel">Select Date and Time</label>
                     <input type="text" id="dateTime" name="dateTime" placeholder="Click to select date and time">
-                    <div class="datetime-hint">Please select your preferred maintenance time</div>
+                    <div class="datetime-hint" id="dateTimeHint">Please select your preferred maintenance time</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="priority">Priority Level</label>
+                <input type="hidden" id="priority" name="priority" value="low">
+                <div class="priority-selection" id="prioritySelection">
+                    <button type="button" class="priority-btn active" id="priorityLow" data-priority="low">
+                        <span class="priority-dot"></span>
+                        <span class="priority-text">Low</span>
+                    </button>
+                    <button type="button" class="priority-btn" id="priorityMedium" data-priority="medium">
+                        <span class="priority-dot"></span>
+                        <span class="priority-text">Medium</span>
+                    </button>
+                    <button type="button" class="priority-btn" id="priorityCritical" data-priority="critical">
+                        <span class="priority-dot"></span>
+                        <span class="priority-text">Critical</span>
+                    </button>
                 </div>
             </div>
 
@@ -152,8 +864,219 @@
 
             <button type="submit" class="btn-submit" id="submitButton" name="submitButton">Submit Issue</button>
         </form>
-    </main>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="js/form.js"></script>
+    <script>
+        // Loading indicator functions
+        function showLoading() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) {
+                loadingContainer.classList.add('active');
+            }
+        }
+
+        function hideLoading() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) {
+                loadingContainer.classList.remove('active');
+            }
+        }
+
+        // Hide loading indicator when page is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            hideLoading();
+            
+            // Branch selector functionality
+            const switchBranchBtn = document.getElementById('switchBranch');
+            if (switchBranchBtn) {
+                switchBranchBtn.addEventListener('click', function() {
+                    this.classList.add('active');
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg> Switching...';
+                    
+                    // Add a subtle animation to the dashboard
+                    const dashboardHeader = document.querySelector('.dashboard-header');
+                    if (dashboardHeader) {
+                        dashboardHeader.style.transition = 'all 0.3s ease';
+                        dashboardHeader.style.opacity = '0.7';
+                        
+                        setTimeout(() => {
+                            dashboardHeader.style.opacity = '1';
+                        }, 800);
+                    }
+                    
+                    setTimeout(() => {
+                        this.classList.remove('active');
+                        this.innerHTML = originalText;
+                        
+                        // Ensure branch name and icon are preserved
+                        const branchName = document.getElementById('branchName');
+                        if (branchName) {
+                            // Make sure the icon is preserved
+                            if (!branchName.querySelector('svg')) {
+                                const iconHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>`;
+                                branchName.innerHTML = iconHTML + branchName.textContent;
+                            }
+                        }
+                        
+                        // Refresh stats with new random values
+                        const newValue = Math.floor(Math.random() * 5) + 1;
+                        const inProgressValue = Math.floor(Math.random() * 7) + 2;
+                        const totalRoomsValue = Math.floor(Math.random() * 30) + 100;
+                        
+                        const newIssuesCount = document.getElementById('newIssuesCount');
+                        const inProgressCount = document.getElementById('inProgressCount');
+                        const totalRooms = document.getElementById('totalRooms');
+                        
+                        if (newIssuesCount) animateCounterOptimized(newIssuesCount, newValue);
+                        if (inProgressCount) animateCounterOptimized(inProgressCount, inProgressValue);
+                        if (totalRooms) animateCounterOptimized(totalRooms, totalRoomsValue);
+                    }, 1500);
+                });
+            }
+            
+            // Time selection functionality - use event delegation for better performance
+            const timeSelectionButtons = document.getElementById('timeSelectionButtons');
+            const dateTimeContainer = document.getElementById('dateTimeContainer');
+            const timePreferenceInput = document.getElementById('timePreference');
+            
+            if (timeSelectionButtons) {
+                timeSelectionButtons.addEventListener('click', function(e) {
+                    const button = e.target.closest('.time-btn');
+                    if (!button) return;
+                    
+                    // Remove active class from all buttons
+                    const buttons = this.querySelectorAll('.time-btn');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update hidden input value
+                    const timeValue = button.dataset.time;
+                    if (timePreferenceInput) {
+                        timePreferenceInput.value = timeValue;
+                    }
+                    
+                    // Show/hide date time container
+                    if (dateTimeContainer) {
+                        dateTimeContainer.style.display = (timeValue === 'before' || timeValue === 'after') ? 'block' : 'none';
+                    }
+                });
+            }
+            
+            // Priority selection - use event delegation
+            const prioritySelection = document.querySelector('.priority-selection');
+            const priorityInput = document.getElementById('priority');
+            
+            if (prioritySelection) {
+                prioritySelection.addEventListener('click', function(e) {
+                    const button = e.target.closest('.priority-btn');
+                    if (!button) return;
+                    
+                    // Remove active class from all buttons
+                    const buttons = this.querySelectorAll('.priority-btn');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update hidden input value
+                    const priorityValue = button.dataset.priority;
+                    if (priorityInput) {
+                        priorityInput.value = priorityValue;
+                    }
+                });
+            }
+            
+            // Form submission with optimized handling
+            const form = document.getElementById('issueForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showLoading();
+                    
+                    const submitBtn = document.getElementById('submitButton');
+                    if (submitBtn) {
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+                        
+                        // Simulate form submission (replace with actual API call)
+                        setTimeout(() => {
+                            hideLoading();
+                            submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Success!';
+                            submitBtn.classList.add('success');
+                            
+                            // Reset form after delay
+                            setTimeout(() => {
+                                form.reset();
+                                submitBtn.disabled = false;
+                                submitBtn.classList.remove('success');
+                                submitBtn.innerHTML = originalText;
+                                
+                                // Update dashboard stats
+                                const newIssuesCount = document.getElementById('newIssuesCount');
+                                if (newIssuesCount) {
+                                    newIssuesCount.textContent = parseInt(newIssuesCount.textContent || 0) + 1;
+                                }
+                            }, 1500);
+                        }, 1000);
+                    }
+                });
+            }
+            
+            // Initialize dashboard stats
+            initializeDashboardStats();
+        });
+        
+        // Initialize dashboard stats
+        function initializeDashboardStats() {
+            // Set initial values to zero
+            const newIssuesCount = document.getElementById('newIssuesCount');
+            const inProgressCount = document.getElementById('inProgressCount');
+            const totalRooms = document.getElementById('totalRooms');
+            
+            if (newIssuesCount) newIssuesCount.textContent = '0';
+            if (inProgressCount) inProgressCount.textContent = '0';
+            if (totalRooms) totalRooms.textContent = '0';
+            
+            // Don't animate with hardcoded values - let the real data load
+            // The proper values will be set by updateMaintenanceStats() in form.js
+        }
+        
+        // Optimized counter animation function using requestAnimationFrame
+        function animateCounterOptimized(element, target, duration = 1000) {
+            if (!element) return;
+            
+            const startTime = performance.now();
+            const startValue = 0;
+            
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                
+                const currentValue = Math.floor(progress * target);
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target;
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+        
+        // Legacy counter animation function for backward compatibility
+        function animateCounter(element, target, duration = 1500) {
+            return animateCounterOptimized(element, target, duration);
+        }
+    </script>
 </body>
 </html> 

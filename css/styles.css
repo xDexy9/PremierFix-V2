@@ -177,32 +177,25 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-submit {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
+    width: 100%;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
     font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.5;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
+    font-weight: 600;
     cursor: pointer;
-    user-select: none;
-    border: 1px solid transparent;
-    border-radius: 0.375rem;
-    transition: all 0.15s ease-in-out;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-submit:hover {
     background-color: #2980b9;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
-}
-
-.btn-submit:active {
-    transform: translateY(0);
 }
 
 .issues-list {
@@ -545,9 +538,9 @@ input:focus, select:focus, textarea:focus {
 }
 
 .time-btn.active {
-    background-color: var(--secondary-color);
+    background-color: #3498db;
     color: white;
-    border-color: var(--secondary-color);
+    border-color: #3498db;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
 }
 
@@ -1433,4 +1426,245 @@ button:focus-visible {
     border-radius: 8px;
     font-weight: 500;
     z-index: 1000;
+}
+
+/* Add styles for priority buttons */
+.priority-selection {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.priority-btn {
+    flex: 1;
+    padding: 0.9rem;
+    border: 1.5px solid var(--border-color);
+    background-color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.priority-btn:hover {
+    background-color: var(--background-color);
+    border-color: #b4b4b4;
+}
+
+.priority-btn.active[data-priority="low"] {
+    background-color: #8ce020;
+    color: white;
+    border-color: #84cc16;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+.priority-btn.active[data-priority="medium"] {
+    background-color: #f39c12;
+    color: white;
+    border-color: #f39c12;
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.2);
+}
+
+.priority-btn.active[data-priority="critical"] {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+}
+
+.priority-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.priority-btn[data-priority="low"] .priority-dot {
+    background-color: #3498db;
+}
+
+.priority-btn[data-priority="medium"] .priority-dot {
+    background-color: #f39c12;
+}
+
+.priority-btn[data-priority="critical"] .priority-dot {
+    background-color: #e74c3c;
+}
+
+.priority-btn.active .priority-dot {
+    background-color: white;
+}
+
+/* Form styles to match original */
+.issue-form {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    margin: 0 auto;
+    max-width: 700px;
+    transition: transform 0.3s ease;
+}
+
+.issue-form:focus-within {
+    transform: scale(1.01);
+}
+
+.form-group {
+    margin-bottom: 1.8rem;
+    text-align: left;
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.form-group:focus-within label {
+    color: var(--secondary-color);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+input:hover, select:hover, textarea:hover {
+    border-color: #b4b4b4;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+.btn-submit {
+    width: 100%;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-submit:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.location-group {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 1.8rem;
+}
+
+.location-field {
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.time-selection {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.time-btn {
+    flex: 1;
+    padding: 0.9rem;
+    border: 1.5px solid var(--border-color);
+    background-color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.time-btn:hover {
+    background-color: var(--background-color);
+    border-color: #b4b4b4;
+}
+
+.time-btn.active {
+    background-color: #3498db;
+    color: white;
+    border-color: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+.datetime-container {
+    margin-top: 1rem;
+    background-color: var(--background-color);
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.datetime-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.datetime-container input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: white;
+}
+
+.datetime-container .datetime-hint {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+textarea {
+    resize: none;
+    height: 120px; /* Fixed height for 4 rows */
+    min-height: 120px;
+    max-height: 120px;
+    overflow-y: auto;
 } 

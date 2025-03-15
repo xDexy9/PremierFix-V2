@@ -10,23 +10,54 @@ To ensure your PremierFix application works correctly when hosted on GitHub Page
 4. Click on the "Rules" tab
 5. Replace the current rules with the following:
 
-```
+```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read access to all users
+    // Allow read access to all collections
     match /{document=**} {
       allow read: if true;
+      allow write: if true;
     }
     
-    // Allow write access to authenticated users (even anonymous)
-    match /issues/{issueId} {
-      allow create: if request.auth != null;
-      allow update: if request.auth != null 
-                    && request.resource.data.keys().hasOnly(['status', 'updatedAt'])
-                    || request.auth.uid == resource.data.userId;
-      allow delete: if request.auth != null 
-                    && request.auth.uid == resource.data.userId;
+    // Hotel branches collection
+    match /hotel_branches/{branchId} {
+      allow write: if true;
+      
+      // Room data subcollection
+      match /rooms/{roomId} {
+        allow write: if true;
+      }
+    }
+    
+    // Room audits collection
+    match /room_audits/{auditId} {
+      allow write: if true;
+      
+      // Validate audit data
+      allow create: if request.resource.data.branchId is string &&
+                      request.resource.data.roomNumber is string &&
+                      request.resource.data.timestamp is timestamp &&
+                      request.resource.data.items is map;
+    }
+    
+    // Maintenance issues collection
+    match /maintenance_issues/{issueId} {
+      allow write: if true;
+      
+      // Validate issue data
+      allow create: if request.resource.data.branchId is string &&
+                      (request.resource.data.roomNumber is string || request.resource.data.location is string) &&
+                      request.resource.data.category is string &&
+                      request.resource.data.description is string &&
+                      request.resource.data.priority in ['low', 'medium', 'critical'] &&
+                      request.resource.data.authorName is string &&
+                      request.resource.data.status in ['New', 'In Progress', 'Completed'] &&
+                      request.resource.data.dateCreated is timestamp;
+      
+      // Allow updates only to specific fields
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+                      .hasOnly(['status', 'updatedAt']);
     }
   }
 }

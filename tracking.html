@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PremierFix - Track Issues</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbAlYMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#511e58">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/autoprefixer.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- Feature detection -->
     <script src="js/modernizr-custom.js"></script>
     <!-- Polyfills for older browsers -->
@@ -26,73 +26,30 @@
     <script src="js/firebase-config.js"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- Service Worker Registration -->
-    <script>
-        // Check if service workers are supported
-        if ('serviceWorker' in navigator) {
-            // Use the window load event to keep the page load performant
-            window.addEventListener('load', () => {
-                // Check if we're on HTTPS or localhost (for development)
-                const isLocalhost = Boolean(
-                    window.location.hostname === 'localhost' ||
-                    window.location.hostname === '[::1]' ||
-                    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
-                );
-                
-                // Only register service worker on HTTPS or localhost
-                if (window.location.protocol === 'https:' || isLocalhost) {
-                    // Get the base path for GitHub Pages
-                    const basePath = location.pathname.includes('/PremierFix') ? '/PremierFix' : '';
-                    
-                    navigator.serviceWorker.register(basePath + '/service-worker.js')
-                        .then(registration => {
-                            console.log('Service Worker registered with scope:', registration.scope);
-                            
-                            // Check for updates
-                            registration.onupdatefound = () => {
-                                const installingWorker = registration.installing;
-                                installingWorker.onstatechange = () => {
-                                    if (installingWorker.state === 'installed') {
-                                        if (navigator.serviceWorker.controller) {
-                                            console.log('New content is available; please refresh.');
-                                        } else {
-                                            console.log('Content is cached for offline use.');
-                                        }
-                                    }
-                                };
-                            };
-                        })
-                        .catch(error => {
-                            console.error('Service Worker registration failed:', error);
-                            
-                            // If running from file:// protocol, show a more helpful message
-                            if (window.location.protocol === 'file:') {
-                                console.warn('Service Worker registration failed because you are running from the file:// protocol. Please use a local web server as described in the README.md file.');
-                            }
-                        });
-                } else {
-                    console.warn('Service Worker registration skipped: Not running on HTTPS or localhost');
-                }
-            });
-        } else {
-            console.warn('Service Workers are not supported in this browser');
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
+    <!-- Loading indicator -->
+    <div class="loading-container" id="loadingContainer">
+        <div class="loading-spinner"></div>
+    </div>
+
     <nav class="navbar">
         <div class="nav-content">
             <div class="nav-brand">
-                <img src="./images/PremierFix.png" alt="PremierFix Logo" class="brand-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
+                <img src="images/PremierFix.png" alt="PremierFix Logo" class="brand-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
             </div>
             <div class="nav-links">
                 <a href="index.html">Log Issue</a>
                 <a href="tracking.html" class="active">Track Issues</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="hoteleditor.html">Hotel Management</a>
             </div>
         </div>
     </nav>
 
-    <main class="container">
+    <div class="container">
         <h1>Track Maintenance Issues</h1>
         
         <div class="scheduled-maintenance">
@@ -144,16 +101,22 @@
                 <input type="date" id="dateTo" name="dateTo" class="filter-input" placeholder="To">
             </div>
             <div class="filter-group">
-                <label for="sortControlButtons" class="filter-label">Sort By</label>
+                <label for="sortControl" class="filter-label">Sort By</label>
                 <input type="hidden" id="sortControl" name="sortControl" value="desc">
-                <div class="sort-control" id="sortControlButtons">
-                    <span>Date</span>
-                    <span class="sort-icon">↓</span>
+                <div class="sort-buttons" id="sortControlButtons">
+                    <button type="button" class="sort-btn active" data-sort="desc">
+                        <i class="fas fa-sort-amount-down"></i> Newest First
+                    </button>
+                    <button type="button" class="sort-btn" data-sort="asc">
+                        <i class="fas fa-sort-amount-up"></i> Oldest First
+                    </button>
                 </div>
             </div>
             <div class="filter-group">
-                <label for="clearFilters" class="filter-label">&nbsp;</label>
-                <button class="clear-filters" id="clearFilters" name="clearFilters">Clear Filters</button>
+                <label class="filter-label">&nbsp;</label>
+                <button type="button" id="clearFilters" class="clear-filters-btn">
+                    <i class="fas fa-times"></i> Clear Filters
+                </button>
             </div>
         </div>
 
@@ -170,7 +133,28 @@
             <!-- Empty div for issues -->
         </div>
         <div id="paginationContainer"></div>
-    </main>
+    </div>
     <script src="js/tracking.js"></script>
+    <script>
+        // Loading indicator functions
+        function showLoading() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) {
+                loadingContainer.classList.add('active');
+            }
+        }
+
+        function hideLoading() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (loadingContainer) {
+                loadingContainer.classList.remove('active');
+            }
+        }
+
+        // Hide loading indicator when page is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            hideLoading();
+        });
+    </script>
 </body>
 </html> 
