@@ -9,6 +9,7 @@
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(255, 255, 255, 0.2);
     --glass-shadow: rgba(31, 38, 135, 0.15);
+    --primary-color-rgb: 81, 30, 88; /* RGB equivalent of #511e58 */
 }
 
 * {
@@ -101,7 +102,7 @@ body {
 }
 
 .nav-links a.active {
-    background: var(--secondary-color);
+    background: #3498DB;
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
 }
@@ -134,7 +135,7 @@ h1 {
 }
 
 .issue-form:focus-within {
-    transform: scale(1.01);
+    /*transform: scale(1.005);*/
 }
 
 .form-group {
@@ -178,7 +179,7 @@ input:focus, select:focus, textarea:focus {
 
 .btn-submit {
     width: 100%;
-    background-color: #3498db;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
     color: white;
     border: none;
     padding: 1rem;
@@ -193,7 +194,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-submit:hover {
-    background-color: #2980b9;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
 }
@@ -538,7 +539,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .time-btn.active {
-    background-color: #3498db;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
     color: white;
     border-color: #3498db;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
@@ -644,15 +645,10 @@ textarea {
     overflow-y: auto;
 }
 
-.location-group {
-    display: flex;
-    gap: 1.2rem;
-    margin-bottom: 1.8rem;
-}
-
+/* Location field and input styles */
 .location-field {
-    flex: 1;
-    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
 }
 
 .location-field input,
@@ -693,11 +689,11 @@ textarea {
 
 @media (max-width: 600px) {
     .location-group {
-        flex-direction: column;
-        gap: 1rem;
+        grid-template-columns: 1fr;
     }
     
-    .location-field {
+    .form-group:not(.location-group) .menu,
+    .location-field .menu {
         width: 100%;
     }
 }
@@ -991,29 +987,84 @@ button:focus-visible {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    color: white;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    animation: slideIn 0.3s ease-out;
     max-width: 400px;
+    min-width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(110%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    overflow: hidden;
+    border-left: 4px solid #3a7bd5;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-content {
+    padding: 15px;
+}
+
+.notification-message {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    white-space: pre-line;
 }
 
 .notification.success {
-    background-color: #27ae60;
+    border-left-color: #4ade80;
+    background-color: rgba(74, 222, 128, 0.1);
 }
 
 .notification.error {
-    background-color: #e74c3c;
+    border-left-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 .notification.info {
-    background-color: var(--secondary-color);
+    border-left-color: #3a7bd5;
+    background-color: rgba(58, 123, 213, 0.1);
+}
+
+/* Add animation for critical notifications */
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Update problematic selectors for compatibility */
+.notification-message.critical-message {
+  font-weight: bold;
+}
+
+.notification.critical-notification {
+  animation: pulse-border 2s infinite;
+  border-left-width: 6px;
+}
+
+/* Instead of using the :contains pseudo-class which has compatibility issues */
+/* .notification-message:contains("CRITICAL") {
+  font-weight: bold;
+}
+
+.notification:has(.notification-message:contains("CRITICAL")) {
+  animation: pulse-border 2s infinite;
+  border-left-width: 6px;
+} */
+
+/* Make sure notifications stack if multiple appear */
+.notification + .notification {
+    top: 95px;
+}
+
+.notification + .notification + .notification {
+    top: 170px;
 }
 
 /* Enhanced Filters */
@@ -1240,16 +1291,18 @@ button:focus-visible {
 }
 
 .task-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px 0 var(--glass-shadow);
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    /* MODIFIED: Set background to plain white and remove glass effect, added !important */
+    background: white !important; 
+    /* backdrop-filter: blur(10px) saturate(180%); */
+    /* -webkit-backdrop-filter: blur(10px) saturate(180%); */
+    border: 1px solid var(--border-color); /* Use standard border color */
+    border-radius: 12px; /* Slightly less rounded */
+    padding: 1.5rem; /* Adjusted padding */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); /* Match issue-form shadow */
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    /* REMOVED: flex-grow: 1; */
 }
 
 .task-card:hover {
@@ -1513,7 +1566,7 @@ button:focus-visible {
 }
 
 .issue-form:focus-within {
-    transform: scale(1.01);
+    /*transform: scale(1.005);*/
 }
 
 .form-group {
@@ -1557,7 +1610,7 @@ input:focus, select:focus, textarea:focus {
 
 .btn-submit {
     width: 100%;
-    background-color: #3498db;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
     color: white;
     border: none;
     padding: 1rem;
@@ -1572,20 +1625,22 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-submit:hover {
-    background-color: #2980b9;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
 }
 
 .location-group {
-    display: flex;
-    gap: 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
     margin-bottom: 1.8rem;
+    align-items: flex-end;
 }
 
 .location-field {
-    flex: 1;
-    transition: all 0.3s ease;
+    width: 100%;
+    position: relative;
 }
 
 .time-selection {
@@ -1613,7 +1668,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .time-btn.active {
-    background-color: #3498db;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
     color: white;
     border-color: #3498db;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
@@ -1667,4 +1722,1964 @@ textarea {
     min-height: 120px;
     max-height: 120px;
     overflow-y: auto;
-} 
+}
+
+/* Button container improvements */
+.button-container {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  margin-top: 1.5rem;
+  justify-content: center;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+}
+
+.button-container .button,
+.button-container .btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 48px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Ensure the buttons have consistent height and aligned properly */
+.button-container .button {
+  padding: 12px 24px;
+}
+
+.button-container .btn {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 24px;
+}
+
+/* Add hover effects for both buttons */
+.button-container .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 119, 255, 0.2);
+}
+
+.button-container .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(252, 70, 100, 0.2);
+}
+
+/* Add slight animation when clicked */
+.button-container .button:active,
+.button-container .btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+  .button-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .button-container .button,
+  .button-container .btn {
+    width: 100%;
+  }
+}
+
+/* Button styles */
+.button {
+  position: relative;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  background-color: #0077ff;
+  transition: all 0.2s ease;
+  overflow: visible;
+}
+
+.button:active {
+  transform: scale(0.96);
+}
+
+.button:before,
+.button:after {
+  position: absolute;
+  content: "";
+  width: 150%;
+  left: 50%;
+  height: 100%;
+  transform: translateX(-50%);
+  z-index: -1;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.button:hover:before {
+  top: -70%;
+  background-image: radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, transparent 20%, #0077ff 20%, transparent 30%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, #0077ff 15%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%);
+  background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%,
+    10% 10%, 18% 18%;
+  background-position: 50% 120%;
+  animation: greentopBubbles 0.6s ease;
+}
+
+@keyframes greentopBubbles {
+  0% {
+    background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%,
+      40% 90%, 55% 90%, 70% 90%;
+  }
+
+  50% {
+    background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%,
+      50% 50%, 65% 20%, 90% 30%;
+  }
+
+  100% {
+    background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%,
+      50% 40%, 65% 10%, 90% 20%;
+    background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+  }
+}
+
+.button:hover::after {
+  bottom: -70%;
+  background-image: radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, #0077ff 15%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%),
+    radial-gradient(circle, #0077ff 20%, transparent 20%);
+  background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 20% 20%, 18% 18%;
+  background-position: 50% 0%;
+  animation: greenbottomBubbles 0.6s ease;
+}
+
+@keyframes greenbottomBubbles {
+  0% {
+    background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%,
+      70% -10%, 70% 0%;
+  }
+
+  50% {
+    background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%,
+      105% 0%;
+  }
+
+  100% {
+    background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%,
+      110% 10%;
+    background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+  }
+}
+
+/* Critical button styles */
+.btn {
+ display: inline-block;
+ padding: 0.9rem 1.8rem;
+ font-size: 16px;
+ font-weight: 700;
+ color: white;
+ border: 3px solid rgb(252, 70, 100);
+ border-radius: 6px;
+ cursor: pointer;
+ position: relative;
+ background-color: rgba(252, 70, 100, 0.1);
+ text-decoration: none;
+ overflow: hidden;
+ z-index: 1;
+ font-family: inherit;
+ transition: all 0.3s ease;
+ text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+ letter-spacing: 0.5px;
+}
+
+.btn::before {
+ content: "";
+ position: absolute;
+ left: 0;
+ top: 0;
+ width: 100%;
+ height: 100%;
+ background-color: rgb(252, 70, 100);
+ transform: translateX(-100%);
+ transition: all .3s;
+ z-index: -1;
+ pointer-events: none;
+}
+
+.btn:hover::before {
+ transform: translateX(0);
+}
+
+/* Modern Select Dropdown Styles */
+.custom-select-container {
+  position: relative;
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.custom-select-container select {
+  display: none; /* Hide original select element */
+}
+
+.select-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  font-size: 1rem;
+}
+
+.select-box::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color);
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.select-box svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--text-color);
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: center;
+}
+
+.select-box.open svg {
+  transform: rotate(-180deg);
+  fill: white;
+}
+
+.select-box.open {
+  color: white;
+  border-color: var(--primary-color);
+  border-radius: 8px 8px 0 0;
+}
+
+.select-box.open::after {
+  transform: scaleX(1);
+  transform-origin: right;
+}
+
+.select-box.open + .select-options {
+  max-height: 300px;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  border-color: var(--primary-color);
+}
+
+.select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1.5px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 100;
+}
+
+.select-box.open + .select-options {
+  max-height: 300px;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  border-color: var(--primary-color);
+}
+
+.select-option {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.select-option:hover {
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.select-option.selected {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  font-weight: 500;
+}
+
+.select-option::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color);
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.select-option:hover::before {
+  transform: scaleX(1);
+  transform-origin: right;
+}
+
+.select-option:hover {
+  color: white;
+}
+
+/* Style for disabled options */
+.select-option.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Focus state for accessibility */
+.select-box:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline when dropdown is open */
+.select-box.open:focus {
+  outline: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .select-box {
+    padding: 10px 14px;
+  }
+  
+  .select-option {
+    padding: 10px 14px;
+  }
+}
+
+/* Override location-field select styles */
+.location-field .select-box {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Make sure dropdown always on top */
+.select-options {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Dropdown Menu Styles from UIverse.io by gharsh11032000 */
+.menu {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #000000;
+  width: fit-content;
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu a {
+  text-decoration: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.menu .link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 36px;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid rgba(204, 204, 204, 0.8);
+}
+
+.menu .link::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color, #0a3cff);
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.menu .link svg {
+  width: 14px;
+  height: 14px;
+  fill: #000000;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.menu .item {
+  position: relative;
+}
+
+.menu .item .submenu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  overflow: hidden;
+  max-height: 280px; /* Limit height to show 7 items */
+  overflow-y: auto;
+}
+
+/* Minimalistic scrollbar styles */
+.menu .item .submenu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu .item .submenu::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.menu .item .submenu::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.menu .item .submenu::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox scrollbar */
+.menu .item .submenu {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+}
+
+.menu .item:hover .submenu {
+  display: block !important;
+}
+
+/* Ensure submenu stays visible when hovering over it */
+.menu .submenu:hover,
+.menu .item:hover .submenu,
+.menu .submenu:focus-within {
+    display: block !important;
+}
+
+.form-group .submenu .submenu-link {
+    padding: 12px 15px;
+    transition: all 0.2s ease;
+    display: block;
+    color: var(--text-color);
+}
+
+.form-group .submenu .submenu-link:hover {
+    background-color: #511E58;
+    color: white;
+}
+
+/* Ensure consistent label styling across all form fields */
+.form-group label {
+    display: block;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: color 0.2s;
+}
+
+/* Menu error state styling */
+.form-group .menu .link.error {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.05);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+/* Enhance submenu link styling */
+.form-group .submenu {
+    padding: 5px 0;
+}
+
+.form-group .submenu .submenu-item {
+    margin: 2px 0;
+}
+
+.form-group .submenu .submenu-link {
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 0 2px;
+}
+
+.form-group .submenu .submenu-link:hover {
+    background-color: #511E58;
+    color: white;
+    transform: translateX(2px);
+}
+
+/* Update the form-group menu link styles */
+.form-group .menu .link,
+.location-field .menu .link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    color: var(--text-color);
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.2s ease;
+    height: 46px;
+    box-sizing: border-box;
+}
+
+.form-group .menu .link:hover,
+.location-field .menu .link:hover {
+    background-color: #f8f9fa;
+    border-color: #ccc;
+}
+
+/* Update the submenu item hover styles */
+.form-group .menu .item:hover .link,
+.location-field .menu .item:hover .link {
+    border-color: #ccc;
+}
+
+.form-group .menu .item:hover .submenu,
+.location-field .menu .item:hover .submenu {
+    display: block !important;
+}
+
+/* Update all submenu links to use the purple color on hover */
+.submenu .submenu-link:hover,
+.menu .submenu .submenu-link:hover,
+.form-group .submenu .submenu-link:hover,
+.location-field .submenu .submenu-link:hover {
+    background-color: #511E58 !important;
+    color: white !important;
+}
+
+/* Update both menu background colors to white */
+.form-group .menu .link,
+.location-field .menu .link,
+#roomNumber {
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+/* Improve the submenu display behavior */
+.menu .item.open .submenu,
+.menu .submenu.open,
+.menu .submenu:hover {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Dashboard Grid Layout */
+.dashboard-parent {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: minmax(180px, 2fr) minmax(90px, 1fr);
+    gap: 15px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    min-height: 320px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    max-width: 700px;
+    margin: 0 auto;
+    transition: none !important; /* Disable any transitions */
+}
+
+.dashboard-parent:hover {
+    transform: none !important; /* Disable transform on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important; /* Keep original shadow */
+}
+
+.dashboard-div1 {
+    grid-column: span 3 / span 3;
+    grid-row: 1;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: none;
+}
+
+.dashboard-div1:hover {
+    transform: none;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-div1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #3a607300);
+    opacity: 0.7;
+}
+
+.dashboard-div2, 
+.dashboard-div3, 
+.dashboard-div4 {
+    grid-row: 2;
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow:
+        5px 5px 15px #e6e6e6,
+        -5px -5px 15px #f3f3f3;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-div2:hover, 
+.dashboard-div3:hover, 
+.dashboard-div4:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stats-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 90px;
+}
+
+.stats-wrapper .heading {
+    font-size: 0.8em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.stats-wrapper .bottom-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.stats-wrapper .bottom-wrapper .dashboard-icon {
+    width: 30px;
+    height: 30px;
+    fill: #3a7bd5;
+}
+
+.dashboard-div2 .dashboard-icon {
+    fill: #4ade80; /* Green for New Jobs */
+}
+
+.dashboard-div3 .dashboard-icon {
+    fill: #f59e0b; /* Orange for In Progress */
+}
+
+.dashboard-div4 .dashboard-icon {
+    fill: #3a7bd5; /* Blue for Total Rooms */
+}
+
+.stats-wrapper .bottom-wrapper .count {
+    font-size: 2em;
+    font-weight: 700;
+    color: #1e293b;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .dashboard-parent {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto repeat(3, minmax(90px, auto));
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    .dashboard-div1 {
+        grid-column: 1;
+        grid-row: 1;
+        padding: 15px;
+    }
+    
+    .dashboard-div2, 
+    .dashboard-div3, 
+    .dashboard-div4 {
+        grid-column: 1;
+    }
+    
+    .dashboard-div2 {
+        grid-row: 2;
+    }
+    
+    .dashboard-div3 {
+        grid-row: 3;
+    }
+    
+    .dashboard-div4 {
+        grid-row: 4;
+    }
+    
+    .stats-wrapper .bottom-wrapper .count {
+        font-size: 1.5em;
+    }
+    
+    .branch-details h2 {
+        font-size: 1.5rem;
+    }
+    
+    .branch-details p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Adjust the existing branch-info-container to work with the new layout */
+.branch-info-container {
+    background: transparent;
+    border-radius: 16px;
+    overflow: visible;
+    box-shadow: none;
+    margin-bottom: 2rem;
+    border: none;
+    transition: none !important; /* Disable any transitions */
+}
+
+.branch-info-container:hover {
+    transform: none !important; /* Disable transform on hover */
+    box-shadow: none !important; /* Keep original shadow */
+}
+
+/* Updating header-action-btn to fit better in the new layout */
+.header-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 1;
+    margin-top: 1rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    width: fit-content;
+    align-self: flex-start;
+}
+
+.header-action-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Improve branch details styling in the new layout */
+.branch-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.branch-details h2 {
+    font-size: 1.75rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Style the branch status in the new layout */
+.branch-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: fit-content;
+    margin-top: 0.5rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+/* Ensure branch address looks right */
+.branch-details p {
+    font-size: 0.95rem;
+    margin: 0;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Ensure location dropdown width matches room number input width */
+.location-field .menu {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure category dropdown width matches description textarea width */
+.form-group:not(.location-group) .menu {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix location group to ensure proper alignment */
+.location-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    align-items: flex-end;
+}
+
+/* Make sure all dropdowns and inputs have consistent box-sizing behavior */
+.form-group .menu .link,
+.location-field .menu .link,
+#roomNumber,
+textarea,
+.form-group input,
+.form-group select,
+.form-group textarea {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+    .location-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-group:not(.location-group) .menu,
+    .location-field .menu {
+        width: 100%;
+    }
+}
+
+/* Fix dropdown menu widths to match their fields */
+.location-field .menu {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Make category dropdown match description width */
+.form-group:not(.location-group) .menu {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure all menu links have correct box-sizing */
+.form-group .menu .link,
+.location-field .menu .link {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 43px !important;
+}
+
+/* Ensure consistent padding */
+.form-group .menu .link,
+.location-field .menu .link,
+#roomNumber {
+    padding: 14.57px 15px !important;
+}
+
+/* Fix dropdown menu widths with exact pixel dimensions */
+.location-field .menu {
+    width: 302px !important;
+    box-sizing: border-box !important;
+}
+
+.location-field .menu .link {
+    width: 302px !important;
+    height: 40.88px !important;
+    box-sizing: border-box !important;
+}
+
+/* Make category dropdown exactly 620x46px */
+.form-group:not(.location-group) .menu {
+    width: 620px !important;
+    box-sizing: border-box !important;
+}
+
+.form-group:not(.location-group) .menu .link {
+    width: 620px !important;
+    height: 40.88px !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure submenus have the same width as their parent */
+.location-field .menu .submenu {
+    width: 302px !important;
+}
+
+.form-group:not(.location-group) .menu .submenu {
+    width: 620px !important;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .location-field .menu,
+    .location-field .menu .link,
+    .location-field .menu .submenu,
+    .form-group:not(.location-group) .menu,
+    .form-group:not(.location-group) .menu .link,
+    .form-group:not(.location-group) .menu .submenu {
+        width: 100% !important;
+    }
+}
+
+/* Add slide animation to submenu links */
+.form-group .submenu .submenu-link,
+.location-field .submenu .submenu-link {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.form-group .submenu .submenu-link::before,
+.location-field .submenu .submenu-link::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #511E58;
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.form-group .submenu .submenu-link:hover::before,
+.location-field .submenu .submenu-link:hover::before {
+    transform: scaleX(1);
+    transform-origin: right;
+}
+
+.form-group .submenu .submenu-link:hover,
+.location-field .submenu .submenu-link:hover {
+    color: #ffffff !important;
+}
+
+/* Dashboard Audit Button */
+.dashboard-audit-btn {
+    width: 210px;
+    height: 121.67px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-audit-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-audit-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-audit-btn svg {
+    width: 32px;
+    height: 32px;
+    stroke: white;
+    margin-bottom: 10px;
+}
+
+/* Ensure the button is properly sized in mobile view */
+@media (max-width: 768px) {
+    .dashboard-audit-btn {
+        width: 100%;
+        height: auto;
+        min-height: 90px;
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .dashboard-audit-btn svg {
+        margin-bottom: 0;
+        margin-right: 8px;
+    }
+}
+
+/* --- Comment Modal Styles --- */
+
+.hidden {
+  display: none !important; /* Ensure this exists */
+}
+
+body.modal-open {
+  overflow: hidden; /* Prevent background scrolling when modal is open */
+}
+
+.comment-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95); /* Start slightly scaled down */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  /* Adjusted z-index as overlay is removed */
+  z-index: 1000; 
+  width: 90%;
+  max-width: 600px; /* Max width of the modal */
+  max-height: 85vh; /* Max height relative to viewport */
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  /* Removed visibility from transition as overlay handles it */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  overflow: hidden; /* Prevent content spilling out before sizing */
+  visibility: hidden; /* Hide initially */
+}
+
+/* Styles when modal is shown */
+/* REMOVED body.modal-open .modal-overlay selector */
+body.modal-open .comment-modal {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  visibility: visible; /* Show when open */
+}
+
+/* Styles for closing animation */
+.comment-modal.closing {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+    visibility: hidden; /* Hide during closing */
+}
+/* REMOVED body.modal-open .modal-overlay.closing */
+
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa; /* Light header background */
+}
+
+.modal-header h5 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--primary, #511e58); /* Use primary color if defined */
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0 5px;
+  opacity: 0.7;
+}
+
+.close-modal-btn:hover {
+  opacity: 1;
+  color: #343a40;
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow body to fill remaining space */
+  overflow: hidden; /* Important for managing internal scrolling */
+}
+
+.comment-list-container {
+  flex-grow: 1; /* Takes up available space */
+  overflow-y: auto; /* Enable vertical scrolling ONLY for the list */
+  margin-bottom: 15px;
+  padding-right: 5px; /* Space for scrollbar */
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #fdfdfd;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.comment-item {
+  padding: 10px 0;
+  border-bottom: 1px dashed #eee;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-content {
+  flex-grow: 1;
+}
+
+.comment-text {
+  margin: 0 0 5px 0;
+  white-space: pre-wrap; /* Preserve line breaks */
+  word-wrap: break-word; /* Break long words */
+  font-size: 0.95rem;
+}
+
+.comment-meta {
+  font-size: 0.8rem;
+  color: #6c757d;
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 5px 15px; /* Row and column gap */
+}
+
+.comment-author {
+  font-weight: 500;
+}
+
+.comment-time {
+   font-style: italic;
+}
+
+.comment-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 5px;
+}
+
+.comment-action-btn {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 2px 4px;
+  opacity: 0.6;
+}
+.comment-action-btn:hover {
+  opacity: 1;
+  color: var(--primary, #511e58);
+}
+.comment-action-btn i {
+   font-size: 0.9em;
+}
+
+
+.no-comments {
+  text-align: center;
+  color: #6c757d;
+  padding: 20px;
+  font-style: italic;
+}
+
+.comment-input-area {
+  margin-top: auto; /* Pushes to the bottom if list isn't full */
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.comment-input-area textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  resize: vertical; /* Allow vertical resize */
+  min-height: 60px;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.comment-input-area textarea:focus {
+  border-color: var(--primary-light, #a87baa);
+  box-shadow: 0 0 0 0.2rem rgba(81, 30, 88, 0.25); /* Use primary color */
+  outline: none;
+}
+
+.comment-input-area .comment-submit-btn {
+  /* Reuse action-btn styles */
+  padding: 8px 15px;
+}
+
+.comment-input-area .comment-status-indicator {
+  margin-left: 10px;
+  color: var(--primary, #511e58);
+}
+
+
+/* --- Badge on original card button --- */
+.comment-count-badge {
+  background-color: var(--primary-dark, #3b1640);
+  color: white;
+  font-size: 0.7em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+/* --- New Print Button Style --- */
+.print-style-btn {
+  /* Adjusted width to fit better potentially */
+  width: 180px; 
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid rgb(213, 213, 213);
+  border-radius: 10px;
+  gap: 10px;
+  font-size: 14px; /* Slightly smaller font */
+  cursor: pointer;
+  overflow: hidden;
+  font-weight: 600; /* Slightly bolder */
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+  /* ADDED: Set text color to be visible on white */
+  color: var(--text-color);
+  /* ADDED: Center button at bottom of flex container */
+  margin-top: auto; /* Push to bottom */
+  align-self: flex-start; /* MODIFIED: Align to left instead of center */
+  margin-bottom: 0.5rem; /* Add some space at the bottom */
+}
+
+/* ADDED: Higher specificity rule to force white background */
+.task-card .print-style-btn.maintenance-action {
+  background-color: white !important;
+  color: var(--text-color) !important; /* Ensure text color is also forced */
+  border: 1px solid rgb(213, 213, 213) !important; /* Ensure border remains */
+}
+
+.print-style-btn .printer-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 100%;
+}
+.print-style-btn .printer-container {
+  height: 50%;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.print-style-btn .printer-container svg {
+  width: 100%;
+  height: auto;
+  transform: translateY(4px);
+  /* Ensure SVG inherits text color */
+  stroke: currentColor; 
+  fill: currentColor;
+}
+
+/* Specifically target the path and circle elements if needed */
+.print-style-btn .printer-container svg path,
+.print-style-btn .printer-container svg circle {
+  stroke: currentColor; /* Inherit color for stroke */
+  fill: currentColor;   /* Inherit color for fill */
+}
+
+/* Target the masked path separately if it needs different fill */
+.print-style-btn .printer-container svg path[mask*="url(#path-2-inside"] {
+  fill: currentColor;
+}
+
+.print-style-btn .printer-page-wrapper {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.print-style-btn .printer-page {
+  width: 70%;
+  height: 10px;
+  /* Match SVG stroke color */
+  border: 1px solid currentColor; 
+  background-color: white;
+  transform: translateY(0px);
+  transition: all 0.3s;
+  transform-origin: top;
+}
+.print-style-btn:hover .printer-page {
+  height: 16px;
+  background-color: rgb(239, 239, 239);
+}
+.print-style-btn:hover {
+  background-color: rgb(239, 239, 239);
+  /* Change text/SVG color on hover if desired */
+  /* color: #511e58; */
+}
+/* --- End New Print Button Style --- */
+
+.issue-content {
+    padding: 15px;
+}
+
+.issue-category {
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    padding: 3px 8px;
+    background-color: #eeeef5;
+    border-radius: 4px;
+    color: var(--primary);
+}
+
+.issue-description {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: #495057;
+}
+
+.issue-meta {
+    display: flex; /* Removed, no longer needed as container */
+    gap: 10px;
+}
+
+/* Grid positioning for footer elements */
+.card-status {
+    grid-column: 1 / 2; /* First column */
+    grid-row: 1 / 2; /* First row */
+    white-space: nowrap; /* Prevent status text wrapping */
+}
+
+.card-author {
+    grid-column: 2 / 3; /* Second column */
+    grid-row: 1 / 2; /* First row */
+    font-size: 0.85rem;
+    color: #6c757d;
+    text-align: left; /* Align author name left */
+    overflow: hidden; /* Prevent long names overflowing */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.card-author i {
+    margin-right: 4px;
+}
+
+.toggle-comments-btn {
+    grid-area: comments; /* Place in bottom-left */
+    grid-column: 1 / 2; /* Explicitly assign to first column */
+    justify-self: start; /* Align to the start (left) */
+    /* Existing styles like background, color etc. remain */
+}
+
+.card-actions {
+    /* This container is now removed from HTML, styles below apply to buttons directly */
+    grid-column: 3 / 4; /* Third column */
+    grid-row: 1 / 3; /* Span both rows */
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    justify-content: space-between; /* Space out buttons */
+    align-items: flex-end; /* Align buttons to the right */
+    gap: 5px; /* Gap between buttons */
+}
+
+/* Specific button placement (using classes added in JS) */
+.start-btn, .reopen-btn { /* Buttons appearing in the first row spot */
+     grid-column: 3 / 4;
+     grid-row: 1 / 2;
+     justify-self: end; /* Align to right */
+}
+.complete-btn { /* Button appearing in the second row spot */
+     grid-column: 3 / 4;
+     grid-row: 2 / 3;
+     justify-self: end; /* Align to right */
+}
+
+/* Styles for status/priority badges remain the same */
+.issue-priority, .issue-status {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.issue-priority.low {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.issue-priority.medium {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.issue-priority.high, .issue-priority.critical {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.issue-status.new {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+.issue-status.in-progress {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.issue-status.completed {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* Style adjustments for action buttons */
+.status-btn {
+    /* display: inline-flex; */ /* Flex already applied below */
+    align-items: center;
+    /* justify-content: center; */ /* Let text span handle centering */
+    min-width: 130px; /* <<< ADDED: Ensure all buttons have the same minimum width */
+    padding: 5px 10px; /* Adjusted padding: top/bottom 5px, left/right 10px */
+    border-radius: 6px;
+    border: 1px solid; /* Border color set by specific classes */
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    /* color: #333333 !important; */ /* Keep color inheritance */
+    background-color: transparent; /* Keep transparent bg */
+    /* position: relative; */ /* Removed */
+    /* text-align: center; */ /* Removed */
+    box-sizing: border-box;
+    display: flex; /* Use Flexbox */
+    text-decoration: none; /* Ensure no underlines if used as links */
+}
+
+.status-btn i {
+    /* position: absolute; */ /* Removed */
+    /* left: 10px; */ /* Removed */
+    /* top: 50%; */ /* Removed */
+    /* transform: translateY(-50%); */ /* Removed */
+    color: inherit !important; /* Inherit color from button */
+    margin-right: 5px; /* Space between icon and text */
+    flex-shrink: 0; /* Prevent icon shrinking */
+    width: 24px; /* Increased fixed width for icon container */
+    /* text-align: center; */ /* Replaced with flex centering below */
+    font-size: 0.9em; 
+    display: inline-flex; /* Use flex to center icon glyph precisely */
+    align-items: center;   /* Vertical centering */
+    justify-content: center; /* Horizontal centering */
+}
+
+/* NEW class for the text span */
+.status-btn .button-text {
+    flex-grow: 1; /* Take remaining space */
+    text-align: center; /* Center text in its available space */
+    /* padding-right: 5px; */ /* Removed padding right */
+    white-space: nowrap; /* Prevent text wrapping */
+    display: inline-block; /* Ensure it takes space */
+}
+
+/* Keep specific button color styles */
+.status-btn.in-progress, .status-btn.start-btn { 
+    border-color: #f39c12;
+    color: #f39c12 !important; 
+}
+/* ... existing code ... */
+.status-btn.completed, .status-btn.complete-btn { 
+    border-color: #27ae60;
+    color: #27ae60 !important;
+}
+/* ... existing code ... */
+.status-btn.new, .status-btn.reopen-btn { 
+    border-color: #3498db;
+    color: #3498db !important;
+}
+/* ... existing code ... */
+.status-btn:hover {
+    color: white !important; /* Keep text white on hover */
+    /* background-color: #f8f8f8; */ /* Replaced by specific hover below */
+    border-color: #bbb; /* Keep subtle border change? maybe remove */
+    /* opacity: 0.9; */ /* Removed opacity */
+    /* transform: translateY(-2px); */ /* Removed transform */
+}
+/* ... existing code ... */
+.start-btn, .reopen-btn { /* Buttons appearing in the first row spot */
+    /* Remove specific min-width/justify */
+    /* min-width: 120px; */
+    /* justify-content: center; */ 
+    /* padding: 5px 10px 5px 30px; */ /* Use base padding */
+}
+
+.complete-btn { /* Button appearing in the second row spot */
+   /* Remove specific min-width/justify */
+   /* min-width: 120px; */
+   /* justify-content: center; */ 
+   /* padding: 5px 10px 5px 30px; */ /* Use base padding */
+}
+/* ... existing code ... */
+
+.card-footer {
+    /* Remove Grid properties */
+    /* display: grid; */
+    /* grid-template-columns: auto 1fr auto; */
+    /* grid-template-rows: auto auto; */
+    /* grid-template-areas:
+        "status . actions-top"
+        "comments . actions-bottom"; */
+    /* gap: 8px 12px; */ /* Row gap and column gap */
+    
+    /* Keep general footer styling */
+    padding: 12px 16px;
+    background-color: var(--background-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex; /* Use flex for the main footer */
+    flex-direction: column; /* Stack the rows vertically */
+    gap: 8px; /* Add gap between the rows/hr */
+}
+
+/* NEW: Styling for the rows within the footer */
+.footer-row {
+    display: flex;
+    justify-content: space-between; /* Pushes items to ends */
+    align-items: center; /* Vertically aligns items */
+    width: 100%; /* Ensure rows take full width */
+}
+
+/* NEW: Styling for the separator line */
+.card-footer hr {
+    border: none; /* Remove default border */
+    border-top: 1px solid var(--border-color-light); /* Use a lighter border color */
+    margin: 0; /* Remove default margins */
+    width: 100%;
+}
+
+/* NEW: Styling for the status and author */
+.status-author-wrapper {
+    /* Remove Grid area assignment */
+    /* grid-area: status; */ 
+    /* justify-self: start; */ 
+    
+    /* Keep Flexbox styling */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-status {
+    /* Remove Grid area assignment */
+    /* grid-area: status; */
+    /* justify-self: start; */
+    /* align-self: center; */
+
+    /* Keep existing badge styling */
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.card-author {
+    /* Remove Grid area assignment */
+    /* grid-area: status; */ /* Was incorrectly placed here */
+    /* justify-self: start; */
+    /* align-self: center; */
+    
+    /* Keep existing author styling */
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: inline-flex; /* Align icon and text */
+    align-items: center;
+    gap: 4px; /* Space between icon and text */
+    white-space: nowrap;
+}
+
+/* Keep icon styling */
+.card-author i {
+    font-size: 0.9em;
+}
+
+.toggle-comments-btn {
+    /* Remove Grid area assignment */
+    /* grid-area: comments; */
+    /* justify-self: start; */ 
+    /* align-self: center; */ 
+
+    /* Keep existing button styling */
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    /* Add other desired button styles if needed */
+}
+
+.start-btn, .reopen-btn { 
+    /* Remove Grid area assignment */
+    /* grid-area: actions-top; */
+    /* justify-self: end; */ 
+    /* align-self: center; */ 
+
+     /* Keep existing button styling */
+    padding: 6px 12px 6px 30px; /* Match padding structure */
+    font-size: 0.85rem;
+    min-width: 120px; /* Ensure minimum width */
+    /* justify-content: center; <-- Removed */
+}
+
+.complete-btn { 
+    /* Remove Grid area assignment */
+    /* grid-area: actions-bottom; */
+    /* justify-self: end; */ 
+    /* align-self: center; */ 
+
+     /* Keep existing button styling */
+    padding: 6px 12px 6px 30px; /* Match padding structure */
+    font-size: 0.85rem;
+    min-width: 120px; /* Ensure minimum width */
+    /* justify-content: center; <-- Removed */
+}
+
+/* Keep status button general styles */
+.status-btn {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.flatpickr-weekday {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.flatpickr-months {
+    position: relative; /* Needed for absolute positioning of dropdowns */
+    min-height: 30px; /* Ensure a minimum stable height */
+    display: flex;
+    align-items: center; /* Vertically align items */
+}
+
+.flatpickr-current-month {
+    /* Adjust flex properties if needed to better center month/year */
+    flex-grow: 1;
+    text-align: center;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    /* Ensure buttons don't cause height changes */
+    height: 30px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px; /* Adjust padding as needed */
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill: var(--background-color) !important;
+}
+
+/* Add this rule to hide specific nav links */
+.management-link {
+    display: none !important; /* Use !important to ensure override if needed */
+}
+
+/* ... existing styles ... */
+
+/* --- Password Prompt Modal Styles --- */
+.password-prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Ensure it's above other elements */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(4px); /* Optional: Add background blur */
+}
+
+.password-prompt-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.password-prompt-modal {
+    background-color: #ffffff;
+    padding: 2rem; /* Slightly adjusted padding */
+    border-radius: 12px; /* Slightly larger radius */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Refined shadow */
+    width: 90%;
+    max-width: 400px; /* Max width */
+    text-align: center;
+    transform: scale(0.95) translateY(-10px); /* Start slightly smaller and higher */
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; /* Smoother animation */
+}
+
+.password-prompt-overlay.visible .password-prompt-modal {
+    transform: scale(1) translateY(0); /* Animate to full size and position */
+    opacity: 1;
+}
+
+.password-prompt-title {
+    font-size: 1.25rem; /* Slightly smaller title */
+    font-weight: 600; /* Standard bold */
+    color: var(--dark-gray, #1F2937); /* Use theme color if available */
+    margin-top: 0;
+    margin-bottom: 1.5rem; /* Increased spacing */
+}
+
+.password-prompt-input {
+    width: 100%;
+    padding: 0.8rem 1rem; /* Increased padding */
+    margin-bottom: 0.75rem; /* Adjusted spacing */
+    border: 1px solid var(--border-color, #ced4da); /* Simple border */
+    border-radius: 8px; /* Consistent radius */
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.password-prompt-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #511e58); /* Use theme color */
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb, 81, 30, 88), 0.2); /* Focus ring with theme color */
+}
+
+.password-prompt-error {
+    color: #dc3545; /* Standard error color */
+    font-size: 0.85rem;
+    min-height: 1.2em; /* Reserve space even when empty */
+    margin-bottom: 1.5rem; /* Increased spacing */
+    text-align: left; /* Align error text left */
+}
+
+.password-prompt-actions {
+    display: flex;
+    justify-content: space-between; /* Space out buttons */
+    gap: 1rem; /* Gap between buttons */
+}
+
+.password-prompt-submit,
+.password-prompt-cancel {
+    flex: 1; /* Make buttons take equal width */
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px; /* Consistent radius */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.password-prompt-submit {
+    background-color: var(--primary-color, #511e58); /* Use theme color */
+    color: white;
+}
+
+.password-prompt-submit:hover {
+    background-color: rgba(var(--primary-color-rgb, 81, 30, 88), 0.85); /* Slightly transparent on hover */
+}
+
+.password-prompt-cancel {
+    background-color: #e9ecef; /* Light gray */
+    color: #495057; /* Darker gray text */
+    border: 1px solid transparent; /* Keep layout consistent */
+}
+
+.password-prompt-cancel:hover {
+    background-color: #dee2e6; /* Slightly darker gray */
+}
+
+.password-prompt-submit:active,
+.password-prompt-cancel:active {
+    transform: scale(0.98); /* Slight press effect */
+}
+
+/* Keep this class to prevent background scroll when modal is open */
+body.modal-prompt-open {
+    overflow: hidden;
+}
+
+.choices__list--dropdown {
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.2);
+    margin-top: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    background-color: white;
+    color: var(--text-color);
+    max-height: 280px; /* Limit height to show 7 items */
+    overflow-y: auto;
+}
+
+/* Minimalistic scrollbar styles */
+.choices__list--dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.choices__list--dropdown::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+.choices__list--dropdown::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.choices__list--dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox scrollbar */
+.choices__list--dropdown {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background-color: rgba(58, 123, 213, 0.1);
+    color: var(--primary-color);
+}
+

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Not Found | Premier Inn Beckton</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Base Styles */
+    body { 
+      background-color: #f8f9fa;
+      color: #212529;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 600px;
+      padding: 2rem;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 4rem;
+      margin: 0;
+      font-weight: 700;
+      color: #0071ce; /* Premier Inn blue */
+    }
+    
+    h2 {
+      font-size: 2rem;
+      margin: 0.5rem 0 2rem;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      color: #495057;
+    }
+    
+    .help-box {
+      background-color: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: left;
+    }
+    
+    .help-title {
+      font-size: 1.4rem;
+      color: #0071ce;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    
+    ul {
+      padding-left: 1.5rem;
+    }
+    
+    li {
+      margin-bottom: 0.8rem;
+      color: #495057;
+    }
+    
+    .contact {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .contact a {
+      color: #0071ce;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .contact a:hover {
+      text-decoration: underline;
+    }
+
+    /* Cat Animation Styles */
+    /* From Uiverse.io by vinodjangid07 */ 
+    .loader {
+      width: fit-content;
+      height: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem auto;
+    }
+    .wrapper {
+      width: fit-content;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .catContainer {
+      width: 100%;
+      height: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .catbody {
+      width: 80px;
+    }
+    .tail {
+      position: absolute;
+      width: 17px;
+      top: 50%;
+      animation: tail 0.5s ease-in infinite alternate-reverse;
+      transform-origin: top;
+    }
+    @keyframes tail {
+      0% {
+        transform: rotateZ(60deg);
+      }
+      50% {
+        transform: rotateZ(0deg);
+      }
+      100% {
+        transform: rotateZ(-20deg);
+      }
+    }
+    .wall {
+      width: 300px;
+    }
+    .text {
+      display: flex;
+      flex-direction: column;
+      width: 50px;
+      position: absolute;
+      margin: 0px 0px 100px 120px;
+    }
+    .zzz {
+      color: black;
+      font-weight: 700;
+      font-size: 15px;
+      animation: zzz 2s linear infinite;
+    }
+    .bigzzz {
+      color: black;
+      font-weight: 700;
+      font-size: 25px;
+      margin-left: 10px;
+      animation: zzz 2.3s linear infinite;
+    }
+    @keyframes zzz {
+      0% {
+        color: transparent;
+      }
+      50% {
+        color: black;
+      }
+      100% {
+        color: transparent;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 3rem;
+      }
+      
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Cat Animation -->
+    <div class="loader">
+      <div class="wrapper">
+        <div class="catContainer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 733 673"
+            class="catbody"
+          >
+            <path
+              fill="#212121"
+              d="M111.002 139.5C270.502 -24.5001 471.503 2.4997 621.002 139.5C770.501 276.5 768.504 627.5 621.002 649.5C473.5 671.5 246 687.5 111.002 649.5C-23.9964 611.5 -48.4982 303.5 111.002 139.5Z"
+            ></path>
+            <path fill="#212121" d="M184 9L270.603 159H97.3975L184 9Z"></path>
+            <path fill="#212121" d="M541 0L627.603 150H454.397L541 0Z"></path>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 158 564"
+            class="tail"
+          >
+            <path
+              fill="#191919"
+              d="M5.97602 76.066C-11.1099 41.6747 12.9018 0 51.3036 0V0C71.5336 0 89.8636 12.2558 97.2565 31.0866C173.697 225.792 180.478 345.852 97.0691 536.666C89.7636 553.378 73.0672 564 54.8273 564V564C16.9427 564 -5.4224 521.149 13.0712 488.085C90.2225 350.15 87.9612 241.089 5.97602 76.066Z"
+            ></path>
+          </svg>
+          <div class="text">
+            <span class="bigzzz">Z</span>
+            <span class="zzz">Z</span>
+          </div>
+        </div>
+        <div class="wallContainer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 500 126"
+            class="wall"
+          >
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="3"
+              x2="450"
+              y1="3"
+              x1="50"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="85"
+              x2="400"
+              y1="85"
+              x1="100"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="122"
+              x2="375"
+              y1="122"
+              x1="125"
+            ></line>
+            <line stroke-width="6" stroke="#7C7C7C" y2="43" x2="500" y1="43"></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="1.99391"
+              x2="115.5"
+              y1="43.0061"
+              x1="115.5"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="2.00002"
+              x2="189"
+              y1="43.0122"
+              x1="189"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="2.00612"
+              x2="262.5"
+              y1="43.0183"
+              x1="262.5"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="2.01222"
+              x2="336"
+              y1="43.0244"
+              x1="336"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="2.01833"
+              x2="409.5"
+              y1="43.0305"
+              x1="409.5"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="43"
+              x2="153"
+              y1="84.0122"
+              x1="153"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="43"
+              x2="228"
+              y1="84.0122"
+              x1="228"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="43"
+              x2="303"
+              y1="84.0122"
+              x1="303"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="43"
+              x2="378"
+              y1="84.0122"
+              x1="378"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="84"
+              x2="192"
+              y1="125.012"
+              x1="192"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="84"
+              x2="267"
+              y1="125.012"
+              x1="267"
+            ></line>
+            <line
+              stroke-width="6"
+              stroke="#7C7C7C"
+              y2="84"
+              x2="342"
+              y1="125.012"
+              x1="342"
+            ></line>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <h1>404</h1>
+    <h2>Oops! Page Not Found</h2>
+    <p>We couldn't find the page you were looking for. It might have been moved, deleted, or perhaps never existed.</p>
+    
+    <div class="help-box">
+      <h3 class="help-title">How to Fix This Issue</h3>
+      <ul>
+        <li><strong>Clear your browser cache</strong> - Sometimes old cached data can cause issues. Try clearing your cache and cookies from your browser settings.</li>
+        <li><strong>Check the URL</strong> - Make sure the web address is spelled correctly without any typos.</li>
+        <li><strong>Try refreshing the page</strong> - Press F5 or click the refresh button to reload the page.</li>
+        <li><strong>Clear browser history</strong> - If you're accessing an old bookmark, try clearing your browsing history.</li>
+        <li><strong>Try a different browser</strong> - If the issue persists, try using a different web browser like Chrome, Firefox, or Edge.</li>
+      </ul>
+      
+      <div class="contact">
+        <p>Still having trouble? Please contact our support team at Premier Inn Beckton:<br>
+        <a href="mailto:robert.sendroiu@whitbread.com">robert.sendroiu@whitbread.com</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

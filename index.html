@@ -1,12 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PremierFix - Maintenance Request</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbA5YMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbAlYMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
     <meta name="theme-color" content="#3a7bd5">
+    <!-- Additional mobile-friendly meta tags -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -154,11 +156,13 @@
             border-radius: 50%;
             border-top-color: #3a7bd5;
             animation: spin 1s ease-in-out infinite;
+            transform: translateZ(0); /* Promote hardware acceleration */
+            will-change: transform; /* Hint to the browser */
         }
 
         @keyframes spin {
             to {
-                transform: rotate(360deg);
+                transform: rotate(360deg) translateZ(0); /* Apply translateZ here too */
             }
         }
         
@@ -169,32 +173,73 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             margin-bottom: 2rem;
-            transition: all 0.3s ease;
             border: 1px solid rgba(58, 123, 213, 0.05);
             position: relative;
+            transition: none;
         }
         
+        /* Remove hover effects */
         .branch-info-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            transform: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
         
         .branch-info-container::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background: linear-gradient(90deg, #3a7bd5, #3498db);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1;
+            display: none;
         }
         
         .branch-info-container:hover::after {
-            height: 3px;
-            opacity: 1;
+            display: none;
+        }
+        
+        /* Dashboard Grid Layout */
+        .dashboard-parent {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: minmax(180px, 2fr) minmax(90px, 1fr);
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 320px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            max-width: 700px;
+            margin: 0 auto;
+            transition: none;
+        }
+        
+        .dashboard-parent:hover {
+            transform: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dashboard-div1 {
+            grid-column: span 3 / span 3;
+            grid-row: 1;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: none !important;
+        }
+        
+        .dashboard-div1::after {
+            display: none;
+        }
+        
+        .dashboard-div1:hover {
+            transform: none !important;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .dashboard-div1:hover::after {
+            display: none;
         }
         
         .dashboard-header {
@@ -214,7 +259,7 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(90deg, #3498db, #3a6073);
+            background: linear-gradient(90deg, #3498db, #3a607300);
             opacity: 0.7;
         }
         
@@ -586,40 +631,73 @@
 
         /* Responsive Media Queries */
         @media (max-width: 768px) {
+            /* Tablet and large phones */
             .container {
+                padding: 0 12px;
                 margin: 1rem auto;
-                padding: 0 0.75rem;
+            }
+            
+            .dashboard-parent {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                gap: 10px;
+            }
+            
+            .dashboard-div1 {
+                grid-column: 1 / span 2;
+            }
+            
+            .form-group.location-group {
+                flex-direction: column;
+            }
+            
+            .location-field {
+                width: 100%;
+                margin-bottom: 15px;
             }
             
             .nav-content {
                 flex-direction: column;
-                align-items: center;
             }
             
             .nav-brand {
-                margin-bottom: 1rem;
+                margin: 0 auto 10px;
             }
             
-            .form-card {
-                padding: 1.25rem;
+            .nav-links {
+                justify-content: center;
+                gap: 0.5rem; /* Added adjustment */
+            }
+            .nav-links a {
+                padding: 0.5rem 0.8rem; /* Added adjustment */
             }
             
             .form-group {
-                margin-bottom: 1rem;
+                margin-bottom: 15px;
             }
             
-            .time-selection, .priority-selection {
-                flex-direction: column;
-                gap: 0.5rem;
+            h1 {
+                font-size: 1.5rem; 
+                margin-bottom: 1rem; 
             }
             
-            .time-btn, .priority-btn {
+            /* Make custom dropdowns full width on mobile */
+            .location-field .menu,
+            .form-group:not(.location-group) .menu {
                 width: 100%;
             }
             
-            .dashboard-stats {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+            /* Stack photo buttons vertically on mobile */
+            .photo-buttons-container {
+                flex-direction: column;
+                align-items: stretch; /* Make items fill container width */
+            }
+            
+            .photo-button,
+            .cssbuttons-io-button {
+                width: 100%; /* Make buttons full width */
+                min-width: unset; /* Remove min-width on mobile */
+                flex-basis: auto; /* Reset flex basis */
             }
         }
         
@@ -677,14 +755,1044 @@
         select {
             min-height: 44px;
         }
+        
+        /* Button container shared styles */
+        .button-container {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            margin-top: 1.5rem;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+
+        /* Regular request button */
+        .submit-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 9px 12px;
+            gap: 8px;
+            height: 40px;
+            border: none;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            border-radius: 20px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 0;
+            box-sizing: border-box;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        /* Critical request button */
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 9px 12px;
+            gap: 8px;
+            height: 40px;
+            border: none;
+            background: rgb(252, 70, 100);
+            border-radius: 20px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 0;
+            box-sizing: border-box;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        /* Hover effects */
+        .submit-button:hover {
+            background: linear-gradient(135deg, #3a7bd5 0%, #3498db 100%);
+            transform: translateY(-1px);
+        }
+
+        .btn:hover {
+            background: #e52441;
+            transform: translateY(-1px);
+        }
+
+        /* Active state */
+        .submit-button:active,
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Media query for mobile */
+        @media (max-width: 768px) {
+            .button-container {
+                flex-direction: row; /* Keep horizontal layout */
+                gap: 10px;
+            }
+            
+            .submit-button,
+            .btn {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .button-container {
+                gap: 8px;
+            }
+            
+            .submit-button,
+            .btn {
+                font-size: 0.85rem;
+                padding: 6px;
+            }
+        }
+
+        /* Standard button style */
+        .button {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 6px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            background-color: #0077ff;
+            transition: all 0.2s ease;
+            overflow: visible;
+        }
+
+        .button:active {
+            transform: scale(0.96);
+        }
+
+        .button:before,
+        .button:after {
+            position: absolute;
+            content: "";
+            width: 150%;
+            left: 50%;
+            height: 100%;
+            transform: translateX(-50%);
+            z-index: -1;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        /* Red button style (for critical request) */
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 1.8rem;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            background-color: rgb(252, 70, 100);
+            text-decoration: none;
+            overflow: hidden;
+            z-index: 1;
+            font-family: inherit;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(252, 70, 100);
+            transform: translateX(-100%);
+            transition: all .3s;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .btn:hover::before {
+            transform: translateX(0);
+        }
+
+        /* Submit button styles in the form */
+        .submit-button {
+            flex: 1;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 48px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Critical button styles in the form */
+        .button-container .btn {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 48px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Photo Button Styles - Take Photo Button */
+        .photo-buttons-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: flex-start;
+            flex-wrap: nowrap; /* Prevent wrapping */
+        }
+        
+        .photo-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 9px 12px;
+            gap: 8px;
+            height: 40px;
+            border: none;
+            background: #979797;
+            border-radius: 20px;
+            cursor: pointer;
+            flex: 1; /* Equal width distribution */
+            min-width: 0; /* Allow shrinking */
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .lable {
+            line-height: 22px;
+            font-size: 19px;
+            color: #fff;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .photo-button:hover {
+            background: #e52441;
+        }
+
+        .photo-button:hover .svg-icon {
+            animation: flickering 2s linear infinite;
+        }
+
+        @keyframes flickering {
+            0% { opacity: 1; }
+            50% { opacity: 1; }
+            52% { opacity: 1; }
+            54% { opacity: 0; }
+            56% { opacity: 1; }
+            90% { opacity: 1; }
+            92% { opacity: 0; }
+            94% { opacity: 1; }
+            96% { opacity: 0; }
+            98% { opacity: 1; }
+            99% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* Upload Button Styles */
+        .cssbuttons-io-button {
+            display: flex;
+            align-items: center;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 0.7em 1.5em;
+            color: white;
+            background: linear-gradient(0deg, rgb(151, 151, 151)50%, rgb(151, 151, 151) 100%);
+            border: none;
+            letter-spacing: 0.05em;
+            border-radius: 20em;
+            flex: 1; /* Equal width distribution */
+            min-width: 0; /* Allow shrinking */
+            justify-content: center;
+            height: 40px;
+            text-align: center;
+        }
+
+        .cssbuttons-io-button svg {
+            margin-right: 8px;
+            flex-shrink: 0; /* Prevent icon shrinking */
+        }
+        
+        /* Room Audit Button Styles - Moved to styles.css */
+        /* Custom branch selector styles for the dashboard */
+        .branch-selector {
+            margin-top: 10px;
+        }
+        
+        .branch-selector select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+            color: #333;
+            width: 100%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .branch-selector select:hover {
+            border-color: #3a7bd5;
+            background-color: #fff;
+        }
+        
+        .branch-selector select:focus {
+            outline: none;
+            border-color: #3a7bd5;
+            box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+        }
+        
+        /* Loading text styles */
+        .loading-text {
+            display: inline-block;
+            position: relative;
+            animation: pulse 1.5s infinite ease-in-out;
+            color: #3a7bd5;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .loading-dots:after {
+            content: '...';
+            display: inline-block;
+            animation: dots 1.5s infinite;
+            letter-spacing: 2px;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        /* Branch selector highlight animation */
+        @keyframes highlight-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(58, 123, 213, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(58, 123, 213, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(58, 123, 213, 0); }
+        }
+        
+        .branch-selector .highlight {
+            animation: highlight-pulse 1.5s ease-out;
+            background: linear-gradient(0deg, rgba(201, 78, 156, 1) 0%, rgba(232, 85, 178, 1) 100%) !important;
+        }
+        
+        @keyframes notification-appear {
+            0% { 
+                transform: translate(-50%, -50%) translateY(-30px) scale(0.9);
+                opacity: 0;
+            }
+            100% { 
+                transform: translate(-50%, -50%) translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes notification-icon-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .modern-notification-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(-100px);
+            max-width: 400px;
+            width: 90%;
+            z-index: 10000; /* Higher z-index to appear on top of any existing notifications */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .modern-notification-container.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1) translateY(0);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.1);
+            animation: notification-appear 0.4s ease-out forwards;
+        }
+        
+        .modern-notification-container.hide {
+            opacity: 0;
+            transform: translate(-50%, -50%) translateY(100px);
+        }
+        
+        .modern-notification-alert {
+            position: relative;
+            border-left-width: 4px;
+            padding: 16px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease-in-out;
+            transform-origin: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #FFFFFF; /* Fallback */
+        }
+        
+        .modern-notification-alert:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modern-notification-alert svg {
+            height: 1.75rem;
+            width: 1.75rem;
+            flex-shrink: 0;
+            margin-right: 1rem;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+            animation: notification-icon-pulse 1.5s ease-in-out infinite;
+        }
+        
+        .modern-notification-alert p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.01em;
+            line-height: 1.5;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', sans-serif;
+        }
+        
+        /* Success notification */
+        .modern-notification-alert.success {
+            background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
+            border-color: #4ade80;
+            color: #166534;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2);
+        }
+        
+        .modern-notification-alert.success svg {
+            color: #15803d;
+        }
+        
+        .modern-notification-alert.success:hover {
+            background: linear-gradient(135deg, #bbf7d0 0%, #4ade80 100%);
+        }
+        
+        /* Info notification */
+        .modern-notification-alert.info {
+            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+            border-color: #3b82f6;
+            color: #1e40af;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .modern-notification-alert.info svg {
+            color: #1d4ed8;
+        }
+        
+        .modern-notification-alert.info:hover {
+            background: linear-gradient(135deg, #bfdbfe 0%, #60a5fa 100%);
+        }
+        
+        /* Warning notification */
+        .modern-notification-alert.warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+            border-color: #f59e0b;
+            color: #854d0e;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+        
+        .modern-notification-alert.warning svg {
+            color: #b45309;
+        }
+        
+        .modern-notification-alert.warning:hover {
+            background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+        }
+        
+        /* Error notification */
+        .modern-notification-alert.error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+            border-color: #ef4444;
+            color: #991b1b;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+        
+        .modern-notification-alert.error svg {
+            color: #dc2626;
+        }
+        
+        .modern-notification-alert.error:hover {
+            background: linear-gradient(135deg, #fecaca 0%, #ef4444 100%);
+        }
+        
+        /* Dark mode support for notifications */
+        @media (prefers-color-scheme: dark) {
+            .modern-notification-alert.success {
+                background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+                border-color: #4ade80;
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+            }
+            
+            .modern-notification-alert.success svg {
+                color: #4ade80;
+            }
+            
+            .modern-notification-alert.info {
+                background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+                border-color: #3b82f6;
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            }
+            
+            .modern-notification-alert.info svg {
+                color: #3b82f6;
+            }
+            
+            .modern-notification-alert.warning {
+                background: linear-gradient(135deg, #78350f 0%, #d97706 100%);
+                border-color: #f59e0b;
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
+            }
+            
+            .modern-notification-alert.warning svg {
+                color: #f59e0b;
+            }
+            
+            .modern-notification-alert.error {
+                background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+                border-color: #ef4444;
+                color: #ffffff;
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            }
+            
+            .modern-notification-alert.error svg {
+                color: #ef4444;
+            }
+            
+            .modern-notification-alert p {
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            }
+        }
+        
+        /* Notification Banner */
+        .notification-banner {
+            background-color: #3a7bd5;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        .notification-banner a {
+            color: white;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-left: 8px;
+        }
+        
+        .notification-banner a:hover {
+            text-decoration: none;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Additional responsive styles for better mobile experience */
+        @media (max-width: 768px) {
+            /* Tablet and large phones */
+            .container {
+                padding: 0 12px;
+                margin: 1rem auto;
+            }
+            
+            .dashboard-parent {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                gap: 10px;
+            }
+            
+            .dashboard-div1 {
+                grid-column: 1 / span 2;
+            }
+            
+            .form-group.location-group {
+                flex-direction: column;
+            }
+            
+            .location-field {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .nav-content {
+                flex-direction: column;
+            }
+            
+            .nav-brand {
+                margin: 0 auto 10px;
+            }
+            
+            .nav-links {
+                justify-content: center;
+                gap: 0.5rem; /* Added adjustment */
+            }
+            .nav-links a {
+                padding: 0.5rem 0.8rem; /* Added adjustment */
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem; 
+                margin-bottom: 1rem; 
+            }
+            
+            /* Make custom dropdowns full width on mobile */
+            .location-field .menu,
+            .form-group:not(.location-group) .menu {
+                width: 100%;
+            }
+            
+            /* Stack photo buttons vertically on mobile */
+            .photo-buttons-container {
+                flex-direction: column;
+                align-items: stretch; /* Make items fill container width */
+            }
+            
+            .photo-button,
+            .cssbuttons-io-button {
+                width: 100%; /* Make buttons full width */
+                min-width: unset; /* Remove min-width on mobile */
+                flex-basis: auto; /* Reset flex basis */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Small phones */
+            .dashboard-parent {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto auto;
+            }
+            
+            .dashboard-div1, .dashboard-div2, .dashboard-div3, .dashboard-div4 {
+                grid-column: 1;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .buttons-container button {
+                width: 100%;
+            }
+            
+            .time-selection {
+                flex-wrap: wrap;
+            }
+            
+            .time-btn {
+                flex: 1 0 30%;
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+            
+            /* Make the form elements larger for better touch targets */
+            input, select, textarea, button {
+                font-size: 16px; /* Prevents iOS from zooming in on focus */
+                padding: 12px;
+            }
+            
+            .photo-buttons-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            /* Limit notification size */
+            #notificationContainer {
+                max-width: 90%;
+            }
+        }
+        
+        /* Improve form performance with hardware acceleration */
+        .issue-form {
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
+        /* Style for the hidden trigger */
+        #hiddenIssueTrigger { 
+            cursor: text; /* Use text cursor to indicate selectability */
+            /* user-select: none; <-- REMOVED */
+            /* -webkit-user-select: none; <-- REMOVED */
+            /* -moz-user-select: none; <-- REMOVED */
+            /* -ms-user-select: none; <-- REMOVED */
+        }
+        
+        /* Date display styles */
+        .date-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+        
+        /* Shared styles for date-content and count-wrapper */
+        .date-content,
+        .count-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 70%; /* Slightly narrower to visually account for the icon */
+            margin: 0 auto;
+        }
+        
+        .day-of-week {
+            font-size: 1.0rem;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.2;
+            color: var(--primary-color, #511e58);
+            text-align: center;
+            width: 100%;
+        }
+        
+        .current-date {
+            font-size: 1.0rem;
+            margin: 0;
+            color: #666;
+            text-align: center;
+            width: 100%;
+        }
+        
+        /* Center titles and content in stats boxes */
+        .stats-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .stats-wrapper .heading {
+            text-align: center;
+            width: 100%;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-wrapper .bottom-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0.5rem 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .dashboard-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary-color, #511e58);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .stats-wrapper .count {
+            text-align: center;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color, #511e58);
+            width: 100%;
+        }
+        
+        .cssbuttons-io-button:hover {
+            background: linear-gradient(0deg, rgba(201, 78, 156, 1) 0%, rgba(232, 85, 178, 1) 100%);
+        }
+        
+        /* Highlight animation for buttons */
+        @keyframes highlight-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(173, 83, 137, 0.7); transform: scale(1); }
+            50% { box-shadow: 0 0 0 8px rgba(173, 83, 137, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(173, 83, 137, 0); transform: scale(1); }
+        }
+        
+        .highlight {
+            animation: highlight-pulse 1.5s ease-out 2;
+            background: linear-gradient(0deg, rgba(201, 78, 156, 1) 0%, rgba(232, 85, 178, 1) 100%) !important;
+        }
+        
+        /* Room Audit Button Styles - Moved to styles.css */
+        .branch-select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .branch-search-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            display: none;
+        }
+
+        .branch-search {
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            outline: none;
+        }
+
+        .branch-search:focus {
+            border-color: var(--primary-color);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+        }
+
+        /* Show search when select is focused */
+        .branch-select:focus + .branch-search-container {
+            display: block;
+        }
+
+        .branch-search-container:hover {
+            display: block;
+        }
+
+        .location-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: 1fr;
+            gap: 8px;
+            align-items: start;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .room-number-section {
+            grid-column: span 2 / span 2;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .separator-section {
+            grid-column-start: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 32px; /* Align with inputs */
+        }
+
+        .location-select-section {
+            grid-column: span 2 / span 2;
+            grid-column-start: 4;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .or-separator {
+            display: flex;
+            align-items: center;
+            color: #6B7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .or-separator span {
+            background: white;
+            padding: 0 8px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .or-separator span::before,
+        .or-separator span::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 12px;
+            height: 1px;
+            background: #E5E7EB;
+        }
+
+        .or-separator span::before {
+            right: 100%;
+            margin-right: 4px;
+        }
+
+        .or-separator span::after {
+            left: 100%;
+            margin-left: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .location-selection-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 16px;
+            }
+
+            .room-number-section,
+            .separator-section,
+            .location-select-section {
+                grid-column: 1;
+            }
+
+            .separator-section {
+                padding: 8px 0;
+            }
+
+            .or-separator span::before,
+            .or-separator span::after {
+                width: 48px;
+            }
+        }
+
+        .location-section-header {
+            width: 100%;
+            text-align: center;
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .location-section-header h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #374151;
+            margin: 0;
+            padding: 0 16px;
+            background: white;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #E5E7EB;
+            z-index: 0;
+        }
+
+        .location-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: 1fr;
+            gap: 8px;
+            align-items: start;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Keep existing styles for other classes */
     </style>
 
     <!-- Non-critical CSS -->
-    <link rel="stylesheet" href="css/normalize.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/styles.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="css/animations.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+    
+    <!-- Flatpickr script -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <!-- Flatpickr calendar fix styles -->
+    <style>
+        /* Fix for flatpickr calendar showing before click */
+        .flatpickr-calendar:not(.open):not(.inline) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        
+        /* Ensure proper animations for opening/closing */
+        .flatpickr-calendar.open {
+            display: block;
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
     
     <!-- Feature detection -->
     <script src="js/modernizr-custom.js" defer></script>
@@ -706,18 +1814,496 @@
         }
     </script>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <!-- Safari Navigation Fix - Must be loaded before Firebase config -->
+    <script src="js/safari-navigation-fix.js"></script>
+    
+    <!-- Firebase Config -->
+    <script>
+        // Check if we're in production mode
+        const isProduction = window.location.hostname === 'premierfix.uk';
+    </script>
     <script src="js/firebase-config.js"></script>
-
-    <!-- Main scripts -->
+    <!-- Load production config if needed -->
+    <script>
+        if (isProduction) {
+            // Production configuration will override the development one
+            document.write('<script src="js/firebase-config-prod.js"><\/script>');
+        }
+    </script>
+    
+    <!-- Core Scripts -->
+    <script src="js/hotel-branch-manager.js"></script>
+    
+    <!-- Modern Notification System -->
+    <script src="js/notifications.js"></script>
+    
+    <!-- Page-specific scripts -->
+    <script src="js/initialize-new-database.js"></script>
+    <script src="js/database-migration-checker.js"></script>
     <script src="js/hotel-config.js"></script>
-    <script src="js/branch-selector.js"></script>
     <script src="js/form.js" defer></script>
+    <script src="js/custom-select.js" defer></script>
     <link rel="stylesheet" href="css/branch-selector.css">
+
+    <!-- Add CSS to override any existing notification styles -->
+    <style id="modern-notification-override">
+        /* Block old notifications when modern ones are shown */
+        body:has(.modern-notification-container) .notification {
+            display: none !important;
+        }
+        
+        /* Ensure our modern notifications stand out */
+        .modern-notification-container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 99999 !important; /* Extremely high z-index */
+        }
+    </style>
+
+    <!-- Override styles for critical button -->
+    <style>
+        /* Simple red button style (for critical request) */
+        .btn {
+            background-color: rgb(252, 70, 100) !important;
+            color: white !important;
+            border: none !important;
+            transition: none !important;
+        }
+        
+        .btn::before {
+            display: none !important;
+        }
+        
+        .btn:hover::before {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Add these in the head section, after other CSS links -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Add custom styles for select2 -->
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+        
+        .select2-container--default .select2-selection--single {
+            height: 42px;
+            padding: 8px 12px;
+            border: 1px solid #3a7bd5;
+            border-radius: 12px;
+            background-color: #fff;
+            font-size: 0.9rem;
+            color: #333;
+            transition: box-shadow 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        /* Remove hover state since we're using the hover styling as default */
+        .select2-container--default .select2-selection--single:hover {
+            box-shadow: 0 2px 5px rgba(58, 123, 213, 0.1);
+        }
+        
+        .select2-container--default .select2-selection--single:focus {
+            outline: none;
+            border-color: #3a7bd5;
+            box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #333;
+            line-height: 26px;
+            padding-left: 0;
+            padding-right: 30px;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 42px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #3a7bd5 transparent transparent transparent;
+            border-width: 5px 5px 0 5px;
+            margin-left: -6px;
+            margin-top: 0;
+            transition: transform 0.2s ease;
+        }
+        
+        .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+            transform: rotate(180deg);
+            border-color: #3a7bd5 transparent transparent transparent;
+        }
+
+        /* Dropdown styles */
+        .select2-dropdown {
+            border: 1px solid #3a7bd5;
+            border-radius: 0 0 12px 12px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: -1px;
+            overflow: hidden;
+        }
+        
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-radius: 12px 12px 0 0;
+            border-bottom: none;
+            background-color: white;
+        }
+        
+        .select2-container--default.select2-container--open .select2-dropdown--below {
+            border-top: none;
+        }
+        
+        /* Search field styles */
+        .select2-search--dropdown {
+            padding: 8px;
+            background: white;
+            position: relative;
+        }
+        
+        .select2-search--dropdown .select2-search__field {
+            padding: 8px 12px;
+            border: 1px solid #3a7bd5;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            width: 100%;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .select2-search--dropdown .select2-search__field:focus {
+            outline: none;
+            border-color: #3a7bd5;
+            box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.1);
+        }
+        
+        /* Results area */
+        .select2-results {
+            padding: 8px;
+            background: white;
+        }
+        
+        .select2-container--default .select2-results__option {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            margin: 2px 0;
+        }
+        
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: rgba(58, 123, 213, 0.1);
+            color: #333;
+        }
+        
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #3a7bd5;
+            color: white;
+        }
+
+        /* Custom scrollbar styles */
+        .select2-results__options::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .select2-results__options::-webkit-scrollbar-track {
+            background: rgba(58, 123, 213, 0.05);
+            border-radius: 4px;
+        }
+        
+        .select2-results__options::-webkit-scrollbar-thumb {
+            background: rgba(58, 123, 213, 0.3);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .select2-results__options::-webkit-scrollbar-thumb:hover {
+            background: rgba(58, 123, 213, 0.5);
+        }
+
+        /* Placeholder style */
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #6B7280;
+        }
+
+        /* Animation for dropdown */
+        .select2-dropdown {
+            animation: selectDropdown 0.15s ease;
+            transform-origin: top;
+        }
+
+        @keyframes selectDropdown {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Focus state improvements */
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #3a7bd5;
+            box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+        }
+
+        /* Container shadow when dropdown is open */
+        .select2-container--default.select2-container--open {
+            z-index: 9999;
+        }
+
+        .select2-container--default.select2-container--open .select2-selection--single {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <style>
+        .issue-form {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1.25rem;
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0f0f0;
+            align-items: start;
+        }
+
+        .form-group {
+            grid-column: 1 / -1;
+            width: 100%;
+        }
+
+        .option-card {
+            width: 100%;
+            min-width: 0;
+            background: #ffffff;
+        }
+
+        .option-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .field-label {
+            color: #4b5563;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0;
+            text-align: left;
+            display: block;
+        }
+
+        .input-with-icon {
+            display: flex;
+            align-items: center;
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 0 0.875rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+            min-height: 42px;
+            width: 100%;
+            position: relative;
+        }
+
+        .input-with-icon:hover {
+            border-color: #d1d5db;
+            background: #ffffff;
+        }
+
+        .input-with-icon:focus-within {
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .option-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            opacity: 0.8;
+            flex: 0 0 24px;
+            height: 24px;
+            margin-right: 0.75rem;
+        }
+
+        .option-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .input-with-icon input,
+        .input-with-icon select {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: #1f2937;
+            width: 100%;
+            min-width: 0;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .option-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0 0.75rem;
+            margin-top: 1.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .issue-form {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .option-divider {
+                margin: 0.5rem 0;
+            }
+
+            .option-card {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+
+    <style>
+        /* Add the new grid layout styles */
+        .parent {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(8, auto);
+            gap: 8px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0f0f0;
+        }
+
+        .div4 {
+            grid-column: span 3 / span 3;
+        }
+
+        .div5 {
+            grid-column: span 3 / span 3;
+            grid-row: span 2 / span 2;
+            grid-row-start: 3;
+        }
+
+        .div6 {
+            grid-row-start: 5;
+            grid-column: 1 / span 1;
+        }
+
+        .div7 {
+            grid-column-start: 3;
+            grid-row-start: 5;
+        }
+
+        .div8 {
+            grid-row-start: 6;
+        }
+
+        .div9 {
+            grid-row-start: 6;
+            grid-column: 2;
+        }
+
+        .div10 {
+            grid-row-start: 6;
+            grid-column: 3;
+        }
+
+        .div11 {
+            grid-column: span 3 / span 3;
+            grid-row-start: 7;
+        }
+
+        .div12 {
+            grid-row-start: 8;
+            grid-column: 1;
+        }
+
+        .div13 {
+            grid-column-start: 3;
+            grid-row-start: 8;
+        }
+
+        /* Adjust button styles for the new layout */
+        .photo-button,
+        .cssbuttons-io-button,
+        .time-btn,
+        .submit-button,
+        .btn {
+            width: 100%;
+            height: 100%;
+            min-height: 44px;
+        }
+
+        /* Ensure form elements fill their containers */
+        .parent input,
+        .parent select,
+        .parent textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .parent {
+                padding: 1rem;
+                gap: 12px;
+            }
+
+            .div6,
+            .div7,
+            .div8,
+            .div9,
+            .div10,
+            .div12,
+            .div13 {
+                grid-column: span 3;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Loading indicator -->
@@ -732,351 +2318,536 @@
             </div>
             <div class="nav-links">
                 <a href="index.html" class="active">Log Issue</a>
-                <a href="tracking.html">Track Issues</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="hoteleditor.html">Hotel Management</a>
+                <a href="tracking-new.html">Track Issues</a>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div id="branchInfo" class="branch-info-container">
-            <div class="dashboard-header">
-                <div class="branch-details">
-                    <h2 id="branchName">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                        Barking
-                    </h2>
-                    <p id="branchAddress">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        Highbridge Rd, Barking IG11 7BA
-                    </p>
-                    <div class="branch-status">
-                        <span class="status-dot"></span>
-                        <span class="status-text">Active</span>
+        <div class="branch-info-container">
+            <!-- Remove dashboard header completely -->
+            <div class="dashboard-parent">
+                <div class="dashboard-div1">
+                    <div class="dashboard-header-content">
+                        <div class="branch-details">
+                            <h2 id="branchName">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                Select Branch
+                            </h2>
+                            <p id="branchAddress">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                Please select a branch
+                            </p>
+                            <div class="branch-selector">
+                                <select id="branchSelect" class="branch-select">
+                                    <option value="">Select Branch</option>
+                                    <!-- Branch options will be loaded dynamically -->
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button class="header-action-btn" id="switchBranch">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                <div class="dashboard-div2 stats-wrapper">
+                    <p class="heading">Today</p>
+                    <div class="bottom-wrapper date-display">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="dashboard-icon">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                        </svg>
+                        <div class="date-content">
+                            <p class="day-of-week" id="currentDay">Tuesday</p>
+                            <p class="current-date" id="currentDateShort">15 April</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="room-audit.html" class="dashboard-div3 dashboard-audit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <path d="M14 2v6h6"></path>
+                        <path d="M9 14l2 2 4-4"></path>
                     </svg>
-                    Select Branch
-                </button>
-            </div>
-            
-            <div class="stats-container">
-                <div class="stat-box">
-                    <div class="stat-label">New Jobs</div>
-                    <div class="stat-value" id="newIssuesCount">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">In Progress</div>
-                    <div class="stat-value" id="inProgressCount">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Total Rooms</div>
-                    <div class="stat-value" id="totalRooms">0</div>
+                    Start Room Audit
+                </a>
+                
+                <div class="dashboard-div4 stats-wrapper">
+                    <p class="heading">Total Rooms</p>
+                    <div class="bottom-wrapper">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="dashboard-icon">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        <div class="count-wrapper">
+                        <p class="count" id="totalRooms">0</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <h1>Log Maintenance Issue</h1>
-        <form id="issueForm" class="issue-form">
-            <div class="form-group location-group">
-                <div class="location-field">
-                    <label for="roomNumber">Room Number</label>
-                    <input type="text" id="roomNumber" name="roomNumber" pattern="[0-9]*" placeholder="Enter room number">
+        <h1>Log Maintenance <span id="hiddenIssueTrigger">Issue</span></h1>
+        <form id="issueForm" class="parent">
+            <div class="div1">
+                <label for="roomNumber" class="field-label">Room number</label>
+                <div class="input-with-icon" role="presentation">
+                    <div class="option-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </div>
+                    <input type="text" 
+                           id="roomNumber" 
+                           name="roomNumber" 
+                           placeholder="Enter room number"
+                           aria-label="Room number input">
                 </div>
-                <div class="location-field">
-                    <label for="location">Or Select Location</label>
-                    <select id="location" name="location">
-                        <option value="">Select location</option>
-                        <option value="Reception">Reception</option>
-                        <option value="Office">Office</option>
-                        <option value="Staff Room">Staff Room</option>
-                        <option value="Car Park">Car Park</option>
-                        <option value="Restaurant">Restaurant</option>
-                        <option value="Corridors">Corridors</option>
+            </div>
+
+            <div class="div2">
+                <div class="option-divider" role="separator" aria-hidden="true">
+                    <span>OR</span>
+                </div>
+            </div>
+
+            <div class="div3">
+                <label for="location" class="field-label">Select Location</label>
+                <div class="input-with-icon" role="presentation">
+                    <div class="option-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <select id="location" 
+                            name="location" 
+                            class="branch-select"
+                            aria-label="Common area selection">
+                        <option value="" selected>Choose a common area</option>
+                        <option value="reception">Reception</option>
+                        <option value="office">Office</option>
+                        <option value="staff_room">Staff Room</option>
+                        <option value="car_park">Car Park</option>
+                        <option value="restaurant">Restaurant</option>
+                        <option value="corridors">Corridors</option>
                     </select>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="div4">
                 <label for="category">Category of Fault</label>
-                <select id="category" name="category" required>
-                    <option value="">Select a category</option>
-                    <option value="Electrical">Electrical</option>
-                    <option value="Plumbing">Plumbing</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="Other">Other</option>
+                <select id="category" name="category" class="branch-select">
+                    <option value="" selected>Select a category</option>
+                    <option value="appliances" title="Fridges, Ovens, Washing Machines, etc.">Appliances</option>
+                    <option value="electrical" title="Power outages, exposed wires, faulty outlets">Electrical</option>
+                    <option value="flooring" title="Tiles, Carpets, Floorboards, etc.">Flooring</option>
+                    <option value="furniture" title="Broken chairs, damaged desks, loose hinges">Furniture</option>
+                    <option value="hvac" title="Heating, Ventilation, and Air Conditioning">HVAC</option>
+                    <option value="lighting" title="Bulbs, Fixtures, etc.">Lighting</option>
+                    <option value="other" title="Uncategorized issues or general concerns">Other</option>
+                    <option value="painting" title="Peeling Paint, Damaged Wallpaper, etc.">Painting & Finishing</option>
+                    <option value="pest-control" title="Rodents, Insects, etc.">Pest Control</option>
+                    <option value="plumbing" title="Leaky faucets, clogged drains, pipe bursts">Plumbing</option>
+                    <option value="roof-gutter" title="Leaks, Blockages, Damage, etc.">Roof & Gutter</option>
+                    <option value="safety-security" title="Smoke detectors, security cameras, alarms, access control">Safety & Security</option>
+                    <option value="structural" title="Walls, Ceilings, Foundations, etc.">Structural</option>
+                    <option value="tv-cable" title="Signal Issues, Ports, Wiring, etc.">TV & Cable Connection</option>
+                    <option value="windows-doors" title="Locks, Hinges, Cracks, etc.">Windows & Doors</option>
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="div5">
                 <label for="description">Description</label>
                 <textarea id="description" name="description" rows="4" required></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="timePreference">When</label>
-                <input type="hidden" id="timePreference" name="timePreference" value="anytime">
-                <div class="time-selection" id="timeSelectionButtons">
-                    <button type="button" class="time-btn active" id="timeAny" data-time="anytime">Anytime</button>
-                    <button type="button" class="time-btn" id="timeBefore" data-time="before">Before</button>
-                    <button type="button" class="time-btn" id="timeAfter" data-time="after">After</button>
-                </div>
-                <div id="dateTimeContainer" class="datetime-container" style="display: none;">
-                    <label for="dateTime" id="dateTimeLabel">Select Date and Time</label>
-                    <input type="text" id="dateTime" name="dateTime" placeholder="Click to select date and time">
-                    <div class="datetime-hint" id="dateTimeHint">Please select your preferred maintenance time</div>
-                </div>
+            <div class="div6">
+                <button type="button" class="photo-button" id="takePhotoBtn" onclick="console.log('Take Photo button clicked'); if(window.handleTakePhoto) window.handleTakePhoto(); else console.error('handleTakePhoto function not found');">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" height="24" fill="none" class="svg-icon"><g stroke-width="2" stroke-linecap="round" stroke="#fff" fill-rule="evenodd" clip-rule="evenodd"><path d="m4 9c0-1.10457.89543-2 2-2h2l.44721-.89443c.33879-.67757 1.03131-1.10557 1.78889-1.10557h3.5278c.7576 0 1.4501.428 1.7889 1.10557l.4472.89443h2c1.1046 0 2 .89543 2 2v8c0 1.1046-.8954 2-2 2h-12c-1.10457 0-2-.8954-2-2z"></path><path d="m15 13c0 1.6569-1.3431 3-3 3s-3-1.3431-3-3 1.3431-3 3-3 3 1.3431 3 3z"></path></g></svg>
+                    <span class="lable">Take a Photo</span>
+                </button>
             </div>
 
-            <div class="form-group">
-                <label for="priority">Priority Level</label>
-                <input type="hidden" id="priority" name="priority" value="low">
-                <div class="priority-selection" id="prioritySelection">
-                    <button type="button" class="priority-btn active" id="priorityLow" data-priority="low">
-                        <span class="priority-dot"></span>
-                        <span class="priority-text">Low</span>
-                    </button>
-                    <button type="button" class="priority-btn" id="priorityMedium" data-priority="medium">
-                        <span class="priority-dot"></span>
-                        <span class="priority-text">Medium</span>
-                    </button>
-                    <button type="button" class="priority-btn" id="priorityCritical" data-priority="critical">
-                        <span class="priority-dot"></span>
-                        <span class="priority-text">Critical</span>
-                    </button>
-                </div>
+            <div class="div7">
+                <button type="button" class="cssbuttons-io-button" id="uploadBtn" onclick="console.log('Upload Photo button clicked'); if(window.handleUploadPhoto) window.handleUploadPhoto(); else console.error('handleUploadPhoto function not found');">
+                    <svg viewBox="0 0 640 512" fill="white" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"></path></svg>
+                    <span>Upload Photo</span>
+                </button>
             </div>
 
-            <div class="form-group">
+            <input type="hidden" id="timePreference" name="timePreference" value="anytime">
+            <div class="div8">
+                <button type="button" class="time-btn active" id="timeAny" data-time="anytime">Anytime</button>
+            </div>
+            <div class="div9">
+                <button type="button" class="time-btn" id="timeBefore" data-time="before">Before</button>
+            </div>
+            <div class="div10">
+                <button type="button" class="time-btn" id="timeAfter" data-time="after">After</button>
+            </div>
+
+            <div class="div11">
                 <label for="authorName">Requested By</label>
                 <input type="text" id="authorName" name="authorName" required>
             </div>
 
-            <button type="submit" class="btn-submit" id="submitButton" name="submitButton">Submit Issue</button>
+            <div class="div12">
+                <button type="submit" class="submit-button" id="submitButton">Regular Request</button>
+            </div>
+
+            <div class="div13">
+                <button type="button" class="btn" id="criticalButton">Critical Request</button>
+            </div>
+
+            <!-- Hidden priority input -->
+            <input type="hidden" id="priority" name="priority" value="low">
         </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Initialize the page -->
     <script>
-        // Loading indicator functions
-        function showLoading() {
-            const loadingContainer = document.getElementById('loadingContainer');
-            if (loadingContainer) {
-                loadingContainer.classList.add('active');
-            }
-        }
-
-        function hideLoading() {
-            const loadingContainer = document.getElementById('loadingContainer');
-            if (loadingContainer) {
-                loadingContainer.classList.remove('active');
-            }
-        }
-
-        // Hide loading indicator when page is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            hideLoading();
+            console.log("DOM Content Loaded - Initializing page");
             
-            // Branch selector functionality
-            const switchBranchBtn = document.getElementById('switchBranch');
-            if (switchBranchBtn) {
-                switchBranchBtn.addEventListener('click', function() {
-                    this.classList.add('active');
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg> Switching...';
-                    
-                    // Add a subtle animation to the dashboard
-                    const dashboardHeader = document.querySelector('.dashboard-header');
-                    if (dashboardHeader) {
-                        dashboardHeader.style.transition = 'all 0.3s ease';
-                        dashboardHeader.style.opacity = '0.7';
+            // First try to call the main initialization function
+            if (typeof initializePage === 'function') {
+                console.log("Calling initializePage() directly");
+                initializePage();
+                            } else {
+                console.error("initializePage function not found");
+            }
+            
+            // As a fallback, try to call just the form listeners setup
+            if (typeof initializeFormListeners === 'function') {
+                console.log("Calling initializeFormListeners() directly");
+                        setTimeout(function() {
+                    initializeFormListeners();
+                }, 500); // Slight delay to ensure other scripts are loaded
+            }
+            
+            // Manual setup for the photo buttons as a last resort
+                        setTimeout(function() {
+                console.log("Setting up manual event listeners for photo buttons");
+                const takePhotoBtn = document.getElementById('takePhotoBtn');
+                const uploadBtn = document.getElementById('uploadBtn');
+                
+                if (takePhotoBtn && typeof handleTakePhoto === 'function') {
+                    console.log("Adding event listener to Take Photo button");
+                    takePhotoBtn.addEventListener('click', handleTakePhoto);
+                }
+                
+                if (uploadBtn && typeof handleUploadPhoto === 'function') {
+                    console.log("Adding event listener to Upload Photo button");
+                    uploadBtn.addEventListener('click', handleUploadPhoto);
+                }
+                        }, 1000);
+        });
+    </script>
+    
+    <!-- Populate branch selector dropdown -->
+    <script>
+        async function populateBranchSelectDropdown() {
+            try {
+                console.log('Starting to populate branch selector dropdown');
+                const branchSelect = document.getElementById('branchSelect');
+                
+                if (!branchSelect) {
+                    console.error('Branch select element not found');
+                    return;
+                }
+                
+                // Show loading state
+                branchSelect.innerHTML = '<option value="">Loading branches...</option>';
+                
+                // Wait for hotel branch manager to be initialized
+                if (typeof window.hotelBranchManager === 'undefined') {
+                    console.error('Hotel branch manager not initialized');
+                    branchSelect.innerHTML = '<option value="">Error loading branches</option>';
+                    return;
+                }
+                
+                // Make sure it's initialized
+                if (!window.hotelBranchManager.initialized) {
+                    await window.hotelBranchManager.initialize();
+                }
+                
+                // Get all branches
+                        const branches = await window.hotelBranchManager.getAllBranches();
+                console.log('Retrieved branches:', branches);
+                
+                if (!branches || branches.length === 0) {
+                    console.warn('No branches found');
+                    branchSelect.innerHTML = '<option value="">No branches available</option>';
+                    return;
+                }
+                
+                // Reset select with default option
+                branchSelect.innerHTML = '<option value="">Select Branch</option>';
+                
+                // Sort branches alphabetically by name
+                const sortedBranches = [...branches].sort((a, b) => 
+                    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+                );
                         
-                        setTimeout(() => {
-                            dashboardHeader.style.opacity = '1';
-                        }, 800);
+                        // Add branch options
+                sortedBranches.forEach(branch => {
+                            const option = document.createElement('option');
+                            option.value = branch.id;
+                            option.textContent = branch.name;
+                            branchSelect.appendChild(option);
+                        });
+                        
+                // Initialize select2
+                $(branchSelect).select2({
+                    placeholder: 'Search or select a branch',
+                    allowClear: false,
+                    width: '100%',
+                    theme: 'default'
+                });
+
+                // Add change event listener using Select2's event system
+                $(branchSelect).on('select2:select', async function(e) {
+                    console.log('Branch selection changed:', e.params.data);
+                    
+                    if (!e.params.data.id) {
+                        console.log('No branch selected, skipping');
+                        return;
                     }
-                    
-                    setTimeout(() => {
-                        this.classList.remove('active');
-                        this.innerHTML = originalText;
+            
+                    try {
+                        // Show loading indicator if available
+                        if (typeof window.showLoading === 'function') {
+                            window.showLoading();
+                        }
                         
-                        // Ensure branch name and icon are preserved
-                        const branchName = document.getElementById('branchName');
-                        if (branchName) {
-                            // Make sure the icon is preserved
-                            if (!branchName.querySelector('svg')) {
-                                const iconHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>`;
-                                branchName.innerHTML = iconHTML + branchName.textContent;
+                        // Load the selected branch data
+                        await window.hotelBranchManager.loadBranchData(e.params.data.id);
+                        
+                        // Get the updated branch data
+                        const branchData = window.hotelBranchManager.getBranchData();
+                        
+                        // Update UI with the new branch data
+                        if (branchData) {
+                            console.log('Updating UI with new branch data:', branchData);
+                
+                            // Update branch name
+                            const branchNameEl = document.getElementById('branchName');
+                            if (branchNameEl) {
+                                const svgIcon = branchNameEl.querySelector('svg');
+                                branchNameEl.innerHTML = '';
+                                if (svgIcon) {
+                                    branchNameEl.appendChild(svgIcon);
+                                }
+                                branchNameEl.appendChild(document.createTextNode(branchData.name || 'N/A'));
+                            }
+                
+                            // Update branch address
+                            const branchAddressEl = document.getElementById('branchAddress');
+                            if (branchAddressEl) {
+                                const svgIcon = branchAddressEl.querySelector('svg');
+                                branchAddressEl.innerHTML = '';
+                                if (svgIcon) {
+                                    branchAddressEl.appendChild(svgIcon);
+                                }
+                                branchAddressEl.appendChild(document.createTextNode(branchData.address || 'N/A'));
+                            }
+                
+                            // Update total rooms if that element exists
+                            const totalRoomsEl = document.getElementById('totalRooms');
+                            if (totalRoomsEl) {
+                                const totalRooms = branchData.rooms ? Object.keys(branchData.rooms).length : 0;
+                                totalRoomsEl.textContent = totalRooms;
+                            }
+                            
+                            // Update maintenance stats
+                            if (typeof window.updateMaintenanceStats === 'function') {
+                                await window.updateMaintenanceStats();
+                            }
+                            
+                            // Show success notification
+                            if (typeof window.showNotification === 'function') {
+                                window.showNotification(`Branch changed to ${branchData.name}`, 'success');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error updating branch data:', error);
+                        if (typeof window.showNotification === 'function') {
+                            window.showNotification('Failed to update branch data', 'error');
+                        }
+                    } finally {
+                        // Hide loading indicator if available
+                        if (typeof window.hideLoading === 'function') {
+                            window.hideLoading();
+                        }
+                    }
+                });
+                
+                console.log('Branch selector populated successfully');
+                    } catch (error) {
+                console.error('Error populating branch selector:', error);
+                const branchSelect = document.getElementById('branchSelect');
+                if (branchSelect) {
+                    branchSelect.innerHTML = '<option value="">Error loading branches</option>';
+                }
+            }
+        }
+        
+        // Run when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Delay branch population to ensure hotel-branch-manager is initialized
+            setTimeout(populateBranchSelectDropdown, 1000);
+        });
+    </script>
+    
+    <!-- Branch selector initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the branch selector
+            const branchSelect = document.getElementById('branchSelect');
+            
+            if (branchSelect) {
+                console.log('Setting up branch selector event listener');
+                
+                // First, check if there's already a selected branch and update UI accordingly
+                const currentBranch = window.hotelBranchManager.getCurrentBranch();
+                const branchData = window.hotelBranchManager.getBranchData();
+                
+                console.log('Current branch on page load:', currentBranch);
+                console.log('Branch data on page load:', branchData);
+                
+                if (currentBranch && branchData) {
+                    console.log('Updating UI with current branch data');
+                    
+                    // Update branch name
+                    const branchNameEl = document.getElementById('branchName');
+                        if (branchNameEl) {
+                        // Get the SVG element if it exists
+                            const svgIcon = branchNameEl.querySelector('svg');
+                            if (svgIcon) {
+                            // Clear the element but keep the SVG
+                                branchNameEl.innerHTML = '';
+                                branchNameEl.appendChild(svgIcon);
+                            // Append the text node
+                            branchNameEl.appendChild(document.createTextNode(branchData.name || 'N/A'));
+                            } else {
+                            branchNameEl.textContent = branchData.name || 'N/A';
                             }
                         }
                         
-                        // Refresh stats with new random values
-                        const newValue = Math.floor(Math.random() * 5) + 1;
-                        const inProgressValue = Math.floor(Math.random() * 7) + 2;
-                        const totalRoomsValue = Math.floor(Math.random() * 30) + 100;
-                        
-                        const newIssuesCount = document.getElementById('newIssuesCount');
-                        const inProgressCount = document.getElementById('inProgressCount');
-                        const totalRooms = document.getElementById('totalRooms');
-                        
-                        if (newIssuesCount) animateCounterOptimized(newIssuesCount, newValue);
-                        if (inProgressCount) animateCounterOptimized(inProgressCount, inProgressValue);
-                        if (totalRooms) animateCounterOptimized(totalRooms, totalRoomsValue);
-                    }, 1500);
-                });
-            }
-            
-            // Time selection functionality - use event delegation for better performance
-            const timeSelectionButtons = document.getElementById('timeSelectionButtons');
-            const dateTimeContainer = document.getElementById('dateTimeContainer');
-            const timePreferenceInput = document.getElementById('timePreference');
-            
-            if (timeSelectionButtons) {
-                timeSelectionButtons.addEventListener('click', function(e) {
-                    const button = e.target.closest('.time-btn');
-                    if (!button) return;
-                    
-                    // Remove active class from all buttons
-                    const buttons = this.querySelectorAll('.time-btn');
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    button.classList.add('active');
-                    
-                    // Update hidden input value
-                    const timeValue = button.dataset.time;
-                    if (timePreferenceInput) {
-                        timePreferenceInput.value = timeValue;
+                    // Update branch address
+                    const branchAddressEl = document.getElementById('branchAddress');
+                        if (branchAddressEl) {
+                        // Get the SVG element if it exists
+                            const svgIcon = branchAddressEl.querySelector('svg');
+                            if (svgIcon) {
+                            // Clear the element but keep the SVG
+                                branchAddressEl.innerHTML = '';
+                                branchAddressEl.appendChild(svgIcon);
+                            // Append the text node
+                            branchAddressEl.appendChild(document.createTextNode(branchData.address || 'N/A'));
+                            } else {
+                            branchAddressEl.textContent = branchData.address || 'N/A';
+                        }
                     }
-                    
-                    // Show/hide date time container
-                    if (dateTimeContainer) {
-                        dateTimeContainer.style.display = (timeValue === 'before' || timeValue === 'after') ? 'block' : 'none';
-                    }
-                });
-            }
-            
-            // Priority selection - use event delegation
-            const prioritySelection = document.querySelector('.priority-selection');
-            const priorityInput = document.getElementById('priority');
-            
-            if (prioritySelection) {
-                prioritySelection.addEventListener('click', function(e) {
-                    const button = e.target.closest('.priority-btn');
-                    if (!button) return;
-                    
-                    // Remove active class from all buttons
-                    const buttons = this.querySelectorAll('.priority-btn');
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    button.classList.add('active');
-                    
-                    // Update hidden input value
-                    const priorityValue = button.dataset.priority;
-                    if (priorityInput) {
-                        priorityInput.value = priorityValue;
-                    }
-                });
-            }
-            
-            // Form submission with optimized handling
-            const form = document.getElementById('issueForm');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    showLoading();
-                    
-                    const submitBtn = document.getElementById('submitButton');
-                    if (submitBtn) {
-                        const originalText = submitBtn.innerHTML;
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
-                        
-                        // Simulate form submission (replace with actual API call)
-                        setTimeout(() => {
-                            hideLoading();
-                            submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Success!';
-                            submitBtn.classList.add('success');
-                            
-                            // Reset form after delay
-                            setTimeout(() => {
-                                form.reset();
-                                submitBtn.disabled = false;
-                                submitBtn.classList.remove('success');
-                                submitBtn.innerHTML = originalText;
-                                
-                                // Update dashboard stats
-                                const newIssuesCount = document.getElementById('newIssuesCount');
-                                if (newIssuesCount) {
-                                    newIssuesCount.textContent = parseInt(newIssuesCount.textContent || 0) + 1;
-                                }
-                            }, 1500);
-                        }, 1000);
-                    }
-                });
-            }
-            
-            // Initialize dashboard stats
-            initializeDashboardStats();
-        });
-        
-        // Initialize dashboard stats
-        function initializeDashboardStats() {
-            // Set initial values to zero
-            const newIssuesCount = document.getElementById('newIssuesCount');
-            const inProgressCount = document.getElementById('inProgressCount');
-            const totalRooms = document.getElementById('totalRooms');
-            
-            if (newIssuesCount) newIssuesCount.textContent = '0';
-            if (inProgressCount) inProgressCount.textContent = '0';
-            if (totalRooms) totalRooms.textContent = '0';
-            
-            // Don't animate with hardcoded values - let the real data load
-            // The proper values will be set by updateMaintenanceStats() in form.js
-        }
-        
-        // Optimized counter animation function using requestAnimationFrame
-        function animateCounterOptimized(element, target, duration = 1000) {
-            if (!element) return;
-            
-            const startTime = performance.now();
-            const startValue = 0;
-            
-            function updateCounter(currentTime) {
-                const elapsedTime = currentTime - startTime;
-                const progress = Math.min(elapsedTime / duration, 1);
-                
-                const currentValue = Math.floor(progress * target);
-                element.textContent = currentValue;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
-                } else {
-                    element.textContent = target;
                 }
+                
+                // Add change event listener to the branch selector
+                branchSelect.addEventListener('change', async function() {
+                    console.log('Branch selection changed:', branchSelect.value);
+                    
+                    if (!branchSelect.value) {
+                        console.log('No branch selected, skipping');
+                return;
             }
             
-            requestAnimationFrame(updateCounter);
-        }
-        
-        // Legacy counter animation function for backward compatibility
-        function animateCounter(element, target, duration = 1500) {
-            return animateCounterOptimized(element, target, duration);
-        }
+                    try {
+                        // Show loading indicator if available
+                        if (typeof window.showLoading === 'function') {
+                            window.showLoading();
+                        }
+                        
+                        // Load the selected branch data
+                        await window.hotelBranchManager.loadBranchData(branchSelect.value);
+                        
+                        // Get the updated branch data
+                const branchData = window.hotelBranchManager.getBranchData();
+                        
+                        // Update UI with the new branch data
+                        if (branchData) {
+                            console.log('Updating UI with new branch data:', branchData);
+                
+                // Update branch name
+                const branchNameEl = document.getElementById('branchName');
+                if (branchNameEl) {
+                                // Get the SVG element if it exists
+                    const svgIcon = branchNameEl.querySelector('svg');
+                    if (svgIcon) {
+                                    // Clear the element but keep the SVG
+                        branchNameEl.innerHTML = '';
+                        branchNameEl.appendChild(svgIcon);
+                                    // Append the text node
+                                    branchNameEl.appendChild(document.createTextNode(branchData.name || 'N/A'));
+                    } else {
+                        branchNameEl.textContent = branchData.name || 'N/A';
+                    }
+                }
+                
+                // Update branch address
+                const branchAddressEl = document.getElementById('branchAddress');
+                if (branchAddressEl) {
+                                // Get the SVG element if it exists
+                    const svgIcon = branchAddressEl.querySelector('svg');
+                    if (svgIcon) {
+                                    // Clear the element but keep the SVG
+                        branchAddressEl.innerHTML = '';
+                        branchAddressEl.appendChild(svgIcon);
+                                    // Append the text node
+                                    branchAddressEl.appendChild(document.createTextNode(branchData.address || 'N/A'));
+                    } else {
+                        branchAddressEl.textContent = branchData.address || 'N/A';
+                    }
+                }
+                
+                            // Update total rooms if that element exists
+                    const totalRoomsEl = document.getElementById('totalRooms');
+                    if (totalRoomsEl) {
+                                const totalRooms = branchData.rooms ? Object.keys(branchData.rooms).length : 0;
+                                totalRoomsEl.textContent = totalRooms;
+                            }
+                            
+                            // Update maintenance stats
+                            if (typeof window.updateMaintenanceStats === 'function') {
+                                await window.updateMaintenanceStats();
+                            }
+                            
+                            // Show success notification
+                            if (typeof window.showNotification === 'function') {
+                                window.showNotification(`Branch changed to ${branchData.name}`, 'success');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error loading branch data:', error);
+                        
+                        // Show error notification
+                        if (typeof window.showNotification === 'function') {
+                            window.showNotification('Failed to load branch data. Please try again.', 'error');
+                        }
+                    } finally {
+                        // Hide loading indicator if available
+                        if (typeof window.hideLoading === 'function') {
+                            window.hideLoading();
+                        }
+                    }
+                });
+            }
+        });
     </script>
+
+    <!-- Password utilities and Easter egg functionality -->
+    <script src="js/password-utils.js"></script>
 </body>
 </html> 

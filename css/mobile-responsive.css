@@ -1,0 +1,191 @@
+/**
+ * PremierFix Mobile-Responsive Styles
+ * Shared mobile-friendly styles for consistent experience across all pages
+ */
+
+/* Base mobile styles */
+@media (max-width: 768px) {
+    /* Header and navigation */
+    .navbar {
+        flex-direction: column;
+    }
+    
+    .navbar .brand {
+        margin-bottom: 10px;
+    }
+    
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+    
+    .nav-links a {
+        margin: 2px;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        flex: 0 1 auto;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Container adjustments */
+    .container {
+        padding: 0 12px;
+        margin: 1rem auto;
+    }
+    
+    /* Buttons and controls */
+    .buttons, 
+    .button-group,
+    .button-container,
+    .control-buttons,
+    .action-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn,
+    button[class*="btn-"],
+    a[class*="btn-"],
+    .button,
+    input[type="button"],
+    input[type="submit"] {
+        min-width: 130px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+    
+    /* Form elements */
+    input, select, textarea {
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 10px;
+    }
+    
+    /* Grid layouts */
+    .grid,
+    .grid-container,
+    .row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    /* Cards and content blocks */
+    .card,
+    .info-card,
+    .content-block {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    /* Typography adjustments */
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+    
+    h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    /* Button stacking for very small screens */
+    .buttons, 
+    .button-group,
+    .button-container,
+    .control-buttons,
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn,
+    button[class*="btn-"],
+    a[class*="btn-"],
+    .button,
+    input[type="button"],
+    input[type="submit"] {
+        width: 100%;
+        min-width: auto;
+        margin-bottom: 5px;
+        padding: 10px;
+    }
+    
+    /* Single column layout */
+    .grid,
+    .grid-container,
+    .row {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Stack form fields */
+    .form-group,
+    .form-row,
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .form-group > *,
+    .form-row > *,
+    .input-group > * {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    /* Reduce heading sizes further */
+    h1 {
+        font-size: 1.3rem;
+    }
+    
+    h2 {
+        font-size: 1.1rem;
+    }
+    
+    h3 {
+        font-size: 1rem;
+    }
+    
+    /* Notification size limit */
+    #notificationContainer,
+    .notification,
+    .toast,
+    .alert {
+        max-width: 90%;
+    }
+}
+
+/* Utility classes for mobile */
+.mobile-hidden {
+    display: none !important;
+}
+
+.mobile-stack {
+    flex-direction: column !important;
+    width: 100% !important;
+}
+
+.mobile-full-width {
+    width: 100% !important;
+}
+
+/* Hardware acceleration for better performance */
+.accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+} 

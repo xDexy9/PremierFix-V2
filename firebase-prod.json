@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firebase-prod.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/README.md",
+      "**/*.bak*",
+      "**/detailsupdate.txt",
+      "**/tracking-new.html",
+      "**/js/tracking-new.js"
+    ]
+  }
+} 

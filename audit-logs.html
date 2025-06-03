@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PremierFix - Audit Logs</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcBeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbA5YMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
+    <meta name="theme-color" content="#3a7bd5">
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="css/styles.css" as="style">
+    
+    <!-- Load fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #3a7bd5;
+            --secondary-color: #3498db;
+            --background-color: #f5f6fa;
+            --text-color: #2c3e50;
+            --border-color: #dcdde1;
+            --success-color: #4ade80;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+            width: 100%;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background-color: #511e58;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .nav-content {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand-logo {
+            height: 45px;
+            width: auto;
+            display: block;
+            max-width: 100%;
+            object-fit: contain;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Audit Logs Styles */
+        .logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        
+        .logs-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .branch-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .branch-selector label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .branch-selector select {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .branch-selector select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
+        }
+        
+        .audit-actions-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .action-btn svg {
+            transition: transform 0.3s;
+        }
+        
+        .action-btn:hover svg {
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.excel-btn:hover {
+            background: #1e7e34;
+            color: white;
+            border-color: #1e7e34;
+            box-shadow: 0 4px 10px rgba(30, 126, 52, 0.2);
+        }
+        
+        .action-btn.pdf-btn:hover {
+            background: #d63031;
+            color: white;
+            border-color: #d63031;
+            box-shadow: 0 4px 10px rgba(214, 48, 49, 0.2);
+        }
+        
+        .action-btn.delete-btn {
+            border-color: #e53e3e;
+            color: #e53e3e;
+        }
+        
+        .action-btn.delete-btn:hover {
+            background: #e53e3e;
+            color: white;
+            border-color: #e53e3e;
+            box-shadow: 0 4px 10px rgba(229, 62, 62, 0.2);
+        }
+        
+        .branch-indicator {
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #475569;
+        }
+        
+        .branch-indicator.active {
+            background: #ebf5ff;
+            color: #3a7bd5;
+            border-left: 3px solid #3a7bd5;
+        }
+        
+        .audit-logs-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .audit-logs-header {
+            background: linear-gradient(135deg, #3a7bd5 0%, #3a6073 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .audit-logs-header h2 {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            gap: 0.5rem;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            padding: 0.25rem 0;
+            width: 200px;
+            font-size: 0.9rem;
+        }
+        
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-box svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.8;
+        }
+        
+        .logs-table-container {
+            overflow-x: auto;
+        }
+        
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .logs-table th {
+            text-align: left;
+            padding: 1.25rem 1rem;
+            background: #f8fafc;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .logs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+        
+        .logs-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .logs-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .room-number {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background: #f1f5f9;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+        }
+        
+        .tag.issue {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .view-details-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .view-details-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .audit-date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loading-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(58, 123, 213, 0.2);
+            border-radius: 50%;
+            border-top-color: #3a7bd5;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            display: none;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: #64748b;
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .empty-state-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .empty-state-btn:hover {
+            background: #2c6ac6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(58, 123, 213, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .logs-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .audit-logs-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+            
+            .logs-table th,
+            .logs-table td {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .view-details-btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Filter Checkbox Styles */
+        .filter-container {
+            /* Existing styles are fine */
+        }
+        #issueFilterCheckboxes {
+            display: flex; /* Use flexbox for layout */
+            flex-wrap: wrap;
+            gap: 10px; /* Gap between pills */
+        }
+        .filter-checkboxes label {
+            display: inline-flex; /* Align items inline */
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px; /* Pill shape */
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            user-select: none; /* Prevent text selection */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .filter-checkboxes label:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff; /* Light primary background */
+            box-shadow: 0 2px 5px rgba(58, 123, 213, 0.1);
+        }
+        .filter-checkboxes input[type="checkbox"] {
+            /* Visually hide the checkbox but keep it functional */
+            opacity: 0;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        .filter-checkboxes label span {
+           margin-left: 0; /* Remove margin now that checkbox is hidden */
+        }
+        /* Style the label when the hidden checkbox inside it is checked */
+        .filter-checkboxes label:has(input[type="checkbox"]:checked) {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 3px 8px rgba(58, 123, 213, 0.2);
+        }
+        .filter-checkboxes label:has(input[type="checkbox"]:checked):hover {
+            background-color: #2c6ac6; /* Darker primary on hover */
+            border-color: #2c6ac6;
+        }
+        
+        /* Grid layout for action buttons */
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(1, 1fr);
+            gap: 1rem; /* Adjusted gap */
+            width: 100%; /* Make grid take full width */
+            justify-items: stretch; /* Stretch items to fill grid cells */
+            align-items: stretch; /* Stretch items vertically */
+        }
+        
+        .action-buttons-grid button {
+            /* Add any specific styles needed for buttons within the grid */
+            /* For example, ensure they stretch if needed */
+            width: 100%; 
+            height: 100%;
+        }
+
+        /* New Excel Button Styles */
+        .excel-button-new {
+          display: flex;
+          position: relative;
+          justify-content: center;
+          align-items: center;
+          background-color: #307750;
+          color: #fff;
+          border-style: none;
+          padding: 1em 2em;
+          border-radius: 0.5em;
+          overflow: hidden;
+          z-index: 1;
+          box-shadow: 4px 8px 10px -3px rgba(0, 0, 0, 0.356);
+          transition: all 250ms;
+          cursor: pointer; /* Ensure cursor is pointer */
+          font-size: 0.875rem; /* Match original font size */
+          font-weight: 500; /* Match original font weight */
+        }
+        .excel-button-new > svg {
+          margin-right: 1em;
+        }
+        .excel-button-new::before {
+          content: "";
+          position: absolute;
+          height: 100%;
+          width: 0;
+          border-radius: 0.5em;
+          background-color: #469b61;
+          z-index: -1;
+          transition: all 350ms;
+        }
+        .excel-button-new:hover::before {
+          width: 100%;
+        }
+        /* Remove file input styling as it's not needed */
+        .excel-button-new input[type="file"] {
+          display: none;
+        }
+
+        /* New Print Button Styles */
+        .print-button-new {
+          width: 100%; /* Override fixed width from example */
+          height: 100%; /* Override fixed height from example */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: white;
+          border: 1px solid rgb(213, 213, 213);
+          border-radius: 10px;
+          gap: 10px;
+          font-size: 0.875rem; /* Match original font size */
+          cursor: pointer;
+          overflow: hidden;
+          font-weight: 500;
+          box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.065);
+          transition: all 0.3s;
+          color: #334155; /* Match original text color */
+        }
+        .print-button-new .printer-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 100%;
+        }
+        .print-button-new .printer-container {
+          height: 50%;
+          width: 100%;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+        }
+        .print-button-new .printer-container svg {
+          width: 100%;
+          height: auto;
+          transform: translateY(4px);
+        }
+        .print-button-new .printer-page-wrapper {
+          width: 100%;
+          height: 50%;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+        }
+        .print-button-new .printer-page {
+          width: 70%;
+          height: 10px;
+          border: 1px solid black;
+          background-color: white;
+          transform: translateY(0px);
+          transition: all 0.3s;
+          transform-origin: top;
+        }
+        .print-button-new:hover .printer-page {
+          height: 16px;
+          background-color: rgb(239, 239, 239);
+        }
+        .print-button-new:hover {
+          background-color: rgb(239, 239, 239);
+        }
+
+        /* New Delete Button Styles */
+        .delete-button-new {
+         width: 100%; /* Override fixed width from example */
+         height: 100%; /* Override fixed height from example */
+         cursor: pointer;
+         display: flex;
+         align-items: center;
+         background: #e62222;
+         border: none;
+         border-radius: 5px;
+         box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+         position: relative; /* Needed for icon positioning */
+         overflow: hidden; /* Hide overflowing icon */
+         font-size: 0.875rem; /* Match original font size */
+        }
+
+        .delete-button-new, .delete-button-new span {
+         transition: 500ms;
+        }
+
+        .delete-button-new .text {
+         transform: translateX(20%); /* Adjust text position */
+         color: white;
+         font-weight: bold;
+         white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .delete-button-new .icon {
+         position: absolute;
+         /* border-left: px solid #c41b1b; No border needed? */
+         right: 0; /* Position icon to the right */
+         transform: translateX(0); /* Start position */
+         height: 100%; /* Full height */
+         width: 50px; /* Fixed width for icon area */
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background: #c41b1b; /* Background for icon area */
+         opacity: 0; /* Hidden initially */
+        }
+
+        .delete-button-new svg {
+         width: 15px;
+         fill: #eee;
+        }
+
+        .delete-button-new:hover {
+         background: #ff3636;
+        }
+
+        .delete-button-new:hover .text {
+         /* Animate text out */
+         transform: translateX(-150%);
+         opacity: 0;
+        }
+
+        .delete-button-new:hover .icon {
+         width: 100%; /* Expand icon area to full width */
+         transform: translateX(0); 
+         opacity: 1; /* Fade in */
+         background: #ff3636; /* Match hover background */
+        }
+
+        .delete-button-new:focus {
+         outline: none;
+        }
+
+        .delete-button-new:active .icon svg {
+         transform: scale(0.8);
+        }
+
+        /* Disabled state for new buttons */
+        .excel-button-new:disabled,
+        .print-button-new:disabled,
+        .delete-button-new:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(50%);
+        }
+        .delete-button-new:disabled:hover .icon {
+            width: 50px; /* Prevent icon expansion on disabled hover */
+            opacity: 0;
+        }
+         .delete-button-new:disabled:hover .text {
+            transform: translateX(20%);
+            opacity: 1;
+        }
+    </style>
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+    
+    <!-- Libraries for Excel and PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="js/firebase-config.js"></script>
+    
+    <!-- Core Scripts -->
+    <!-- Modern Notification System -->
+    <script src="js/notifications.js"></script>
+    
+    <!-- Page-specific scripts -->
+    <script src="js/initialize-new-database.js"></script>
+    <script src="js/database-migration-checker.js"></script>
+    <script src="js/hotel-config.js"></script>
+    <script src="js/hotel-branch-manager.js"></script>
+    <script src="js/audit-logs.js" defer></script>
+</head>
+<body>
+    <!-- Loading indicator -->
+    <div class="loading-container" id="loadingContainer">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <img src="images/PremierFix.png" alt="PremierFix Logo" class="brand-logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Log Issue</a>
+                <a href="tracking-new.html">Track Issues</a>
+                <a href="room-audit.html">Room Audit</a>
+                <a href="audit-logs.html" class="active">Audit Logs</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="logs-header">
+            <h1>Room Audit Logs</h1>
+            <div class="branch-selector">
+                <label for="branchSelect">Branch:</label>
+                <select id="branchSelect">
+                    <option value="">Select Branch</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Branch-specific action buttons -->
+        <div class="audit-actions-container">
+            <!-- Apply the grid layout here -->
+            <div class="action-buttons-grid">
+                 <!-- Button 1: Excel -->
+                 <button id="exportExcelBtn" class="excel-button-new" disabled>
+                    <svg
+                      fill="#fff"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 50 50"
+                    >
+                      <path
+                        d="M28.8125 .03125L.8125 5.34375C.339844 
+                      5.433594 0 5.863281 0 6.34375L0 43.65625C0 
+                      44.136719 .339844 44.566406 .8125 44.65625L28.8125 
+                      49.96875C28.875 49.980469 28.9375 50 29 50C29.230469 
+                      50 29.445313 49.929688 29.625 49.78125C29.855469 49.589844 
+                      30 49.296875 30 49L30 1C30 .703125 29.855469 .410156 29.625 
+                      .21875C29.394531 .0273438 29.105469 -.0234375 28.8125 .03125ZM32 
+                      6L32 13L34 13L34 15L32 15L32 20L34 20L34 22L32 22L32 27L34 27L34 
+                      29L32 29L32 35L34 35L34 37L32 37L32 44L47 44C48.101563 44 49 
+                      43.101563 49 42L49 8C49 6.898438 48.101563 6 47 6ZM36 13L44 
+                      13L44 15L36 15ZM6.6875 15.6875L11.8125 15.6875L14.5 21.28125C14.710938 
+                      21.722656 14.898438 22.265625 15.0625 22.875L15.09375 22.875C15.199219 
+                      22.511719 15.402344 21.941406 15.6875 21.21875L18.65625 15.6875L23.34375 
+                      15.6875L17.75 24.9375L23.5 34.375L18.53125 34.375L15.28125 
+                      28.28125C15.160156 28.054688 15.035156 27.636719 14.90625 
+                      27.03125L14.875 27.03125C14.8125 27.316406 14.664063 27.761719 
+                      14.4375 28.34375L11.1875 34.375L6.1875 34.375L12.15625 25.03125ZM36 
+                      20L44 20L44 22L36 22ZM36 27L44 27L44 29L36 29ZM36 35L44 35L44 37L36 37Z"
+                      ></path>
+                    </svg>
+                    Export to Excel
+                 </button>
+                <!-- Button 2: Print -->
+                <button id="printPdfBtn" class="print-button-new" disabled>
+                    <span class="printer-wrapper">
+                      <span class="printer-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 92 75">
+                          <path
+                            stroke-width="5"
+                            stroke="black"
+                            d="M12 37.5H80C85.2467 37.5 89.5 41.7533 89.5 47V69C89.5 70.933 87.933 72.5 86 72.5H6C4.067 72.5 2.5 70.933 2.5 69V47C2.5 41.7533 6.75329 37.5 12 37.5Z"
+                          ></path>
+                          <mask fill="white" id="path-2-inside-1_30_7">
+                            <path
+                              d="M12 12C12 5.37258 17.3726 0 24 0H57C70.2548 0 81 10.7452 81 24V29H12V12Z"
+                            ></path>
+                          </mask>
+                          <path
+                            mask="url(#path-2-inside-1_30_7)"
+                            fill="black"
+                            d="M7 12C7 2.61116 14.6112 -5 24 -5H57C73.0163 -5 86 7.98374 86 24H76C76 13.5066 67.4934 5 57 5H24C20.134 5 17 8.13401 17 12H7ZM81 29H12H81ZM7 29V12C7 2.61116 14.6112 -5 24 -5V5C20.134 5 17 8.13401 17 12V29H7ZM57 -5C73.0163 -5 86 7.98374 86 24V29H76V24C76 13.5066 67.4934 5 57 5V-5Z"
+                          ></path>
+                          <circle fill="black" r="3" cy="49" cx="78"></circle>
+                        </svg>
+                      </span>
+                      <span class="printer-page-wrapper">
+                        <span class="printer-page"></span>
+                      </span>
+                    </span>
+                    Print Report
+                  </button>
+                <!-- Button 3: Delete -->
+                <button id="deleteAllBtn" class="delete-button-new" disabled>
+                   <span class="text">Delete All Records</span>
+                   <span class="icon">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                           <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path>
+                       </svg>
+                   </span>
+                 </button>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-container" style="margin-bottom: 2rem; background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif;">Filter by Issues Found:</h3>
+            <div class="filter-checkboxes" id="issueFilterCheckboxes">
+                <!-- Checkboxes will be added dynamically, but structure remains -->
+                <label>
+                    <input type="checkbox" value="lights" class="issue-filter-checkbox">
+                    <span>Lights</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="switches" class="issue-filter-checkbox">
+                    <span>Switches</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="powerPlugs" class="issue-filter-checkbox">
+                    <span>Power Plugs</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="mirrors" class="issue-filter-checkbox">
+                    <span>Mirrors</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="furniture" class="issue-filter-checkbox">
+                    <span>Furniture</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="beerOpeners" class="issue-filter-checkbox">
+                    <span>Beer Openers</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="doorViewer" class="issue-filter-checkbox">
+                    <span>Door Viewer</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="doorLocks" class="issue-filter-checkbox">
+                    <span>Door Locks</span>
+                </label>
+                <label>
+                    <input type="checkbox" value="wallDamage" class="issue-filter-checkbox">
+                    <span>Wall Damage</span>
+                </label>
+                 <label>
+                    <input type="checkbox" value="mould" class="issue-filter-checkbox">
+                    <span>Mould</span>
+                </label>
+                <!-- Add more checkboxes for other potential issues -->
+            </div>
+        </div>
+        
+        <div class="audit-logs-container">
+            <div class="audit-logs-header">
+                <h2>All Audit Records</h2>
+                <div class="search-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by room number...">
+                </div>
+            </div>
+            
+            <div class="logs-table-container">
+                <table class="logs-table" id="auditLogsTable">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Date & Time</th>
+                            <th>Issues Found</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogsBody">
+                        <!-- Logs will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">📋</div>
+                <h3>No Audit Logs Found</h3>
+                <p>There are no room audit logs for this branch yet. Start by conducting a room audit.</p>
+                <a href="room-audit.html" class="empty-state-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Conduct Room Audit
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

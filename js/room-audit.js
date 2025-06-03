@@ -1,546 +1,411 @@
 // Room Audit Functionality
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize loading indicator
+    const loadingContainer = document.getElementById('loadingContainer');
+    const showLoading = () => {
+        loadingContainer.classList.add('active');
+    };
+    const hideLoading = () => {
+        loadingContainer.classList.remove('active');
+    };
 
-const AUDIT_CHECKLIST = {
-    lighting: [
-        { id: 'main_lights', label: 'Main Room Lights', type: 'check' },
-        { id: 'bathroom_lights', label: 'Bathroom Lights', type: 'check' },
-        { id: 'desk_lamp', label: 'Desk Lamp', type: 'check' },
-        { id: 'bedside_lamps', label: 'Bedside Lamps', type: 'check' }
-    ],
-    plumbing: [
-        { id: 'sink_faucet', label: 'Sink Faucet', type: 'check' },
-        { id: 'toilet_flush', label: 'Toilet Flush', type: 'check' },
-        { id: 'shower_head', label: 'Shower Head', type: 'check' },
-        { id: 'drain_flow', label: 'Drain Flow', type: 'check' },
-        { id: 'water_pressure', label: 'Water Pressure', type: 'rating', max: 5 }
-    ],
-    climate: [
-        { id: 'ac_cooling', label: 'AC Cooling', type: 'check' },
-        { id: 'ac_noise', label: 'AC Noise Level', type: 'rating', max: 5 },
-        { id: 'thermostat', label: 'Thermostat Function', type: 'check' },
-        { id: 'ventilation', label: 'Room Ventilation', type: 'check' }
-    ],
-    furniture: [
-        { id: 'bed_frame', label: 'Bed Frame', type: 'check' },
-        { id: 'mattress', label: 'Mattress Condition', type: 'rating', max: 5 },
-        { id: 'desk_chair', label: 'Desk & Chair', type: 'check' },
-        { id: 'wardrobe', label: 'Wardrobe/Closet', type: 'check' },
-        { id: 'curtains', label: 'Curtains/Blinds', type: 'check' }
-    ],
-    electronics: [
-        { id: 'tv_function', label: 'TV Function', type: 'check' },
-        { id: 'tv_remote', label: 'TV Remote', type: 'check' },
-        { id: 'wifi_signal', label: 'WiFi Signal Strength', type: 'rating', max: 5 },
-        { id: 'phone', label: 'Room Phone', type: 'check' },
-        { id: 'power_outlets', label: 'Power Outlets', type: 'check' }
-    ],
-    safety: [
-        { id: 'smoke_detector', label: 'Smoke Detector', type: 'check' },
-        { id: 'door_lock', label: 'Door Lock & Security', type: 'check' },
-        { id: 'emergency_info', label: 'Emergency Information', type: 'check' },
-        { id: 'window_locks', label: 'Window Locks', type: 'check' }
-    ]
-};
-
-class RoomAuditUI {
-    constructor() {
-        this.currentRoom = null;
-        this.auditData = {};
-        this.initialized = false;
-    }
-
-    async initialize() {
-        if (this.initialized) return;
-        
-        // Create and append modal HTML
-        this.createModalHTML();
-        
-        // Initialize event listeners
-        this.setupEventListeners();
-        
-        this.initialized = true;
-    }
-
-    createModalHTML() {
-        const modalHTML = `
-            <div id="roomAuditModal" class="modal">
-                <div class="modal-content audit-modal">
-                    <div class="modal-header">
-                        <h2>Room Audit - <span id="roomNumber"></span></h2>
-                        <button class="close-btn">&times;</button>
-                    </div>
-                    <div class="audit-content">
-                        <div class="audit-tabs">
-                            ${Object.keys(AUDIT_CHECKLIST).map(category => `
-                                <button class="tab-btn" data-category="${category}">
-                                    ${category.charAt(0).toUpperCase() + category.slice(1)}
-                                </button>
-                            `).join('')}
-                        </div>
-                        <div class="audit-sections">
-                            ${Object.entries(AUDIT_CHECKLIST).map(([category, items]) => `
-                                <div class="audit-section" data-category="${category}">
-                                    <h3>${category.charAt(0).toUpperCase() + category.slice(1)}</h3>
-                                    <div class="checklist">
-                                        ${items.map(item => `
-                                            <div class="checklist-item">
-                                                <label for="${item.id}">${item.label}</label>
-                                                ${item.type === 'check' ? `
-                                                    <div class="check-options">
-                                                        <button class="status-btn" data-status="pass" data-item="${item.id}">Pass</button>
-                                                        <button class="status-btn" data-status="fail" data-item="${item.id}">Fail</button>
-                                                        <button class="status-btn" data-status="na" data-item="${item.id}">N/A</button>
-                                                    </div>
-                                                ` : `
-                                                    <div class="rating-options">
-                                                        ${Array.from({length: item.max}, (_, i) => i + 1).map(num => `
-                                                            <button class="rating-btn" data-rating="${num}" data-item="${item.id}">${num}</button>
-                                                        `).join('')}
-                                                    </div>
-                                                `}
-                                                <div class="notes-field">
-                                                    <input type="text" placeholder="Add notes..." data-item="${item.id}">
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="saveAudit" class="btn-primary">Save Audit</button>
-                        <button id="exportAuditPDF" class="btn-secondary">Export PDF</button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Add styles
-        const styles = `
-            .audit-modal {
-                width: 90%;
-                max-width: 800px;
-                max-height: 90vh;
-                margin: 5vh auto;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding-bottom: 15px;
-                border-bottom: 1px solid #ddd;
-            }
-
-            .close-btn {
-                background: none;
-                border: none;
-                font-size: 24px;
-                cursor: pointer;
-            }
-
-            .audit-content {
-                flex: 1;
-                overflow-y: auto;
-                padding: 20px 0;
-            }
-
-            .audit-tabs {
-                display: flex;
-                gap: 10px;
-                margin-bottom: 20px;
-                flex-wrap: wrap;
-            }
-
-            .tab-btn {
-                padding: 8px 16px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                background: none;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-
-            .tab-btn.active {
-                background: #007bff;
-                color: white;
-                border-color: #0056b3;
-            }
-
-            .audit-section {
-                display: none;
-            }
-
-            .audit-section.active {
-                display: block;
-            }
-
-            .checklist {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .checklist-item {
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-
-            .check-options {
-                display: flex;
-                gap: 10px;
-                margin: 10px 0;
-            }
-
-            .status-btn {
-                padding: 5px 15px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                background: none;
-                cursor: pointer;
-            }
-
-            .status-btn.active[data-status="pass"] {
-                background: #28a745;
-                color: white;
-            }
-
-            .status-btn.active[data-status="fail"] {
-                background: #dc3545;
-                color: white;
-            }
-
-            .status-btn.active[data-status="na"] {
-                background: #6c757d;
-                color: white;
-            }
-
-            .rating-options {
-                display: flex;
-                gap: 5px;
-                margin: 10px 0;
-            }
-
-            .rating-btn {
-                width: 30px;
-                height: 30px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                background: none;
-                cursor: pointer;
-            }
-
-            .rating-btn.active {
-                background: #007bff;
-                color: white;
-            }
-
-            .notes-field input {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                margin-top: 5px;
-            }
-
-            .modal-footer {
-                padding-top: 15px;
-                border-top: 1px solid #ddd;
-                display: flex;
-                gap: 10px;
-                justify-content: flex-end;
-            }
-
-            .btn-secondary {
-                background-color: #6c757d;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-
-            .btn-secondary:hover {
-                background-color: #5a6268;
-            }
-        `;
-
-        // Add modal and styles to document
-        const styleElement = document.createElement('style');
-        styleElement.textContent = styles;
-        document.head.appendChild(styleElement);
-
-        const modalContainer = document.createElement('div');
-        modalContainer.innerHTML = modalHTML;
-        document.body.appendChild(modalContainer);
-    }
-
-    setupEventListeners() {
-        const modal = document.getElementById('roomAuditModal');
-        const closeBtn = modal.querySelector('.close-btn');
-        const tabButtons = modal.querySelectorAll('.tab-btn');
-        const statusButtons = modal.querySelectorAll('.status-btn');
-        const ratingButtons = modal.querySelectorAll('.rating-btn');
-        const saveButton = document.getElementById('saveAudit');
-        const exportButton = document.getElementById('exportAuditPDF');
-        const noteInputs = modal.querySelectorAll('.notes-field input');
-
-        // Close button
-        closeBtn.addEventListener('click', () => {
-            this.closeAudit();
-        });
-
-        // Tab switching
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const category = button.dataset.category;
-                this.switchTab(category);
-            });
-        });
-
-        // Status buttons
-        statusButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const item = button.dataset.item;
-                const status = button.dataset.status;
-                this.updateItemStatus(item, status, button);
-            });
-        });
-
-        // Rating buttons
-        ratingButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const item = button.dataset.item;
-                const rating = parseInt(button.dataset.rating);
-                this.updateItemRating(item, rating, button);
-            });
-        });
-
-        // Note inputs
-        noteInputs.forEach(input => {
-            input.addEventListener('change', () => {
-                const item = input.dataset.item;
-                this.updateItemNotes(item, input.value);
-            });
-        });
-
-        // Save button
-        saveButton.addEventListener('click', async () => {
-            await this.saveAudit();
-        });
-
-        // Export button
-        exportButton.addEventListener('click', () => {
-            this.exportAuditPDF();
-        });
-    }
-
-    openAudit(roomNumber) {
-        this.currentRoom = roomNumber;
-        this.auditData = {};
-        
-        // Reset UI
-        document.getElementById('roomNumber').textContent = `Room ${roomNumber}`;
-        document.querySelectorAll('.status-btn.active').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.rating-btn.active').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.notes-field input').forEach(input => input.value = '');
-        
-        // Show first tab
-        this.switchTab(Object.keys(AUDIT_CHECKLIST)[0]);
-        
-        // Show modal
-        document.getElementById('roomAuditModal').style.display = 'block';
-    }
-
-    closeAudit() {
-        document.getElementById('roomAuditModal').style.display = 'none';
-        this.currentRoom = null;
-        this.auditData = {};
-    }
-
-    switchTab(category) {
-        // Update tab buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.category === category);
-        });
-
-        // Update sections
-        document.querySelectorAll('.audit-section').forEach(section => {
-            section.classList.toggle('active', section.dataset.category === category);
-        });
-    }
-
-    updateItemStatus(item, status, button) {
-        // Remove active class from sibling buttons
-        const siblings = button.parentElement.querySelectorAll('.status-btn');
-        siblings.forEach(btn => btn.classList.remove('active'));
-        
-        // Add active class to clicked button
-        button.classList.add('active');
-        
-        // Update audit data
-        if (!this.auditData[item]) this.auditData[item] = {};
-        this.auditData[item].status = status;
-    }
-
-    updateItemRating(item, rating, button) {
-        // Remove active class from sibling buttons
-        const siblings = button.parentElement.querySelectorAll('.rating-btn');
-        siblings.forEach(btn => btn.classList.remove('active'));
-        
-        // Add active class to clicked button
-        button.classList.add('active');
-        
-        // Update audit data
-        if (!this.auditData[item]) this.auditData[item] = {};
-        this.auditData[item].rating = rating;
-    }
-
-    updateItemNotes(item, notes) {
-        if (!this.auditData[item]) this.auditData[item] = {};
-        this.auditData[item].notes = notes;
-    }
-
-    async saveAudit() {
-        try {
-            if (!this.currentRoom) throw new Error('No room selected');
-            
-            const auditData = {
-                roomNumber: this.currentRoom,
-                timestamp: new Date().toISOString(),
-                items: this.auditData
-            };
-            
-            await window.roomAuditManager.saveAudit(this.currentRoom, auditData);
-            this.showNotification('Audit saved successfully');
-            this.closeAudit();
-        } catch (error) {
-            console.error('Error saving audit:', error);
-            this.showError('Failed to save audit');
+    // Get form elements
+    const roomNumberInput = document.getElementById('roomNumber');
+    const auditNotesInput = document.getElementById('auditNotes');
+    const photoInput = document.getElementById('photoInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const submitAuditBtn = document.getElementById('submitAuditBtn');
+    
+    // Get all checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    
+    // Initialize state
+    let currentBranch = null;
+    let photoFile = null;
+    
+    // Initialize Firebase
+    try {
+        showLoading();
+        await initializeFirebase();
+        const { db } = await getFirebaseInstances();
+        if (!db) {
+            throw new Error('Failed to initialize Firebase database');
         }
-    }
-
-    async exportAuditPDF() {
-        try {
-            if (!this.currentRoom) throw new Error('No room selected');
-            
-            // Create PDF content
-            const content = this.generatePDFContent();
-            
-            // Generate PDF using jsPDF
-            const pdf = new jsPDF();
-            
-            // Add content to PDF
-            let yOffset = 20;
-            
-            // Add header
-            pdf.setFontSize(16);
-            pdf.text(`Room ${this.currentRoom} Audit Report`, 20, yOffset);
-            yOffset += 10;
-            
-            pdf.setFontSize(12);
-            pdf.text(`Date: ${new Date().toLocaleDateString()}`, 20, yOffset);
-            yOffset += 20;
-            
-            // Add categories
-            Object.entries(AUDIT_CHECKLIST).forEach(([category, items]) => {
-                // Add category header
-                pdf.setFontSize(14);
-                pdf.text(category.charAt(0).toUpperCase() + category.slice(1), 20, yOffset);
-                yOffset += 10;
-                
-                // Add items
-                pdf.setFontSize(10);
-                items.forEach(item => {
-                    const itemData = this.auditData[item.id] || {};
-                    let status = itemData.status || 'Not checked';
-                    if (item.type === 'rating') {
-                        status = itemData.rating ? `Rating: ${itemData.rating}/5` : 'Not rated';
-                    }
-                    
-                    const text = `${item.label}: ${status}`;
-                    if (yOffset > 270) {
-                        pdf.addPage();
-                        yOffset = 20;
-                    }
-                    
-                    pdf.text(text, 30, yOffset);
-                    yOffset += 7;
-                    
-                    if (itemData.notes) {
-                        pdf.setTextColor(100);
-                        pdf.text(`Notes: ${itemData.notes}`, 40, yOffset);
-                        pdf.setTextColor(0);
-                        yOffset += 7;
-                    }
-                });
-                
-                yOffset += 10;
-            });
-            
-            // Save PDF
-            pdf.save(`room_${this.currentRoom}_audit.pdf`);
-            
-        } catch (error) {
-            console.error('Error exporting audit:', error);
-            this.showError('Failed to export audit to PDF');
-        }
-    }
-
-    generatePDFContent() {
-        // Generate content for PDF export
-        const content = [];
         
-        Object.entries(AUDIT_CHECKLIST).forEach(([category, items]) => {
-            content.push({
-                text: category.charAt(0).toUpperCase() + category.slice(1),
-                style: 'categoryHeader'
-            });
+        // Get current branch
+        currentBranch = window.hotelBranchManager.getCurrentBranch();
+        if (!currentBranch) {
+            showNotification('Please select a branch first.', 'warning');
+        }
+        
+        // Set up event listeners
+        setupEventListeners();
+        
+        hideLoading();
+    } catch (error) {
+        console.error('Initialization error:', error);
+        hideLoading();
+        showNotification('Failed to initialize application. Please refresh the page.', 'error');
+    }
+    
+    // Set up event listeners
+    function setupEventListeners() {
+        // Photo upload handler
+        photoInput.addEventListener('change', handlePhotoUpload);
+        
+        // Submit audit handler
+        submitAuditBtn.addEventListener('click', submitAudit);
+    }
+    
+    // Handle photo upload
+    function handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // Store the file for later upload
+        photoFile = file;
+        
+        // Preview image is handled in the inline script in the HTML file
+    }
+    
+    // Submit audit to Firebase
+    async function submitAudit() {
+        try {
+            // Validate inputs
+            if (!validateForm()) {
+                return;
+            }
             
-            items.forEach(item => {
-                const itemData = this.auditData[item.id] || {};
-                content.push({
-                    text: `${item.label}: ${itemData.status || 'Not checked'}`,
-                    style: 'item'
-                });
-                
-                if (itemData.notes) {
-                    content.push({
-                        text: `Notes: ${itemData.notes}`,
-                        style: 'notes'
-                    });
+            showLoading();
+            
+            // Get current branch
+            const branchId = window.hotelBranchManager.getCurrentBranch();
+            if (!branchId) {
+                hideLoading();
+                showNotification('Please select a branch first.', 'warning');
+                return;
+            }
+            
+            // Collect form data
+            const roomNumber = roomNumberInput.value.trim();
+            const notes = auditNotesInput.value.trim();
+            
+            // Collect checked issues
+            const issues = [];
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    // Save the lowercase ID directly to match filter values
+                    issues.push(checkbox.id.toLowerCase());
                 }
             });
             
-            content.push({ text: '', margin: [0, 10] });
+            // Upload photo if available
+            let imageUrl = null;
+            let photoUploadFailed = false;
+            if (photoFile) {
+                try {
+                    imageUrl = await uploadPhoto(branchId, roomNumber);
+                    if (!imageUrl) {
+                        photoUploadFailed = true;
+                    }
+                } catch (uploadError) {
+                    console.error('Photo upload failed:', uploadError);
+                    photoUploadFailed = true;
+                }
+            }
+            
+            // Prepare notes with image upload status if needed
+            let finalNotes = notes;
+            if (photoUploadFailed) {
+                finalNotes = `${notes}\n\n[NOTE: Photo evidence failed to upload due to a CORS/network issue. This is expected in local development environments and doesn't affect the audit data.]`;
+                showNotification('Photo could not be uploaded due to CORS restrictions, but audit will be saved without the image.', 'warning');
+            }
+            
+            // Create audit object
+            const auditData = {
+                branchId,
+                roomNumber,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                issues,
+                notes: finalNotes,
+                imageUrl,
+                photoAttempted: photoFile !== null,
+                photoUploaded: imageUrl !== null
+            };
+            
+            // Save to Firestore
+            const { db } = await getFirebaseInstances();
+            await db.collection('roomAudits').add(auditData);
+            
+            // Show success message
+            showNotification('Room audit submitted successfully!', 'success');
+            
+            // Reset form
+            resetForm();
+            
+            hideLoading();
+            
+        } catch (error) {
+            console.error('Error submitting audit:', error);
+            hideLoading();
+            showNotification('Failed to submit audit. Please try again.', 'error');
+        }
+    }
+    
+    // Upload photo to Firebase Storage
+    async function uploadPhoto(branchId, roomNumber) {
+        try {
+            const { storage } = await getFirebaseInstances();
+            
+            // Generate a unique filename
+            const timestamp = new Date().getTime();
+            const filename = `${branchId}_${roomNumber}_${timestamp}.jpg`;
+            const storageRef = storage.ref(`room-audits/${filename}`);
+            
+            // Add CORS handling with a timeout
+            const uploadTask = storageRef.put(photoFile);
+            
+            // Create a promise that resolves on success or rejects on error
+            return new Promise((resolve, reject) => {
+                // Set a timeout for the upload
+                const timeoutId = setTimeout(() => {
+                    reject(new Error('Upload timed out - possible CORS issue'));
+                }, 15000); // 15 seconds timeout
+                
+                uploadTask.on('state_changed',
+                    // Progress tracking if needed
+                    (snapshot) => {
+                        // Optional: track upload progress here
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload progress: ' + Math.round(progress) + '%');
+                    },
+                    // Error handling
+                    (error) => {
+                        clearTimeout(timeoutId);
+                        console.error('Error uploading photo:', error);
+                        
+                        // Detailed error message
+                        let errorMessage = 'Failed to upload photo';
+                        if (error.code === 'storage/unauthorized' || error.message.includes('CORS')) {
+                            errorMessage = 'CORS policy blocked the photo upload. This is common in development environments.';
+                            // Show a detailed notification about CORS issues
+                            showCorsHelpNotification();
+                            reject(new Error('CORS error: Firebase Storage may not be configured for local development'));
+                        } else {
+                            reject(error);
+                        }
+                    },
+                    // Success handling
+                    async () => {
+                        clearTimeout(timeoutId);
+                        try {
+                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                            resolve(downloadURL);
+                        } catch (urlError) {
+                            console.error('Error getting download URL:', urlError);
+                            reject(urlError);
+                        }
+                    }
+                );
+            });
+        } catch (error) {
+            console.error('Error in upload process:', error);
+            // Return null to indicate no image was uploaded
+            return null;
+        }
+    }
+    
+    // Show a helpful notification about CORS issues
+    function showCorsHelpNotification() {
+        // Create a special notification for CORS issues
+        const notification = document.createElement('div');
+        notification.className = 'notification info';
+        notification.style.width = '400px';
+        notification.style.maxWidth = '90%';
+        
+        notification.innerHTML = `
+            <div class="notification-content" style="padding: 15px;">
+                <h4 style="margin-top: 0; color: #3a7bd5;">Photo Upload Failed - CORS Issue</h4>
+                <p>This is a common issue in development environments when testing with a local server (127.0.0.1).</p>
+                <p><strong>Why this happens:</strong> Firebase Storage requires special configuration to allow uploads from development URLs.</p>
+                <p><strong>Your audit will still be saved</strong> without the photo.</p>
+                <p style="margin-bottom: 5px;"><strong>Solutions:</strong></p>
+                <ul style="margin-top: 0; padding-left: 20px;">
+                    <li>Deploy the app to Firebase Hosting</li>
+                    <li>Configure CORS settings in Firebase Storage</li>
+                    <li>Use Firebase Emulators for local development</li>
+                </ul>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                    <button id="moreCorsInfoBtn" style="background: #3a7bd5; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">More Info</button>
+                    <button id="dismissCorsHelp" style="background: #64748b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Dismiss</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Add animation class after a small delay
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        // Add event listener to More Info button
+        const moreInfoButton = notification.querySelector('#moreCorsInfoBtn');
+        moreInfoButton.addEventListener('click', () => {
+            // Close the notification
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+            
+            // Show the CORS help modal if it exists
+            if (typeof showCorsHelpModal === 'function') {
+                showCorsHelpModal();
+            } else {
+                // If the modal function doesn't exist, create a simple alert
+                alert('CORS issues are common in development environments. Your audit will still be saved without the photo.');
+            }
         });
         
-        return content;
+        // Add event listener to dismiss button
+        const dismissButton = notification.querySelector('#dismissCorsHelp');
+        dismissButton.addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        });
+        
+        // Auto-dismiss after 20 seconds
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }
+        }, 20000);
     }
-
-    showNotification(message) {
-        if (window.showNotification) {
-            window.showNotification(message, 'success');
+    
+    // Validate form inputs
+    function validateForm() {
+        // Check room number
+        if (!roomNumberInput.value.trim()) {
+            showNotification('Please enter a room number.', 'warning');
+            roomNumberInput.focus();
+            return false;
+        }
+        
+        // Check if at least one issue is selected
+        let issueSelected = false;
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                issueSelected = true;
+            }
+        });
+        
+        // Allow form submission even if no issues are selected
+        // This supports the case where room is perfect and has no issues
+        
+        return true;
+    }
+    
+    // Reset form after submission
+    function resetForm() {
+        roomNumberInput.value = '';
+        auditNotesInput.value = '';
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        photoFile = null;
+        imagePreview.style.display = 'none';
+        photoInput.value = ''; // Reset file input
+    }
+    
+    // Show notification
+    function showNotification(message, type = 'info') {
+        // Check if notification function exists in the global scope
+        if (typeof window.showNotification === 'function') {
+            // Use the modern notification system
+            window.showNotification(message, type);
         } else {
-            alert(message);
+            console.warn('Modern notification system not available, using fallback');
+            
+            // Create a simple notification (fallback)
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add styles (if they don't already exist)
+            if (!document.getElementById('fallback-notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'fallback-notification-styles';
+                style.textContent = `
+                    .notification {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        padding: 15px 20px;
+                        border-radius: 8px;
+                        background-color: white;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        z-index: 1000;
+                        transition: all 0.3s ease;
+                        opacity: 0;
+                        transform: translateY(-20px);
+                        max-width: 300px;
+                    }
+                    
+                    .notification.show {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                    
+                    .notification.success {
+                        border-left: 4px solid #4ade80;
+                    }
+                    
+                    .notification.warning {
+                        border-left: 4px solid #f59e0b;
+                    }
+                    
+                    .notification.error {
+                        border-left: 4px solid #ef4444;
+                    }
+                    
+                    .notification.info {
+                        border-left: 4px solid #3a7bd5;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Remove notification after a few seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
         }
     }
-
-    showError(message) {
-        if (window.showError) {
-            window.showError(message);
-        } else {
-            alert('Error: ' + message);
-        }
-    }
-}
-
-// Initialize room audit UI
-window.roomAuditUI = new RoomAuditUI();
-document.addEventListener('DOMContentLoaded', () => {
-    window.roomAuditUI.initialize();
 }); 

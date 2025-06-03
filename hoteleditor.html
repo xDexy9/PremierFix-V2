@@ -21,17 +21,38 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile-responsive.css">
     <link rel="stylesheet" href="css/branch-selector.css">
 
     <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script>
+        // Check if we're in production mode
+        const isProduction = window.location.hostname === 'premierfix.uk';
+    </script>
     <script src="js/firebase-config.js"></script>
-
-    <!-- Main scripts -->
-    <script src="js/hotel-config.js"></script>
+    <!-- Load production config if needed -->
+    <script>
+        if (isProduction) {
+            // Production configuration will override the development one
+            document.write('<script src="js/firebase-config-prod.js"><\/script>');
+        }
+    </script>
+    
+    <!-- Core Scripts -->
+    <script src="js/hotel-branch-manager.js"></script>
+    
+    <!-- Modern Notification System -->
+    <script src="js/notifications.js"></script>
+    
+    <!-- Page-specific scripts -->
+    <script src="js/initialize-new-database.js"></script>
+    <script src="js/database-migration-checker.js"></script>
     <script src="js/hotel-editor.js" defer></script>
     
     <style>
@@ -235,9 +256,9 @@
             </div>
             <div class="nav-links">
                 <a href="index.html">Log Issue</a>
-                <a href="tracking.html">Track Issues</a>
+                <a href="tracking-new.html">Track Issues</a>
                 <a href="dashboard.html">Dashboard</a>
-                <a href="hoteleditor.html" class="active">Hotel Management</a>
+                <a href="hoteleditor.html" class="active">Hotel Editor</a>
             </div>
         </div>
     </nav>

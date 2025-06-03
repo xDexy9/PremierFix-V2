@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PremierFix - Photo Viewer</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDVJREFUWEe9V21oXEUUPefNJtVWa6tNbIz9oRRbP8AP/FD8gB+gVhRFReyPglYqKoIIoqhYqdCKVkXEKkJVUBT8UUHxq1VQUasgVkFQqW2TxibZ3ffmHplN3u7Om7dvX7KbHFh2d+bMnXPvnTNzZ4mKxvkA7gJwIYAhAEcA7APwBYBvAUyVGaKMUQPAegD3AljVw84UgF0AngXwflE/RQFcDuBVAMeVcPoLgJcA7AHwG4C/Acw3bU8GcAqAMwBcCeBGACcWOH8dwM0AvutrAIcDeAnADQC+B/AygLcAfJvj4DgA5wG4GcDVAI4E8CKAL5JnZwF4B8AxAK4D8G5vALEEXwO4HMBzAB7KcZoO+xCAhwEcAvAAgCcT+4sAvA3gdADXAvigPwANwNUAXgPwRIGjdQAeA3AAwEYALyT25wN4A8ClAK4B8NEAAFYBeBfAEwXOHgXwIICDAO4H8FRifxGAtwBcDuAKAB8PAMByAO8BeLLA2WYA9wE4AOBJAE8n9hcDeB3AVQA2APh0AABLAbwP4OkCZ1sBbAJwEMBWAM8k9pcAeA3A9QBuAPDZAABOBLAXwDMFzrYD2AzgXwDbADyb2C8B8AqAmwDcCuDzAQAcD+ADAL0S0Q4AWwD8A+BZAC8k9ksBvAzgdgB3Aviy3wQsA/AhgOcLnO0EcA+AfwE8D+DFxH4ZgJcA3AXgbgBfDQBgKYCPALxU4OxVAHcD+BvAiwB2JfbLAbwI4B4A9wH4egAAJwD4GMArBc52A7gTwF8AdgJ4ObE/CcDzAO4H8ACAb/oBEKXgEwCvFjh7HcAdAP4E8AqA1xL7kwE8C2ArgIcBfNcPgOUAPgXwRoGzPQBuA/AHgNcBvJXYrwDwDIBHADwK4Id+AKwA8BmANwucvQngVgC/A3gLwDuJ/UoATwF4DMDjAH7sB8ApAD4H8HaBs7cB3ALgNwB7AbyX2K8C8ASAJQA+ArABwM8DAFgJ4AsA7xQ42wfgZgC/AngXwPuJ/WoA2wGcC2AUwIUAfu0HwGkAvgTwXoGz9wDcCOAXAPsB7E/s1wDYBmAjgFEApwM41A+A0wF8DWBfgbMPAFwP4GcAHwL4OLFfC+BRAJsBjAE4E8C//QA4E8A3AD4pcPYRgOsA/ATgYwCfJvZnA3gYwL0AxgGcA+D/fgCcA+BbAJ8VOPsUwDoAPwL4BMBnif06AA8BmAAwAeD8QQCcB+A7AF8UOPscwFoAPwD4HMCXif35ALYC2AZgEsCFgwC4AMD3AL4qcPYlgMsA/ADgKwBfJ/YXAdgC4CEAUwAuHgTAxQAOAPiuwNk3AC4F8D2ArwB8k9hfAmATgEcATAO4bBAAlwL4AcD3Bc6+A3AJgO8AfAPg28T+MgAbATwOYAbA5YMAWAPgRwA/FTj7HsDFAA4A+BHAwcT+CgDrATwJYBbAlYMAWAvgZwC/FDj7CcBFAH5tDvZrYn8VgHUAngIwB+DqQQD8ARVhw8em0kDrAAAAAElFTkSuQmCC">
+    <meta name="theme-color" content="#511e58">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mobile-responsive.css">
+    
+    <style>
+        :root {
+            --primary: #511e58;
+            --secondary: #8e44ad;
+            --success: #27ae60;
+            --info: #3498db;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --text: #212529;
+            --border: #dee2e6;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background-color: #f9f9f9;
+            line-height: 1.6;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        
+        .navbar .brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .photo-viewer {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .photo-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+        
+        .photo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .photo-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .photo-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            min-height: 200px;
+        }
+        
+        .photo-image img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .photo-details {
+            margin-bottom: 20px;
+        }
+        
+        .photo-metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metadata-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .metadata-value {
+            font-weight: 500;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(81, 30, 88, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .error-container {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f8d7da;
+            border-radius: 8px;
+            border-left: 4px solid #842029;
+            margin: 20px 0;
+        }
+        
+        .error-container h3 {
+            margin-bottom: 15px;
+            color: #842029;
+        }
+        
+        .error-container p {
+            color: #842029;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+            }
+            
+            .navbar .brand {
+                margin-bottom: 10px;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+            }
+            
+            .nav-links a {
+                margin: 2px;
+                padding: 6px 10px;
+                font-size: 0.85rem;
+                flex: 0 1 auto;
+                text-align: center;
+            }
+            
+            /* Improve button layout for tablets */
+            .buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .btn {
+                min-width: 130px;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        /* Add additional media query for small screens */
+        @media (max-width: 480px) {
+            .buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                min-width: auto;
+                margin-bottom: 5px;
+                padding: 10px;
+                font-size: 0.9rem;
+                text-align: center;
+            }
+        }
+        
+        .error-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .error-image-icon {
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        
+        .error-image-message h3 {
+            color: #343a40;
+            margin-bottom: 10px;
+        }
+        
+        .error-image-message p {
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .error-image-message code {
+            display: inline-block;
+            max-width: 100%;
+            overflow: auto;
+            padding: 3px 6px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #138496;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="brand">
+                <img src="images/PremierFix.png" alt="PremierFix Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='PremierFix';">
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Log Issues</a>
+                <a href="tracking-new.html">Track Issues</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="photo-viewer" id="photoViewer">
+            <div class="loading" id="loadingSpinner">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script>
+        // Check if we're in production mode
+        const isProduction = window.location.hostname === 'premierfix.uk';
+    </script>
+    <script src="js/photo-viewer-firebase.js"></script>
+    <!-- Load production config if needed -->
+    <script>
+        if (isProduction) {
+            // Load additional production firebase config
+            document.write('<script src="js/firebase-config-prod.js"><\/script>');
+        }
+    </script>
+    <script>
+        // Parse URL parameters
+        function getUrlParams() {
+            const params = {};
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            for (const [key, value] of urlSearchParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+        
+        // Create HTML for photo viewer
+        function createPhotoViewer(issueData, photoUrl) {
+            const photoViewer = document.getElementById('photoViewer');
+            if (!photoViewer) return;
+            
+            // Clear loading spinner
+            photoViewer.innerHTML = '';
+            
+            const location = issueData.roomNumber ? `Room ${issueData.roomNumber}` : (issueData.location || 'Unknown Location');
+            
+            // Format date
+            const dateCreated = formatDate(issueData.createdAt);
+            
+            // Log the photo URL for debugging
+            console.log('Attempting to load photo from URL:', photoUrl);
+            
+            // Create the photo container
+            const photoContainer = document.createElement('div');
+            photoContainer.className = 'photo-container';
+            photoContainer.innerHTML = `
+                <div class="photo-header">
+                    <div class="photo-title">Photo for Issue at ${location}</div>
+                    <div class="issue-date">${dateCreated}</div>
+                </div>
+                <div class="photo-image">
+                    <img src="${photoUrl}" alt="Issue photo" id="photoImage" 
+                         onload="this.parentElement.classList.add('loaded'); console.log('Image loaded successfully');" 
+                         onerror="handleImageError(this, '${photoUrl}')">
+                </div>
+                <div class="photo-details">
+                    <div class="photo-metadata">
+                        <div class="metadata-item">
+                            <div class="metadata-label">Location</div>
+                            <div class="metadata-value">${location}</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Category</div>
+                            <div class="metadata-value">${issueData.category || 'Not specified'}</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Status</div>
+                            <div class="metadata-value">${issueData.status || 'Unknown'}</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Reported by</div>
+                            <div class="metadata-value">${issueData.authorName || 'Unknown'}</div>
+                        </div>
+                    </div>
+                    <div class="issue-description">
+                        <h3>Issue Description</h3>
+                        <p>${issueData.description || 'No description provided'}</p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-secondary" onclick="window.history.back()">Back</button>
+                    <a href="${photoUrl}" download="issue_photo" class="btn btn-primary" target="_blank">Download</a>
+                    <button class="btn btn-info" onclick="retryLoadImage('${photoUrl}')">Retry</button>
+                    <a href="${photoUrl}" class="btn btn-secondary" target="_blank">View URL</a>
+                </div>
+            `;
+            
+            photoViewer.appendChild(photoContainer);
+        }
+        
+        // Handle image loading errors
+        function handleImageError(imgElement, url) {
+            console.error('Failed to load image from URL:', url);
+            
+            // Check if the URL starts with http or https
+            if (!url.startsWith('http') && !url.startsWith('data:')) {
+                console.warn('URL does not start with http/https or data:, might be a relative path issue');
+            }
+            
+            // Replace the broken image with a message
+            const parent = imgElement.parentElement;
+            parent.innerHTML = `
+                <div class="error-image-container">
+                    <div class="error-image-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="error-image-message">
+                        <h3>Image could not be loaded</h3>
+                        <p>The image might have been moved, deleted, or the URL might be incorrect.</p>
+                        <p>URL: <code>${url}</code></p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Show error message (for general errors, not just image loading)
+        function showError(message) {
+            const photoViewer = document.getElementById('photoViewer');
+            if (!photoViewer) return;
+            
+            // Clear loading spinner
+            photoViewer.innerHTML = '';
+            
+            const errorContainer = document.createElement('div');
+            errorContainer.className = 'error-container';
+            errorContainer.innerHTML = `
+                <h3>Error Loading Photo</h3>
+                <p>${message}</p>
+                <button class="btn btn-secondary" onclick="window.history.back()">Back</button>
+            `;
+            
+            photoViewer.appendChild(errorContainer);
+        }
+        
+        // Try to fetch the image with CORS handling
+        async function tryFetchImage(url) {
+            try {
+                console.log('Attempting to fetch image with CORS:', url);
+                const response = await fetch(url, {
+                    mode: 'cors',
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // If we get here, the image exists and is accessible
+                console.log('Image fetch successful:', url);
+                return true;
+            } catch (error) {
+                console.error('Error fetching image:', error);
+                return false;
+            }
+        }
+        
+        // Retry loading the image
+        function retryLoadImage(url) {
+            const photoImage = document.getElementById('photoImage');
+            if (photoImage) {
+                // Create a new URL with cache-busting parameter
+                const cacheBuster = new Date().getTime();
+                let newUrl = url;
+                
+                // Add cache buster
+                if (url.includes('?')) {
+                    newUrl = `${url}&cb=${cacheBuster}`;
+                } else {
+                    newUrl = `${url}?cb=${cacheBuster}`;
+                }
+                
+                console.log('Retrying image load with URL:', newUrl);
+                
+                // Replace the image container with a new image
+                const photoImageContainer = document.querySelector('.photo-image');
+                if (photoImageContainer) {
+                    photoImageContainer.innerHTML = `
+                        <img src="${newUrl}" alt="Issue photo" id="photoImage" 
+                             onload="this.parentElement.classList.add('loaded'); console.log('Image loaded successfully on retry');" 
+                             onerror="handleImageError(this, '${newUrl}')">
+                    `;
+                }
+            }
+        }
+        
+        // Format date
+        function formatDate(dateInput) {
+            try {
+                // Handle Firestore timestamps
+                if (dateInput && dateInput.seconds) {
+                    const date = new Date(dateInput.seconds * 1000);
+                    return date.toLocaleString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                }
+                
+                // Handle string or Date objects
+                const date = (dateInput instanceof Date) ? dateInput : new Date(dateInput);
+                
+                // Check for invalid dates
+                if (isNaN(date.getTime())) {
+                    return 'Unknown Date';
+                }
+                
+                return date.toLocaleString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                console.error('Error formatting date:', error);
+                return 'Invalid Date';
+            }
+        }
+        
+        // Initialize the photo viewer
+        async function initPhotoViewer() {
+            try {
+                // Get parameters from URL
+                const params = getUrlParams();
+                
+                if (!params.id) {
+                    showError('No issue ID provided');
+                    return;
+                }
+                
+                if (!params.photoUrl) {
+                    showError('No photo URL provided');
+                    return;
+                }
+                
+                const photoUrl = decodeURIComponent(params.photoUrl);
+                let finalPhotoUrl = photoUrl; // This might be updated if we get a fresh URL
+                
+                // Check if the photoUrl is valid (not empty and starts with http or https or data:)
+                if (!photoUrl || (!photoUrl.startsWith('http') && !photoUrl.startsWith('data:'))) {
+                    showError(`Invalid photo URL format: ${photoUrl}`);
+                    console.error('Invalid photo URL format:', photoUrl);
+                    return;
+                }
+                
+                console.log('Photo URL from parameters:', photoUrl);
+                
+                // Try to validate the image URL using fetch
+                const imageExists = await tryFetchImage(photoUrl);
+                if (!imageExists) {
+                    console.warn('Image URL could not be validated, but will attempt to display anyway');
+                }
+                
+                try {
+                    // Try to initialize Firebase using our simplified photo viewer Firebase init
+                    await window.photoViewerFirebase.initialize();
+                    
+                    // Fetch issue data
+                    const issueData = await window.photoViewerFirebase.getIssueById(params.id);
+                    
+                    if (issueData) {
+                        console.log('Issue data retrieved:', issueData);
+                        
+                        // Check if the issue has photoStoragePath for direct storage access
+                        if (issueData.photoStoragePath && !imageExists) {
+                            console.log('Attempting to get fresh download URL using storage path:', issueData.photoStoragePath);
+                            
+                            // Try to get a fresh download URL directly from Firebase Storage
+                            const freshUrl = await window.photoViewerFirebase.getPhotoDownloadUrl(issueData.photoStoragePath);
+                            
+                            if (freshUrl) {
+                                console.log('Using fresh download URL instead of original URL');
+                                finalPhotoUrl = freshUrl;
+                            }
+                        }
+                        
+                        // Check if the issue has a photoUrl that might be different from the one in params
+                        if (issueData.photoUrl && issueData.photoUrl !== photoUrl && !imageExists) {
+                            console.log('Issue has a different photoUrl than provided in params:', issueData.photoUrl);
+                            
+                            // Try the issue's photoUrl if the original one didn't work
+                            const issuePhotoExists = await tryFetchImage(issueData.photoUrl);
+                            if (issuePhotoExists) {
+                                console.log('Using photoUrl from issue data instead of URL parameter');
+                                finalPhotoUrl = issueData.photoUrl;
+                            }
+                        }
+                        
+                        // Display the photo viewer with issue data
+                        createPhotoViewer(issueData, finalPhotoUrl);
+                    } else {
+                        throw new Error('Issue not found');
+                    }
+                } catch (firebaseError) {
+                    console.warn('Firebase initialization or data fetch failed:', firebaseError);
+                    
+                    // Create a minimal issue object with the ID
+                    const fallbackIssueData = {
+                        id: params.id,
+                        roomNumber: '',
+                        location: 'Unknown Location',
+                        category: 'Unknown',
+                        status: 'Unknown',
+                        createdAt: new Date(),
+                        description: 'Issue details could not be loaded'
+                    };
+                    
+                    // Still display the photo
+                    createPhotoViewer(fallbackIssueData, finalPhotoUrl);
+                }
+            } catch (error) {
+                console.error('Error initializing photo viewer:', error);
+                showError('Failed to load photo: ' + error.message);
+            }
+        }
+        
+        // Initialize when the page loads
+        document.addEventListener('DOMContentLoaded', initPhotoViewer);
+    </script>
+</body>
+</html> 

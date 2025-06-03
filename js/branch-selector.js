@@ -3,52 +3,110 @@
 class BranchSelectorUI {
     constructor() {
         this.initialized = false;
+        this.initializationPromise = null;
+        this.initializingState = false;
     }
 
     async initialize() {
-        try {
-            if (this.initialized) {
-                console.log('Branch selector already initialized');
-                return true;
-            }
-            
-            console.log('Initializing branch selector UI');
-            
-            // Create and append modal HTML
-            const modalCreated = this.createModalHTML();
-            if (!modalCreated) {
-                console.error('Failed to create modals');
-                return false;
-            }
-            
-            // Verify that modals were created
-            const branchSelectorModal = document.getElementById('branchSelectorModal');
-            
-            if (!branchSelectorModal) {
-                console.error('Failed to create branch selector modal');
-                return false;
-            }
-            
-            // Initialize event listeners
-            this.setupEventListeners();
-            
-            // Check if branch is selected
-            const selectedBranch = localStorage.getItem('selectedBranch');
-            if (!selectedBranch) {
-                console.log('No branch selected, showing branch selector');
-                this.showBranchSelector();
-            } else {
-                console.log('Branch already selected:', selectedBranch);
-            }
-            
+        // First check if we're on a tracking page - if so, don't show the modal at all
+        const isTrackingPage = window.location.pathname.includes('tracking-new') || 
+                              window.location.pathname.endsWith('tracking-new.html') ||
+                              window.location.pathname.includes('tracking.html');
+        
+        if (isTrackingPage) {
+            console.log('Branch selector UI: On tracking page, skipping modal initialization');
+            // Still mark as initialized to prevent future attempts
             this.initialized = true;
-            console.log('Branch selector UI initialized successfully');
             return true;
-        } catch (error) {
-            console.error('Error initializing branch selector UI:', error);
-            this.showError('Failed to initialize branch selector. Please refresh the page.');
-            return false;
         }
+        
+        // If already initializing, return existing promise
+        if (this.initializingState && this.initializationPromise) {
+            console.log('Branch selector UI initialization already in progress');
+            return this.initializationPromise;
+        }
+        
+        // If already initialized, just return
+        if (this.initialized) {
+            console.log('Branch selector already initialized');
+            return true;
+        }
+        
+        // Set initializing flag and create promise
+        this.initializingState = true;
+        
+        this.initializationPromise = (async () => {
+            try {
+                console.log('Initializing branch selector UI');
+                
+                // Create and append modal HTML
+                const modalCreated = this.createModalHTML();
+                if (!modalCreated) {
+                    console.error('Failed to create modals');
+                    return false;
+                }
+                
+                // Verify that modals were created
+                const branchSelectorModal = document.getElementById('branchSelectorModal');
+                
+                if (!branchSelectorModal) {
+                    console.error('Failed to create branch selector modal');
+                    return false;
+                }
+                
+                // Initialize event listeners
+                this.setupEventListeners();
+                
+                // Make sure HotelBranchManager is initialized before proceeding
+                if (window.hotelBranchManager && typeof window.hotelBranchManager.initialize === 'function') {
+                    try {
+                        console.log('Waiting for HotelBranchManager initialization...');
+                        await window.hotelBranchManager.initialize();
+                        console.log('HotelBranchManager initialized');
+                    } catch (error) {
+                        console.error('Error initializing HotelBranchManager from branch-selector:', error);
+                        // Continue anyway and try to load branches
+                    }
+                }
+                
+                // Check if branch is selected
+                const selectedBranch = localStorage.getItem('selectedBranch');
+                if (!selectedBranch) {
+                    console.log('No branch selected, showing branch selector');
+                    this.showBranchSelector();
+                } else {
+                    console.log('Branch already selected:', selectedBranch);
+                    // Verify that we can load this branch data
+                    try {
+                        if (window.hotelBranchManager && typeof window.hotelBranchManager.loadBranchData === 'function') {
+                            const success = await window.hotelBranchManager.loadBranchData(selectedBranch);
+                            if (!success) {
+                                console.warn(`Failed to load branch data for ${selectedBranch}, showing selector`);
+                                localStorage.removeItem('selectedBranch');
+                                this.showBranchSelector();
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('Error loading branch data, will show selector:', error);
+                        localStorage.removeItem('selectedBranch'); 
+                        this.showBranchSelector();
+                    }
+                }
+                
+                this.initialized = true;
+                console.log('Branch selector UI initialized successfully');
+                return true;
+            } catch (error) {
+                console.error('Error initializing branch selector UI:', error);
+                this.showError('Failed to initialize branch selector. Please refresh the page.');
+                return false;
+            } finally {
+                this.initializingState = false;
+                this.initializationPromise = null;
+            }
+        })();
+        
+        return this.initializationPromise;
     }
 
     createModalHTML() {
@@ -183,7 +241,7 @@ class BranchSelectorUI {
 
     async loadBranches() {
         try {
-            const branches = await window.hotelBranchManager.getAllBranches();
+            console.log('Loading branches...');
             const branchList = document.getElementById('branchList');
             
             if (!branchList) {
@@ -191,7 +249,64 @@ class BranchSelectorUI {
                 return;
             }
             
-            if (branches.length === 0) {
+            // Show loading indicator inside the branch list
+            branchList.innerHTML = `
+                <div class="branch-loading">
+                    <div class="branch-spinner"></div>
+                    <p>Loading branches...</p>
+                </div>
+            `;
+            
+            // Make sure we add the spinner CSS
+            this.addLoadingSpinnerCSS();
+            
+            // Ensure HotelBranchManager is initialized
+            if (window.hotelBranchManager && typeof window.hotelBranchManager.initialize === 'function') {
+                try {
+                    if (!window.hotelBranchManager.initialized) {
+                        console.log('Initializing HotelBranchManager before loading branches');
+                        await window.hotelBranchManager.initialize();
+                    }
+                } catch (error) {
+                    console.error('Error initializing HotelBranchManager:', error);
+                    branchList.innerHTML = `
+                        <div class="no-branches">
+                            <p>Error loading branches. Please refresh the page.</p>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+            
+            // Set a timeout to handle cases where getAllBranches might hang
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Loading branches timed out')), 10000));
+            
+            // Try to get branches with timeout
+            let branches;
+            try {
+                branches = await Promise.race([
+                    window.hotelBranchManager.getAllBranches(),
+                    timeoutPromise
+                ]);
+            } catch (error) {
+                console.error('Error or timeout loading branches:', error);
+                branchList.innerHTML = `
+                    <div class="no-branches">
+                        <p>Failed to load branches. Please try again or refresh the page.</p>
+                        <button id="retryBranchesBtn" class="btn-primary">Retry</button>
+                    </div>
+                `;
+                
+                // Add retry button functionality
+                const retryBtn = document.getElementById('retryBranchesBtn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', () => this.loadBranches());
+                }
+                return;
+            }
+            
+            if (!branches || branches.length === 0) {
                 branchList.innerHTML = `
                     <div class="no-branches">
                         <p>No branches found. Please add a branch in the Hotel Management page.</p>
@@ -223,19 +338,36 @@ class BranchSelectorUI {
 
     async selectBranch(branchId) {
         try {
+            console.log(`Selecting branch: ${branchId}`);
+            
+            // Load branch data
             await window.hotelBranchManager.loadBranchData(branchId);
+            
+            // Hide the modal
             document.getElementById('branchSelectorModal').style.display = 'none';
-            this.showNotification('Branch selected successfully');
+            
+            // Show success notification - REMOVED
+            // this.showNotification('Branch selected successfully');
             
             // Refresh the page to update all data
             window.location.reload();
         } catch (error) {
             console.error('Error selecting branch:', error);
-            this.showError('Failed to select branch');
+            this.showError('Failed to select branch: ' + error.message);
         }
     }
 
     showBranchSelector() {
+        // Double-check we're not on a tracking page
+        const isTrackingPage = window.location.pathname.includes('tracking-new') || 
+                              window.location.pathname.endsWith('tracking-new.html') ||
+                              window.location.pathname.includes('tracking.html');
+                              
+        if (isTrackingPage) {
+            console.log('showBranchSelector: Not showing modal on tracking page');
+            return;
+        }
+        
         try {
             const modal = document.getElementById('branchSelectorModal');
             if (!modal) {
@@ -381,6 +513,44 @@ class BranchSelectorUI {
             }, 300);
         }, 5000);
     }
+
+    // Add CSS for loading spinner
+    addLoadingSpinnerCSS() {
+        // Check if we already added the styles
+        if (document.getElementById('branch-spinner-styles')) {
+            return;
+        }
+        
+        const style = document.createElement('style');
+        style.id = 'branch-spinner-styles';
+        style.textContent = `
+            .branch-loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                text-align: center;
+            }
+            
+            .branch-spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid rgba(58, 123, 213, 0.2);
+                border-radius: 50%;
+                border-top-color: #3a7bd5;
+                animation: branch-spin 1s ease-in-out infinite;
+                margin-bottom: 1rem;
+            }
+            
+            @keyframes branch-spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 // Initialize branch selector
@@ -389,9 +559,13 @@ window.branchSelector = new BranchSelectorUI();
 // Only initialize if document is already loaded, otherwise wait for DOMContentLoaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        window.branchSelector.initialize();
+        window.branchSelector.initialize().catch(error => {
+            console.error('Error initializing branch selector on DOMContentLoaded:', error);
+        });
     });
 } else {
     // Document already loaded, initialize immediately
-    window.branchSelector.initialize();
+    window.branchSelector.initialize().catch(error => {
+        console.error('Error initializing branch selector immediately:', error);
+    });
 } 

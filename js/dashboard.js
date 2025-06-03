@@ -1,24 +1,31 @@
 // Dashboard functionality
 
 // Cache DOM elements
-const ELEMENTS = {
-    branchSelect: document.getElementById('branchSelect'),
-    startDate: document.getElementById('startDate'),
-    endDate: document.getElementById('endDate'),
-    totalBranches: document.getElementById('totalBranches'),
-    totalRooms: document.getElementById('totalRooms'),
-    activeIssues: document.getElementById('activeIssues'),
-    resolutionRate: document.getElementById('resolutionRate'),
-    branchChange: document.getElementById('branchChange'),
-    roomChange: document.getElementById('roomChange'),
-    issueChange: document.getElementById('issueChange'),
-    resolutionChange: document.getElementById('resolutionChange'),
-    recentActivities: document.getElementById('recentActivities'),
-    issuesTrendChart: document.getElementById('issuesTrendChart'),
-    categoriesChart: document.getElementById('categoriesChart'),
-    statusChart: document.getElementById('statusChart'),
-    timeDistributionChart: document.getElementById('timeDistributionChart')
-};
+// Define ELEMENTS as a global variable
+let ELEMENTS = {};
+
+// Function to initialize elements
+function initializeElements() {
+    ELEMENTS = {
+        branchSelect: document.getElementById('branchSelect'),
+        startDate: document.getElementById('startDate'),
+        endDate: document.getElementById('endDate'),
+        totalBranches: document.getElementById('totalBranches'),
+        totalRooms: document.getElementById('totalRooms'),
+        activeIssues: document.getElementById('activeIssues'),
+        resolutionRate: document.getElementById('resolutionRate'),
+        branchChange: document.getElementById('branchChange'),
+        roomChange: document.getElementById('roomChange'),
+        issueChange: document.getElementById('issueChange'),
+        resolutionChange: document.getElementById('resolutionChange'),
+        recentActivities: document.getElementById('recentActivities'),
+        issuesTrendChart: document.getElementById('issuesTrendChart'),
+        categoriesChart: document.getElementById('categoriesChart'),
+        statusChart: document.getElementById('statusChart'),
+        timeDistributionChart: document.getElementById('timeDistributionChart'),
+        refreshPageDataBtn: document.getElementById('refreshPageDataBtn')
+    };
+}
 
 // Chart instances
 let issuesTrendChartInstance = null;
@@ -35,35 +42,49 @@ let dateRange = {
     end: null
 };
 
-// Colors for charts
+// Updated Colors for charts - Using CSS Variables where possible
+// Get computed style for CSS variables
+const rootStyles = getComputedStyle(document.documentElement);
+
 const CHART_COLORS = {
-    primary: '#3a7bd5',
-    secondary: '#3a6073',
-    success: '#28a745',
-    warning: '#ffc107',
-    danger: '#dc3545',
-    light: '#f8f9fa',
-    dark: '#343a40',
-    gray: '#6c757d',
+    primary: rootStyles.getPropertyValue('--primary-color').trim() || '#511e58',
+    primaryDark: rootStyles.getPropertyValue('--primary-dark').trim() || '#3b1640',
+    primaryLight: rootStyles.getPropertyValue('--primary-light').trim() || '#f3e9f7',
+    secondary: rootStyles.getPropertyValue('--secondary-color').trim() || '#6366F1', // Indigo
+    success: rootStyles.getPropertyValue('--success-color').trim() || '#10B981', // Teal/Green
+    warning: rootStyles.getPropertyValue('--warning-color').trim() || '#F97316', // Orange
+    danger: rootStyles.getPropertyValue('--danger-color').trim() || '#EF4444', // Red
+    mediumGray: rootStyles.getPropertyValue('--medium-gray').trim() || '#9CA3AF',
+    darkGray: rootStyles.getPropertyValue('--dark-gray').trim() || '#374151',
+    // Define specific palettes if CSS vars aren't suitable for array
     categories: [
-        '#3a7bd5', '#3a6073', '#28a745', '#ffc107', '#dc3545', 
-        '#6610f2', '#fd7e14', '#20c997', '#6c757d', '#343a40'
+        '#511e58', // Primary Purple
+        '#6366F1', // Indigo
+        '#10B981', // Teal
+        '#F59E0B', // Amber
+        '#EF4444', // Red
+        '#8B5CF6', // Violet
+        '#F97316', // Orange
+        '#EC4899', // Pink
+        '#3B82F6', // Blue
+        '#6B7280'  // Gray
     ],
     statuses: {
-        'New': '#3a7bd5',
-        'In Progress': '#ffc107',
-        'Completed': '#28a745',
-        'Cancelled': '#dc3545'
+        'New': rootStyles.getPropertyValue('--primary-color').trim() || '#511e58',
+        'In Progress': rootStyles.getPropertyValue('--warning-color').trim() || '#F97316',
+        'Completed': rootStyles.getPropertyValue('--success-color').trim() || '#10B981',
+        'Cancelled': rootStyles.getPropertyValue('--danger-color').trim() || '#EF4444' 
     },
+    // Gradient or slightly varied colors for time distribution
     timeOfDay: [
-        'rgba(58, 123, 213, 0.8)',
-        'rgba(58, 123, 213, 0.7)',
-        'rgba(58, 123, 213, 0.6)',
-        'rgba(58, 123, 213, 0.5)',
-        'rgba(58, 123, 213, 0.4)',
-        'rgba(58, 123, 213, 0.3)',
-        'rgba(58, 123, 213, 0.2)',
-        'rgba(58, 123, 213, 0.1)'
+        'rgba(81, 30, 88, 0.9)', // Darker Purple
+        'rgba(81, 30, 88, 0.8)',
+        'rgba(81, 30, 88, 0.7)',
+        'rgba(81, 30, 88, 0.6)',
+        'rgba(81, 30, 88, 0.5)',
+        'rgba(81, 30, 88, 0.4)',
+        'rgba(81, 30, 88, 0.3)',
+        'rgba(81, 30, 88, 0.2)' 
     ]
 };
 
@@ -72,6 +93,17 @@ async function initializeDashboard() {
     try {
         console.log('Initializing dashboard...');
         showLoading();
+        
+        // Check if we're on the dashboard page by looking for key elements
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (!dashboardContainer) {
+            console.log('Not on dashboard page, skipping initialization');
+            hideLoading();
+            return;
+        }
+        
+        // Initialize DOM elements
+        initializeElements();
         
         // Initialize date range
         initializeDateRange();
@@ -110,9 +142,14 @@ function initializeDateRange() {
     dateRange.start = thirtyDaysAgo;
     dateRange.end = today;
     
-    // Format dates for input fields
-    ELEMENTS.startDate.value = formatDateForInput(thirtyDaysAgo);
-    ELEMENTS.endDate.value = formatDateForInput(today);
+    // Format dates for input fields - only set if elements exist
+    if (ELEMENTS.startDate) {
+        ELEMENTS.startDate.value = formatDateForInput(thirtyDaysAgo);
+    }
+    
+    if (ELEMENTS.endDate) {
+        ELEMENTS.endDate.value = formatDateForInput(today);
+    }
 }
 
 // Format date for input fields
@@ -145,6 +182,12 @@ async function loadBranches() {
 
 // Populate branch select
 function populateBranchSelect() {
+    // Check if ELEMENTS.branchSelect is valid
+    if (!ELEMENTS || !ELEMENTS.branchSelect) {
+        console.error('Branch select element not found during population.');
+        return; 
+    }
+    
     // Clear existing options except "All Branches"
     while (ELEMENTS.branchSelect.options.length > 1) {
         ELEMENTS.branchSelect.remove(1);
@@ -159,90 +202,90 @@ function populateBranchSelect() {
     });
 }
 
-// Load issues
+// Load issues - MODIFIED to fetch from Firestore
 async function loadIssues() {
     try {
-        // In a real application, you would fetch issues from Firebase
-        // For now, we'll generate mock data
-        allIssues = generateMockIssues();
+        console.log("Fetching real issues from Firestore...");
+        if (!firebase || !firebase.firestore) {
+             throw new Error("Firebase Firestore is not available.");
+        }
+        const db = firebase.firestore();
+        const issuesSnapshot = await db.collection('issues').get();
+        
+        allIssues = issuesSnapshot.docs.map(doc => {
+            const data = doc.data();
+            // Convert Firestore Timestamps to JS Dates
+            const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : (data.dateCreated ? new Date(data.dateCreated) : new Date());
+            const completedAt = data.completedAt?.toDate ? data.completedAt.toDate() : null;
+            
+            // Find branch name (might be slightly inefficient but okay for moderate number of branches)
+            const branch = allBranches.find(b => b.id === data.branchId);
+            const branchName = branch ? branch.name : 'Unknown Branch';
+
+            return {
+                id: doc.id,
+                ...data,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                branchName: branchName // Add branch name for display
+            };
+        });
+        
+        console.log(`Fetched ${allIssues.length} issues.`);
         return allIssues;
     } catch (error) {
-        console.error('Error loading issues:', error);
-        showError('Failed to load maintenance issues');
+        console.error('Error loading issues from Firestore:', error);
+        showError('Failed to load maintenance issues from database.');
+        allIssues = []; // Ensure allIssues is empty on error
         return [];
     }
 }
 
-// Generate mock issues for demonstration
-function generateMockIssues() {
-    const issues = [];
-    const categories = ['Electrical', 'Plumbing', 'Furniture', 'HVAC', 'Cleaning', 'Other'];
-    const statuses = ['New', 'In Progress', 'Completed', 'Cancelled'];
-    const priorities = ['low', 'medium', 'critical'];
-    
-    // Generate random issues for each branch
-    allBranches.forEach(branch => {
-        // Generate between 10 and 30 issues per branch
-        const issueCount = Math.floor(Math.random() * 20) + 10;
-        
-        for (let i = 0; i < issueCount; i++) {
-            // Generate random date within the last 90 days
-            const createdAt = new Date();
-            createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 90));
-            
-            // Generate random completion date for completed issues
-            let completedAt = null;
-            if (Math.random() > 0.5) {
-                completedAt = new Date(createdAt);
-                completedAt.setHours(createdAt.getHours() + Math.floor(Math.random() * 72));
-            }
-            
-            // Generate random room number
-            const roomNumber = Math.floor(Math.random() * 500) + 100;
-            
-            // Generate random issue
-            const issue = {
-                id: `issue-${branch.id}-${i}`,
-                branchId: branch.id,
-                branchName: branch.name,
-                roomNumber: roomNumber.toString(),
-                category: categories[Math.floor(Math.random() * categories.length)],
-                description: `Issue in room ${roomNumber}`,
-                status: statuses[Math.floor(Math.random() * statuses.length)],
-                priority: priorities[Math.floor(Math.random() * priorities.length)],
-                createdAt: createdAt,
-                completedAt: completedAt,
-                assignedTo: Math.random() > 0.7 ? 'Maintenance Staff' : null
-            };
-            
-            issues.push(issue);
-        }
-    });
-    
-    return issues;
-}
-
-// Update dashboard stats
+// Update dashboard stats - MODIFIED to remove mock changes
 function updateDashboardStats() {
+    // Ensure elements are initialized
+    if (Object.keys(ELEMENTS).length === 0) {
+        console.warn("Dashboard elements not initialized yet in updateDashboardStats.");
+        return;
+    }
+
     // Filter issues based on selected branch and date range
     const filteredIssues = filterIssues();
     
     // Update total branches
     ELEMENTS.totalBranches.textContent = selectedBranch === 'all' ? allBranches.length : 1;
     
-    // Update total rooms
+    // Update total rooms - Fetching dynamically for selected branch or summing for all
     let totalRooms = 0;
     if (selectedBranch === 'all') {
         allBranches.forEach(branch => {
-            if (branch.rooms) {
-                totalRooms += Object.keys(branch.rooms).length;
+             // Assuming branch object fetched by hotelBranchManager might have basic room count or structure
+             // A more robust solution might involve specific room count fields in branch docs or separate counts collection
+            if (branch.rooms) { // Check if rooms data/count is available directly
+                 if (typeof branch.rooms === 'number') {
+                     totalRooms += branch.rooms;
+                 } else if (typeof branch.rooms === 'object') {
+                    totalRooms += Object.keys(branch.rooms).length;
+                 }
+            } else if (branch.totalRooms) { // Check for a dedicated count field
+                 totalRooms += branch.totalRooms;
             }
+             // If no room info, it adds 0. Consider fetching detailed branch info if needed.
         });
     } else {
         const branch = allBranches.find(b => b.id === selectedBranch);
-        if (branch && branch.rooms) {
-            totalRooms = Object.keys(branch.rooms).length;
-        }
+         if (branch) {
+            if (branch.rooms) {
+                 if (typeof branch.rooms === 'number') {
+                     totalRooms = branch.rooms;
+                 } else if (typeof branch.rooms === 'object') {
+                    totalRooms = Object.keys(branch.rooms).length;
+                 }
+             } else if (branch.totalRooms) {
+                  totalRooms = branch.totalRooms;
+             }
+             // If no room info, totalRooms remains 0. Consider fetching if needed.
+         }
     }
     ELEMENTS.totalRooms.textContent = totalRooms;
     
@@ -254,19 +297,36 @@ function updateDashboardStats() {
     
     // Update resolution rate
     const completedIssues = filteredIssues.filter(issue => issue.status === 'Completed').length;
-    const resolutionRate = filteredIssues.length > 0 
-        ? Math.round((completedIssues / filteredIssues.length) * 100) 
+    // Avoid division by zero if no issues match filters
+    const relevantTotalIssues = filteredIssues.filter(issue => ['New', 'In Progress', 'Completed'].includes(issue.status)).length;
+    const resolutionRate = relevantTotalIssues > 0 
+        ? Math.round((completedIssues / relevantTotalIssues) * 100) 
         : 0;
     ELEMENTS.resolutionRate.textContent = `${resolutionRate}%`;
     
-    // Update change percentages (mock data for demonstration)
-    ELEMENTS.branchChange.textContent = '5% from last month';
-    ELEMENTS.roomChange.textContent = '3% from last month';
-    ELEMENTS.issueChange.textContent = '-7% from last month';
-    ELEMENTS.resolutionChange.textContent = '12% from last month';
-    
+    // Hide or clear the change elements if they exist
+    const changeContainers = [
+        document.getElementById('branchChangeContainer'),
+        document.getElementById('roomChangeContainer'),
+        document.getElementById('issueChangeContainer'),
+        document.getElementById('resolutionChangeContainer')
+    ];
+    changeContainers.forEach(container => {
+        if (container) {
+             // Option 1: Hide the container
+             // container.style.display = 'none'; 
+             
+             // Option 2: Clear the text content
+             const span = container.querySelector('span');
+             if (span) span.textContent = '-'; // Or set to empty string ''
+             const icon = container.querySelector('i');
+             if (icon) icon.className = 'bx bx-minus'; // Set to neutral icon
+             container.className = 'stat-change neutral'; // Set to neutral style
+        }
+    });
+
     // Update recent activities
-    updateRecentActivities(filteredIssues);
+    updateRecentActivities();
 }
 
 // Filter issues based on selected branch and date range
@@ -294,54 +354,139 @@ function filterIssues() {
     });
 }
 
-// Update recent activities
-function updateRecentActivities(filteredIssues) {
-    // Sort issues by creation date (newest first)
-    const sortedIssues = [...filteredIssues].sort((a, b) => 
-        new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    
-    // Take the 10 most recent issues
-    const recentIssues = sortedIssues.slice(0, 10);
+// Update recent activities - REVISED LOGIC V2
+function updateRecentActivities() { 
+    if (!ELEMENTS.recentActivities) {
+        console.warn("Recent activities element not found");
+        return;
+    }
+
+    // 1. Filter out completed issues first and issues with incomplete data
+    const activeIssues = allIssues.filter(issue => {
+        // Filter out completed issues
+        if (issue.status === 'Completed') return false;
+        
+        // Filter out issues with both missing branch name and missing description
+        if ((!issue.branchName || issue.branchName === 'Unknown Branch') && 
+            (!issue.description || issue.description === 'No description')) {
+            return false;
+        }
+        
+        return true;
+    });
+
+    // 2. Separate critical issues from others 
+    const criticalIssues = activeIssues.filter(issue => issue.priority === 'critical');
+    const otherIssues = activeIssues.filter(issue => issue.priority !== 'critical');
+
+    // 3. Sort each group by creation date (newest first)
+    const sortByDateDesc = (a, b) => new Date(b.createdAt) - new Date(a.createdAt);
+    criticalIssues.sort(sortByDateDesc);
+    otherIssues.sort(sortByDateDesc);
+
+    // 4. Combine lists (critical first) and take the latest 20
+    const sortedIssues = [...criticalIssues, ...otherIssues].slice(0, 20);
     
     // Clear existing activities
     ELEMENTS.recentActivities.innerHTML = '';
     
     // Add recent activities
-    if (recentIssues.length === 0) {
-        ELEMENTS.recentActivities.innerHTML = '<p class="text-center">No recent activities</p>';
+    if (sortedIssues.length === 0) {
+        ELEMENTS.recentActivities.innerHTML = '<p style="text-align: center; padding: 1rem; color: var(--medium-gray);">No active issues found.</p>'; // Updated message
         return;
     }
     
-    recentIssues.forEach(issue => {
-        const activityItem = document.createElement('div');
-        activityItem.className = 'activity-item';
+    sortedIssues.forEach(issue => {
+        console.log('Processing issue for activity feed (Grid Layout):', issue);
         
-        // Determine icon class based on status
-        let iconClass = 'new';
-        if (issue.status === 'In Progress') {
-            iconClass = 'progress';
-        } else if (issue.status === 'Completed') {
-            iconClass = 'completed';
-        }
+        const activityLink = document.createElement('a');
+        activityLink.href = `tracking.html?branchId=${issue.branchId || ''}`; 
+        activityLink.className = 'activity-item-link'; // Keep the link wrapper for clickability
+        activityLink.target = "_blank"; 
+
+        const gridParent = document.createElement('div');
+        gridParent.className = 'activity-item-grid-parent'; // New parent class for grid
         
-        // Format date
+        // --- Populate Grid Divs --- 
+
+        // Div 1: Branch Name
+        const div1 = `<div class="div1">${escapeHTML(issue.branchName || 'Unknown Branch')}</div>`;
+
+        // Div 2: Room Number / Location
+        const locationText = issue.roomNumber 
+            ? `Room: ${escapeHTML(issue.roomNumber)}`
+            : (issue.location ? `Loc: ${escapeHTML(issue.location)}` : 'N/A');
+        const div2 = `<div class="div2">${locationText}</div>`;
+
+        // Div 3: Category
+        const div3 = `<div class="div3">${escapeHTML(issue.category || 'N/A')}</div>`;
+
+        // Div 4: Image Preview
+        let div4 = '<div class="div4 activity-image-placeholder"></div>'; // Placeholder if no image
+        if (issue.photoUrl) {
+             div4 = `
+                 <div class="div4">
+                     <img src="${issue.photoUrl}" 
+                          alt="Issue Photo Preview" 
+                          class="activity-photo-preview-grid" 
+                          onerror="this.parentElement.classList.add('activity-image-placeholder'); this.remove();" 
+                          loading="lazy">
+                 </div>`;
+         }
+
+        // Div 5: Description (Truncated)
+        const description = issue.description || 'No description';
+        const truncatedDescription = description.length > 150 
+            ? escapeHTML(description.substring(0, 150)) + '...' 
+            : escapeHTML(description);
+        const div5 = `<div class="div5">${truncatedDescription}</div>`;
+
+        // Div 6: Date and Time
         const formattedDate = formatDate(issue.createdAt);
-        
-        activityItem.innerHTML = `
-            <div class="activity-icon ${iconClass}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                </svg>
-            </div>
-            <div class="activity-content">
-                <p class="activity-text">${issue.description} - ${issue.status}</p>
-                <p class="activity-time">${formattedDate} - ${issue.branchName}</p>
-            </div>
+        const div6 = `<div class="div6">${formattedDate}</div>`;
+
+        // Div 7: Issue Type (Critical Flag)
+        const issueTypeText = issue.priority === 'critical' ? 'Critical' : 'New Job';
+        const criticalClass = issue.priority === 'critical' ? 'critical-text' : '';
+        const div7 = `<div class="div7 ${criticalClass}">${issueTypeText}</div>`;
+
+        // Div 8: Icon
+        let iconClass = 'new'; 
+        let iconName = 'bx-wrench';
+        if (issue.priority === 'critical') {
+             iconClass = 'critical'; 
+             iconName = 'bx-error-circle'; 
+        } else if (issue.status === 'In Progress') { // Keep In Progress status distinct if possible
+            iconClass = 'progress';
+            iconName = 'bx-run'; 
+        }
+        const div8 = `
+            <div class="div8 activity-icon-grid ${iconClass}">
+                <i class='bx ${iconName}'></i>
+            </div>`;
+
+        // --- Assemble Grid --- 
+        gridParent.innerHTML = `
+            ${div1}
+            ${div2}
+            ${div3}
+            ${div4}
+            ${div5}
+            ${div6}
+            ${div7}
+            ${div8}
         `;
         
-        ELEMENTS.recentActivities.appendChild(activityItem);
+        activityLink.appendChild(gridParent);
+        ELEMENTS.recentActivities.appendChild(activityLink);
     });
+}
+
+// Helper to escape HTML characters (important for user-generated content)
+function escapeHTML(str) {
+     const div = document.createElement('div');
+     div.textContent = str;
+     return div.innerHTML;
 }
 
 // Format date
@@ -353,108 +498,163 @@ function formatDate(dateString) {
 
 // Initialize charts
 function initializeCharts() {
-    // Filter issues based on selected branch and date range
     const filteredIssues = filterIssues();
-    
-    // Initialize issue trends chart
     initializeIssuesTrendChart(filteredIssues);
-    
-    // Initialize categories chart
     initializeCategoriesChart(filteredIssues);
-    
-    // Initialize status chart
     initializeStatusChart(filteredIssues);
-    
-    // Initialize time distribution chart
     initializeTimeDistributionChart(filteredIssues);
 }
 
-// Initialize issues trend chart
+// Initialize issues trend chart - UPDATED STYLES with GRADIENT & DATE FORMAT
 function initializeIssuesTrendChart(filteredIssues) {
-    // Group issues by date
     const issuesByDate = groupIssuesByDate(filteredIssues);
-    
-    // Prepare data for chart
     const labels = Object.keys(issuesByDate).sort();
-    const newIssues = [];
-    const resolvedIssues = [];
-    
+    const newIssuesData = [];
+    const resolvedIssuesData = [];
+
     labels.forEach(date => {
-        const issues = issuesByDate[date];
-        const newCount = issues.filter(issue => 
-            new Date(issue.createdAt).toDateString() === new Date(date).toDateString()
-        ).length;
-        
-        const resolvedCount = issues.filter(issue => 
-            issue.completedAt && 
-            new Date(issue.completedAt).toDateString() === new Date(date).toDateString()
-        ).length;
-        
-        newIssues.push(newCount);
-        resolvedIssues.push(resolvedCount);
+        const issues = issuesByDate[date] || []; // Ensure array exists
+        const newCount = issues.filter(issue => new Date(issue.createdAt).toISOString().split('T')[0] === date).length;
+        const resolvedCount = issues.filter(issue => issue.completedAt && new Date(issue.completedAt).toISOString().split('T')[0] === date).length;
+        newIssuesData.push(newCount);
+        resolvedIssuesData.push(resolvedCount);
     });
-    
-    // Create or update chart
-    if (issuesTrendChartInstance) {
-        issuesTrendChartInstance.data.labels = labels;
-        issuesTrendChartInstance.data.datasets[0].data = newIssues;
-        issuesTrendChartInstance.data.datasets[1].data = resolvedIssues;
-        issuesTrendChartInstance.update();
-    } else {
-        const ctx = ELEMENTS.issuesTrendChart.getContext('2d');
-        issuesTrendChartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'New Issues',
-                        data: newIssues,
-                        borderColor: CHART_COLORS.primary,
-                        backgroundColor: 'rgba(58, 123, 213, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Resolved Issues',
-                        data: resolvedIssues,
-                        borderColor: CHART_COLORS.success,
-                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
+
+    // Format date labels for display (e.g., 'Jan 21')
+    const formattedLabels = labels.map(dateString => {
+        try {
+            // Add time component to avoid potential timezone issues with just YYYY-MM-DD
+            const date = new Date(dateString + 'T00:00:00'); 
+            // Check if date is valid before formatting
+            if (isNaN(date.getTime())) {
+                 console.warn("Invalid date string encountered:", dateString); 
+                 return dateString; // Return original string if invalid
+             }
+            return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        } catch (e) {
+            console.error("Error formatting date label:", dateString, e);
+            return dateString; // Return original on error
+        }
+    });
+
+    const data = {
+        labels: formattedLabels, // Use formatted labels
+        datasets: [
+            {
+                label: 'New Issues',
+                data: newIssuesData,
+                borderColor: CHART_COLORS.primary,
+                backgroundColor: (context) => {
+                    const chart = context.chart;
+                    const {ctx, chartArea} = chart;
+                    if (!chartArea) { 
+                        return 'rgba(81, 30, 88, 0.1)'; 
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
+                    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                    gradient.addColorStop(0, 'rgba(81, 30, 88, 0)');    
+                    gradient.addColorStop(0.8, 'rgba(81, 30, 88, 0.2)'); 
+                    gradient.addColorStop(1, 'rgba(81, 30, 88, 0.4)'); 
+                    return gradient;
                 },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
+                borderWidth: 2,
+                tension: 0.4, 
+                fill: true, 
+                pointRadius: 0, 
+                pointBackgroundColor: CHART_COLORS.primary,
+                pointHoverRadius: 5, 
+                pointHitRadius: 10 
+            },
+            {
+                label: 'Resolved Issues',
+                data: resolvedIssuesData,
+                borderColor: CHART_COLORS.success,
+                 backgroundColor: (context) => {
+                    const chart = context.chart;
+                    const {ctx, chartArea} = chart;
+                    if (!chartArea) { 
+                        return 'rgba(16, 185, 129, 0.1)'; 
+                    }
+                    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                    gradient.addColorStop(0, 'rgba(16, 185, 129, 0)');    
+                    gradient.addColorStop(0.8, 'rgba(16, 185, 129, 0.15)'); 
+                    gradient.addColorStop(1, 'rgba(16, 185, 129, 0.3)');  
+                    return gradient;
+                },
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 0, 
+                pointBackgroundColor: CHART_COLORS.success,
+                pointHoverRadius: 5, 
+                pointHitRadius: 10
+            }
+        ]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom', 
+                labels: {
+                    boxWidth: 12,
+                    padding: 15,
+                    font: {
+                        size: 11 
                     }
                 }
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                titleFont: { size: 12 },
+                bodyFont: { size: 11 },
+                padding: 8
             }
-        });
-    }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false 
+                },
+                ticks: {
+                    font: { size: 11 }, // Slightly larger font
+                    color: CHART_COLORS.mediumGray, // Use medium gray color
+                    maxRotation: 0, 
+                    autoSkip: true,
+                    // Removed maxTicksLimit - let autoSkip handle density
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)', 
+                    drawBorder: false
+                },
+                 ticks: {
+                    font: { size: 10 }
+                }
+            }
+        },
+        interaction: {
+             mode: 'nearest',
+             axis: 'x',
+             intersect: false
+        }
+    };
+
+    if (issuesTrendChartInstance) {
+        issuesTrendChartInstance.data = data;
+        issuesTrendChartInstance.options = options; 
+        issuesTrendChartInstance.update();
+    } else if (ELEMENTS.issuesTrendChart) {
+        const ctx = ELEMENTS.issuesTrendChart.getContext('2d');
+        issuesTrendChartInstance = new Chart(ctx, { type: 'line', data: data, options: options });
+    } else {
+         console.error('Issues Trend Chart canvas element not found.');
+     }
 }
 
 // Group issues by date
@@ -466,7 +666,9 @@ function groupIssuesByDate(issues) {
     const endDate = new Date(dateRange.end);
     
     // Create empty entries for each date in range
-    const currentDate = new Date(startDate);
+    let currentDate = new Date(startDate);
+    // Ensure loop runs at least once if start and end are same day
+    endDate.setHours(23, 59, 59, 999); 
     while (currentDate <= endDate) {
         const dateString = currentDate.toISOString().split('T')[0];
         issuesByDate[dateString] = [];
@@ -476,341 +678,451 @@ function groupIssuesByDate(issues) {
     
     // Group issues by date
     issues.forEach(issue => {
-        const createdDate = new Date(issue.createdAt).toISOString().split('T')[0];
-        if (issuesByDate[createdDate]) {
-            issuesByDate[createdDate].push(issue);
-        }
+        if (issue.createdAt) {
+             try {
+                const createdDate = new Date(issue.createdAt).toISOString().split('T')[0];
+                if (issuesByDate[createdDate]) {
+                    issuesByDate[createdDate].push(issue);
+                } else {
+                     // Handle cases where issue date might be outside the initialized range
+                     // console.warn(`Issue date ${createdDate} outside initial range, adding dynamically.`);
+                     issuesByDate[createdDate] = [issue];
+                 }
+             } catch (e) {
+                 console.error("Error processing issue date:", issue.createdAt, e);
+             }
+         } else {
+             console.warn("Issue missing createdAt date:", issue.id);
+         }
     });
     
     return issuesByDate;
 }
 
-// Initialize categories chart
+// Initialize categories chart - UPDATED STYLES
 function initializeCategoriesChart(filteredIssues) {
-    // Group issues by category
     const issuesByCategory = {};
-    
     filteredIssues.forEach(issue => {
-        if (!issuesByCategory[issue.category]) {
-            issuesByCategory[issue.category] = 0;
-        }
-        issuesByCategory[issue.category]++;
+        const category = issue.category || 'Uncategorized';
+        issuesByCategory[category] = (issuesByCategory[category] || 0) + 1;
     });
-    
-    // Prepare data for chart
+
     const labels = Object.keys(issuesByCategory);
-    const data = labels.map(category => issuesByCategory[category]);
+    const dataValues = labels.map(category => issuesByCategory[category]);
     const backgroundColors = labels.map((_, index) => 
         CHART_COLORS.categories[index % CHART_COLORS.categories.length]
     );
-    
-    // Create or update chart
-    if (categoriesChartInstance) {
-        categoriesChartInstance.data.labels = labels;
-        categoriesChartInstance.data.datasets[0].data = data;
-        categoriesChartInstance.data.datasets[0].backgroundColor = backgroundColors;
-        categoriesChartInstance.update();
-    } else {
-        const ctx = ELEMENTS.categoriesChart.getContext('2d');
-        categoriesChartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        data: data,
-                        backgroundColor: backgroundColors,
-                        borderWidth: 0
-                    }
-                ]
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            data: dataValues,
+            backgroundColor: backgroundColors,
+            hoverBackgroundColor: backgroundColors.map(color => Chart.helpers.color(color).alpha(0.8).rgbString()), // Add hover effect
+            borderWidth: 2, // Add subtle border
+            borderColor: '#fff' // White border for separation
+        }]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                     boxWidth: 12,
+                     padding: 12,
+                     font: { size: 11 }
+                 }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                titleFont: { size: 12 },
+                bodyFont: { size: 11 },
+                padding: 8,
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.raw || 0;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                        return ` ${label}: ${value} (${percentage}%)`; // Added space
                     }
-                },
-                cutout: '70%'
+                }
+            },
+            datalabels: { // Optional: Show percentage directly on chart
+                 formatter: (value, ctx) => {
+                     let sum = 0;
+                     let dataArr = ctx.chart.data.datasets[0].data;
+                     dataArr.map(data => {
+                         sum += data;
+                     });
+                     let percentage = sum > 0 ? (value * 100 / sum).toFixed(1) + '%' : '0%';
+                     // Only show label if percentage is significant
+                     return parseFloat(percentage) > 5 ? percentage : ''; 
+                 },
+                 color: '#fff',
+                 font: {
+                     size: 10,
+                     weight: 'bold'
+                 },
+                 textShadow: {
+                     color: 'rgba(0, 0, 0, 0.3)',
+                     offsetX: 1,
+                     offsetY: 1,
+                     blur: 2
+                 }
+             }
+        },
+        cutout: '65%' // Slightly larger cutout
+    };
+
+    if (categoriesChartInstance) {
+        categoriesChartInstance.data = data;
+        categoriesChartInstance.options = options;
+        categoriesChartInstance.update();
+    } else if (ELEMENTS.categoriesChart) {
+        const ctx = ELEMENTS.categoriesChart.getContext('2d');
+        categoriesChartInstance = new Chart(ctx, { 
+             type: 'doughnut', 
+             data: data, 
+             options: options, 
+             plugins: [ChartDataLabels] // Register datalabels plugin
+         });
+     } else {
+         console.error('Categories Chart canvas element not found.');
+     }
+}
+
+// Helper function to determine text color contrast based on background brightness
+function getBrightness(colorStr) {
+    let r = 0, g = 0, b = 0;
+    try {
+        if (colorStr.startsWith('#')) {
+            // Basic Hex parsing (#RRGGBB or #RGB)
+            let hex = colorStr.slice(1);
+            if (hex.length === 3) {
+                hex = hex.split('').map(c => c + c).join('');
             }
-        });
+            if (hex.length === 6) {
+                r = parseInt(hex.substring(0, 2), 16);
+                g = parseInt(hex.substring(2, 4), 16);
+                b = parseInt(hex.substring(4, 6), 16);
+            }
+        } else if (colorStr.startsWith('rgb')) {
+            // Basic RGB/RGBA parsing
+            const match = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+            if (match) {
+                r = parseInt(match[1]);
+                g = parseInt(match[2]);
+                b = parseInt(match[3]);
+            }
+        } else {
+            // Cannot parse reliably, default to assuming dark background -> white text
+            return 0; 
+        }
+        // Simple brightness calculation (YIQ simplified)
+        // Values range from 0 (black) to 255 (white)
+        return (r * 299 + g * 587 + b * 114) / 1000;
+    } catch (e) {
+        console.error("Error parsing color for brightness:", colorStr, e);
+        return 0; // Default to dark background on error
     }
 }
 
-// Initialize status chart
+// Initialize status chart - UPDATED STYLES
 function initializeStatusChart(filteredIssues) {
-    // Group issues by status
     const issuesByStatus = {
         'New': 0,
         'In Progress': 0,
         'Completed': 0,
-        'Cancelled': 0
+        'Cancelled': 0 // Assuming Cancelled is a possible status
     };
-    
     filteredIssues.forEach(issue => {
-        if (issuesByStatus[issue.status] !== undefined) {
-            issuesByStatus[issue.status]++;
+        const status = issue.status || 'Unknown';
+        if (issuesByStatus[status] !== undefined) {
+            issuesByStatus[status]++;
         }
     });
-    
-    // Prepare data for chart
-    const labels = Object.keys(issuesByStatus);
-    const data = labels.map(status => issuesByStatus[status]);
-    const backgroundColors = labels.map(status => CHART_COLORS.statuses[status]);
-    
-    // Create or update chart
-    if (statusChartInstance) {
-        statusChartInstance.data.labels = labels;
-        statusChartInstance.data.datasets[0].data = data;
-        statusChartInstance.data.datasets[0].backgroundColor = backgroundColors;
-        statusChartInstance.update();
-    } else {
-        const ctx = ELEMENTS.statusChart.getContext('2d');
-        statusChartInstance = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        data: data,
-                        backgroundColor: backgroundColors,
-                        borderWidth: 0
-                    }
-                ]
+
+    // Filter out statuses with 0 issues for cleaner chart
+    const labels = Object.keys(issuesByStatus).filter(status => issuesByStatus[status] > 0);
+    const dataValues = labels.map(status => issuesByStatus[status]);
+    const backgroundColors = labels.map(status => CHART_COLORS.statuses[status] || CHART_COLORS.mediumGray);
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            data: dataValues,
+            backgroundColor: backgroundColors,
+            hoverBackgroundColor: backgroundColors.map(color => { try { return Chart.helpers.color(color).alpha(0.8).rgbString(); } catch(e) { return color; } }), // Keep hover, add try-catch just in case
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    boxWidth: 12,
+                    padding: 15,
+                    font: { size: 11 }
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                titleFont: { size: 12 },
+                bodyFont: { size: 11 },
+                padding: 8,
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.raw || 0;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                        return ` ${label}: ${value} (${percentage}%)`;
                     }
                 }
-            }
+            },
+             datalabels: { 
+                 formatter: (value, ctx) => {
+                     let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                     let percentage = sum > 0 ? (value * 100 / sum).toFixed(1) + '%' : '0%';
+                     return parseFloat(percentage) > 5 ? percentage : ''; 
+                 },
+                 // UPDATED color callback using getBrightness
+                 color: (context) => { 
+                    const bgColor = context.dataset.backgroundColor[context.dataIndex];
+                    const brightness = getBrightness(bgColor);
+                    // Use a threshold (e.g., 150) to decide between black/white text
+                    return brightness > 150 ? '#000' : '#fff'; 
+                 },
+                 font: {
+                     size: 10,
+                     weight: 'bold'
+                 },
+                  textShadow: {
+                     color: 'rgba(0, 0, 0, 0.3)',
+                     offsetX: 1,
+                     offsetY: 1,
+                     blur: 2
+                 }
+             }
+        }
+    };
+
+    if (statusChartInstance) {
+        statusChartInstance.data = data;
+        statusChartInstance.options = options;
+        statusChartInstance.update();
+    } else if (ELEMENTS.statusChart) {
+        const ctx = ELEMENTS.statusChart.getContext('2d');
+        statusChartInstance = new Chart(ctx, { 
+            type: 'pie', 
+            data: data, 
+            options: options, 
+            plugins: [ChartDataLabels] 
         });
-    }
+    } else {
+         console.error('Status Chart canvas element not found.');
+     }
 }
 
-// Initialize time distribution chart
+// Initialize time distribution chart - UPDATED STYLES
 function initializeTimeDistributionChart(filteredIssues) {
-    // Group completed issues by hour of completion
     const issuesByHour = Array(24).fill(0);
-    
     filteredIssues.forEach(issue => {
         if (issue.completedAt) {
-            const hour = new Date(issue.completedAt).getHours();
-            issuesByHour[hour]++;
-        }
+             try {
+                 const completedDate = new Date(issue.completedAt);
+                 if (!isNaN(completedDate)) { // Check if date is valid
+                     const hour = completedDate.getHours();
+                     issuesByHour[hour]++;
+                 } else {
+                     console.warn("Invalid completedAt date for issue:", issue.id, issue.completedAt);
+                 }
+             } catch (e) {
+                  console.error("Error processing completedAt date:", issue.id, issue.completedAt, e);
+              }
+         }
     });
-    
-    // Prepare data for chart
+
     const labels = Array(24).fill().map((_, i) => {
         const hour = i % 12 || 12;
         const ampm = i < 12 ? 'AM' : 'PM';
-        return `${hour} ${ampm}`;
+        return i % 3 === 0 ? `${hour}${ampm}` : ''; // Show labels every 3 hours
     });
     
-    // Create or update chart
-    if (timeDistributionChartInstance) {
-        timeDistributionChartInstance.data.labels = labels;
-        timeDistributionChartInstance.data.datasets[0].data = issuesByHour;
-        timeDistributionChartInstance.update();
-    } else {
-        const ctx = ELEMENTS.timeDistributionChart.getContext('2d');
-        timeDistributionChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Issues Completed',
-                        data: issuesByHour,
-                        backgroundColor: CHART_COLORS.primary,
-                        borderWidth: 0,
-                        borderRadius: 4
-                    }
-                ]
+    // Use a gradient or single color for bars
+    const barColor = CHART_COLORS.primary;
+    const barHoverColor = CHART_COLORS.primaryDark;
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Issues Completed',
+            data: issuesByHour,
+            backgroundColor: barColor,
+            borderColor: barColor,
+            borderWidth: 1,
+            borderRadius: 4, // Rounded bars
+            hoverBackgroundColor: barHoverColor,
+            barPercentage: 0.7, // Adjust bar width
+            categoryPercentage: 0.8 // Adjust spacing between bars
+        }]
+    };
+
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                titleFont: { size: 12 },
+                bodyFont: { size: 11 },
+                padding: 8,
+                callbacks: {
+                    // Use the full hour label in tooltip title
+                    title: function(context) {
+                         const index = context[0].dataIndex;
+                         const hour = index % 12 || 12;
+                         const ampm = index < 12 ? 'AM' : 'PM';
+                         return `${hour}:00 ${ampm} - ${hour}:59 ${ampm}`;
                     },
-                    tooltip: {
-                        callbacks: {
-                            title: function(context) {
-                                return `${context[0].label}`;
-                            },
-                            label: function(context) {
-                                return `Issues completed: ${context.raw}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
+                    label: function(context) {
+                        return `Issues completed: ${context.raw}`;
                     }
                 }
             }
-        });
-    }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                },
+                 ticks: {
+                     font: { size: 10 },
+                     maxRotation: 0
+                 }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)',
+                    drawBorder: false
+                },
+                 ticks: {
+                    font: { size: 10 }
+                }
+            }
+        }
+    };
+
+    if (timeDistributionChartInstance) {
+        timeDistributionChartInstance.data = data;
+        timeDistributionChartInstance.options = options;
+        timeDistributionChartInstance.update();
+    } else if (ELEMENTS.timeDistributionChart) {
+        const ctx = ELEMENTS.timeDistributionChart.getContext('2d');
+        timeDistributionChartInstance = new Chart(ctx, { type: 'bar', data: data, options: options });
+    } else {
+         console.error('Time Distribution Chart canvas element not found.');
+     }
 }
 
 // Setup event listeners
 function setupEventListeners() {
     // Branch select change
-    ELEMENTS.branchSelect.addEventListener('change', () => {
-        selectedBranch = ELEMENTS.branchSelect.value;
-        updateDashboard();
-    });
+    if (ELEMENTS.branchSelect) {
+        ELEMENTS.branchSelect.addEventListener('change', () => {
+            selectedBranch = ELEMENTS.branchSelect.value;
+            updateDashboardUI();
+        });
+    }
     
     // Date range change
-    ELEMENTS.startDate.addEventListener('change', () => {
-        dateRange.start = ELEMENTS.startDate.value ? new Date(ELEMENTS.startDate.value) : null;
-        updateDashboard();
-    });
-    
-    ELEMENTS.endDate.addEventListener('change', () => {
-        dateRange.end = ELEMENTS.endDate.value ? new Date(ELEMENTS.endDate.value) : null;
-        updateDashboard();
-    });
+    if (ELEMENTS.startDate) {
+        ELEMENTS.startDate.addEventListener('change', () => {
+            dateRange.start = ELEMENTS.startDate.value ? new Date(ELEMENTS.startDate.value) : null;
+            updateDashboardUI();
+        });
+    }
+    if (ELEMENTS.endDate) {
+        ELEMENTS.endDate.addEventListener('change', () => {
+            dateRange.end = ELEMENTS.endDate.value ? new Date(ELEMENTS.endDate.value) : null;
+            updateDashboardUI();
+        });
+    }
+
+    // **Refresh Button Listener** (Calls global showNotification/showError)
+    if (ELEMENTS.refreshPageDataBtn) {
+        ELEMENTS.refreshPageDataBtn.addEventListener('click', async () => {
+            console.log('Refresh Page Data button clicked');
+            showLoading();
+            try {
+                await loadBranches();
+                await loadIssues();
+                updateDashboardUI();
+
+                // Assuming global showNotification exists and handles types
+                if (typeof showNotification === 'function') {
+                     showNotification('Dashboard data refreshed successfully.', 'success');
+                 } else {
+                     console.warn('Global showNotification function not found.');
+                     alert('Dashboard data refreshed successfully.'); // Fallback alert
+                 }
+            } catch (error) {
+                console.error('Error refreshing dashboard data:', error);
+                 // Assuming global showError exists
+                 if (typeof showError === 'function') {
+                     showError('Failed to refresh dashboard data.');
+                 } else {
+                     console.warn('Global showError function not found.');
+                     alert('Error: Failed to refresh dashboard data.'); // Fallback alert
+                 }
+            } finally {
+                hideLoading();
+            }
+        });
+    }
 }
 
-// Update dashboard
-function updateDashboard() {
+// Renamed: Update dashboard UI elements (stats & charts) based on current data
+function updateDashboardUI() {
     updateDashboardStats();
     initializeCharts();
 }
 
-// Show error
-function showError(message) {
-    console.error('Error:', message);
-    
-    // Create a notification element
-    const notification = document.createElement('div');
-    notification.className = 'error-notification';
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">&times;</button>
-        </div>
-    `;
-    
-    // Add styles if they don't exist
-    if (!document.getElementById('notification-styles')) {
-        const styles = document.createElement('style');
-        styles.id = 'notification-styles';
-        styles.textContent = `
-            .error-notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                background-color: #f8d7da;
-                border-left: 4px solid #dc3545;
-                color: #721c24;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                z-index: 2000;
-                max-width: 350px;
-                animation: slideIn 0.3s ease-out forwards;
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            
-            @keyframes slideIn {
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-            
-            .notification-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            
-            .notification-message {
-                flex: 1;
-                margin-right: 10px;
-            }
-            
-            .notification-close {
-                background: none;
-                border: none;
-                font-size: 20px;
-                cursor: pointer;
-                color: inherit;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-            }
-            
-            .notification-close:hover {
-                opacity: 1;
-            }
-        `;
-        document.head.appendChild(styles);
-    }
-    
-    // Add to document
-    document.body.appendChild(notification);
-    
-    // Add close button functionality
-    const closeBtn = notification.querySelector('.notification-close');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            notification.remove();
-        });
-    }
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(20px)';
-        notification.style.transition = 'all 0.3s ease-out';
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 5000);
-}
-
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    initializeDashboard();
-}); 
+    // Only initialize if we're on the dashboard page
+    if (document.querySelector('.dashboard-container')) {
+        console.log('Dashboard page detected, initializing...');
+        initializeDashboard();
+    } else {
+        console.log('Not on dashboard page, skipping initialization');
+    }
+});
+
+// Loading indicator functions
+function showLoading() {
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+        loadingContainer.classList.add('active');
+    }
+}
+
+function hideLoading() {
+    const loadingContainer = document.getElementById('loadingContainer');
+    if (loadingContainer) {
+        loadingContainer.classList.remove('active');
+    }
+} 
